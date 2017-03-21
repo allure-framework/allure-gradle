@@ -2,19 +2,22 @@ plugins {
     id 'java'
     id 'io.qameta.allure'
 }
+
 allure {
-    aspectjweaver = true
     testNG = true
+    aspectjweaver = true
     allureVersion = '2.0-BETA5'
+    testNGAdapterVersion = '2.0-SNAPSHOT'
 }
+
 repositories {
     jcenter()
     mavenLocal()
 }
 dependencies {
     testCompile 'org.testng:testng:6.8'
-    testCompile 'io.qameta.allure:allure2-model-api:2.0-BETA4'
 }
+
 test {
     useTestNG()
 }

@@ -10,16 +10,10 @@ import org.gradle.api.reporting.internal.TaskReportContainer
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class AllureReportContainerImpl extends TaskReportContainer<Report> implements AllureReportContainer {
+class AllureReportContainer extends TaskReportContainer<Report> {
 
-    AllureReportContainerImpl(Task task) {
+    AllureReportContainer(Task task) {
         super(ConfigurableReport.class, task)
         add(TaskGeneratedSingleDirectoryReport.class, "allure-report", task, "index.html")
     }
-
-    @Override
-    DirectoryReport getAllureReport() {
-        return (DirectoryReport) getByName("allure-report")
-    }
-
 }

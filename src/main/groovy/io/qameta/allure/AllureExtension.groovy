@@ -24,7 +24,13 @@ class AllureExtension extends ReportingExtension {
 
     String allureVersion
 
+    String aspectjVersion = "1.8.9"
+
     String configuration = "testCompile"
+
+    String testNGAdapterVersion
+
+    String downloadLinkFormat = "https://bintray.com/qameta/generic/download_file?file_path=io%%2Fqameta%%2Fallure%%2Fallure%%2F2.0-BETA5%%2Fallure-%s.zip"
 
     boolean testNG
 

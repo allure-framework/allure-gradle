@@ -6,6 +6,11 @@ pipeline {
                 sh './gradlew build'
             }
         }
+        stage('Report') {
+            steps {
+                junit 'build/test-results/test/*.xml'
+            }
+        }
     }
     post {
         always {

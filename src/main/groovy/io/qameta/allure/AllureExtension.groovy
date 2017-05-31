@@ -30,7 +30,7 @@ class AllureExtension extends ReportingExtension {
 
     String testNGAdapterVersion
 
-    String downloadLinkFormat = "https://bintray.com/qameta/generic/download_file?file_path=io%%2Fqameta%%2Fallure%%2Fallure%%2F2.0-BETA5%%2Fallure-%s.zip"
+    String downloadLinkFormat = "https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/%s/allure-%<s.zip"
 
     boolean testNG
 

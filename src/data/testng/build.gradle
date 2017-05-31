@@ -6,8 +6,8 @@ plugins {
 allure {
     testNG = true
     aspectjweaver = true
-    allureVersion = '2.0-BETA5'
-    testNGAdapterVersion = '2.0-SNAPSHOT'
+    allureVersion = '2.0.1'
+    testNGAdapterVersion = '2.0-BETA8'
 }
 
 repositories {

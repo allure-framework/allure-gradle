@@ -1,12 +1,19 @@
-plugins {
-    id 'java-gradle-plugin'
-    id 'groovy'
+group = 'io.qameta.allure'
+
+apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
+
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.encoding = 'UTF-8'
 }
 
-group 'io.qameta'
-version '1.0-SNAPSHOT'
-
-sourceCompatibility = 1.6
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+    options.encoding = 'UTF-8'
+}
 
 task createClasspathManifest {
     def outputDir = file("$buildDir/$name")

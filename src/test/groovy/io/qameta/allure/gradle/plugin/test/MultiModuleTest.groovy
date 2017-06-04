@@ -13,9 +13,9 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class TestNgTest {
+class MultiModuleTest {
 
-    private static String DATA_DIR = "testng"
+    private static String DATA_DIR = "multi-module"
 
     private BuildResult buildResult
 
@@ -29,7 +29,7 @@ class TestNgTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'generateAllureReport')
+                .withArguments('test', 'generateAllureReport', '--debug', '--stacktrace')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
@@ -37,7 +37,7 @@ class TestNgTest {
     @Test
     void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
-                .as("Build tasks test and generateAllureReport should be successfully executed")
+                .as("Build tasks test and allureReport should be successfully executed")
                 .filteredOn({task -> task.path in [":test", ":generateAllureReport"]})
                 .extracting("outcome")
                 .containsExactly(SUCCESS, SUCCESS)
@@ -50,15 +50,4 @@ class TestNgTest {
         assertThat(reportDir.listFiles().toList()).as("allure-report directory should not be empty")
                 .isNotEmpty()
     }
-
-    @Test
-    void attachmentsAreProcessed() {
-        File reportDir = new File(testProjectDirectory.absolutePath + "/build/reports/allure-report")
-        assertThat(reportDir.exists()).as("allure-report directory has not been generated")
-        File attachmentsDir = new File(reportDir.absolutePath, "/data/attachments")
-        assertThat(attachmentsDir.listFiles().toList())
-                .as("Attachments have not been processed")
-                .hasSize(1)
-    }
-
 }

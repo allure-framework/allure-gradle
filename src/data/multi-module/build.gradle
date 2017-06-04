@@ -1,0 +1,8 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure'
+}
+
+allureReport {
+    version = '2.1.0'
+}

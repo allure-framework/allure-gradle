@@ -1,9 +1,17 @@
 package io.qameta.allure
 
+import groovy.transform.CompileStatic
+import io.qameta.allure.adapters.CucumberJVMAdapter
+import io.qameta.allure.adapters.JUnit4Adapter
+import io.qameta.allure.adapters.TestNGAdapter
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import groovy.transform.CompileStatic
+import org.gradle.api.file.FileTree
+import org.gradle.api.file.FileVisitDetails
+import org.gradle.api.internal.tasks.testing.junit.JUnitTestFramework
+import org.gradle.api.internal.tasks.testing.testng.TestNGTestFramework
 import org.gradle.api.tasks.testing.Test
+import org.gradle.util.ConfigureUtil
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
@@ -13,68 +21,102 @@ class Allure2GradlePlugin implements Plugin<Project> {
 
     private static final String CONFIGURATION_ASPECTJWEAVER = "aspectjweaverAgent"
     private static final String ALLURE_DIR_PROPERTY = "allure.results.directory"
-    private static final String ALLURE_CONFIGURATION_NAME = "allure"
+    private static final String JUNIT4_ASPECT_DEPENDENCY = "io.qameta.allure:allure-junit4-aspect:"
+    private static final String JUNIT4 = "JUnit4"
 
+    private static final Map<String, String> ADAPTER_DEPENDENCIES =
+            ["TestNG"     : "io.qameta.allure:allure-testng:",
+             "JUnit4"     : "io.qameta.allure:allure-junit4:",
+             "CucumberJVM": "io.qameta.allure:allure-cucumber-jvm:"]
 
-    Project project
+    private static final Map<String, Class> TEST_FRAMEWORKS =
+            ["TestNG": TestNGTestFramework.class,
+             "JUnit4": JUnitTestFramework.class]
+
+    private Project project
 
     @Override
     void apply(Project project) {
         this.project = project
-        project.configurations.create(ALLURE_CONFIGURATION_NAME)
-        AllureExtension ext = configureAllureExtension(project)
+        AdaptersExtension adapters = getAdaptersExtension(project)
+        AllureReportExtension reportExtension = getReportExtension(project)
 
         project.afterEvaluate {
-            applyTestNgAdaptor(ext)
-            configureAllureDownload(ext)
-            configureAllureTask(ext)
-            configureTestTasks(ext)
-            applyAspectjweaver(ext)
+            if (adapters.autoconfigure) {
+                autoconfigure(adapters)
+            }
+            applyAdapters(adapters)
+            applyAspectjweaver(adapters)
+            configureTestTasks(adapters)
+
+            if (reportExtension?.version) {
+                project.evaluationDependsOnChildren()
+                project.tasks.create(DownloadAllureTask.NAME, DownloadAllureTask.class)
+                project.tasks.create(AllureTask.NAME, AllureTask.class)
+                configureAllureDownload(reportExtension)
+                configureReportTask(reportExtension)
+            }
         }
-        project.tasks.create(DownloadAllureTask.NAME, DownloadAllureTask.class)
-        project.tasks.create(AllureTask.NAME, AllureTask.class)
+
     }
 
-    private static AllureExtension configureAllureExtension(Project project) {
-        project.extensions.create(AllureExtension.NAME, AllureExtension.class, project)
+    private static AllureReportExtension getReportExtension(Project project) {
+        project.extensions.create(AllureReportExtension.NAME, AllureReportExtension.class, project)
     }
 
-    private void configureAllureDownload(AllureExtension extension) {
-        DownloadAllureTask task = project.getTasks().withType(DownloadAllureTask.class)
-                .getByName(DownloadAllureTask.NAME)
-        task.allureVersion = extension.allureVersion
-        task.allureCliDest = project.file(project.buildDir.absolutePath + "/allure-${extension.allureVersion}")
-        task.downloadAllureLink = String.format(extension.downloadLinkFormat, extension.allureVersion)
+    private static AdaptersExtension getAdaptersExtension(Project project) {
+        project.extensions.create(AdaptersExtension.NAME, AdaptersExtension.class, project)
     }
 
-    private void configureAllureTask(AllureExtension extension) {
-        AllureTask task = project.getTasks().withType(AllureTask.class)
-                .getByName(AllureTask.NAME)
-        task.allureVersion = extension.allureVersion
-        task.inputDir = new File(extension.allureResultsDir)
-        task.outputDir = new File(extension.allureReportDir)
-    }
-
-    private void applyTestNgAdaptor(AllureExtension extension) {
-        if (extension.testNG) {
-            project.dependencies.add(extension.configuration,
-                    "io.qameta.allure:allure-testng:$extension.testNGAdapterVersion")
+    private void autoconfigure(AdaptersExtension extension) {
+        TEST_FRAMEWORKS.each { name, framework ->
+            boolean apply = project.tasks.withType(Test.class)
+                    .any { task -> framework.isInstance(task.getTestFramework()) }
+            if (apply) {
+                project.logger.debug("Allure autoconfiguration: $name test framework found")
+                String dependencyString = ADAPTER_DEPENDENCIES[name] + extension.allureJavaVersion
+                project.dependencies.add(extension.configuration, dependencyString)
+                if (name == JUNIT4) {
+                    String aspectDependencyString = JUNIT4_ASPECT_DEPENDENCY + extension.allureJavaVersion
+                    project.dependencies.add(extension.configuration, aspectDependencyString)
+                }
+            }
         }
     }
 
-    private void configureTestTasks(AllureExtension ext) {
+    private applyAdapters(AdaptersExtension ext) {
+        if (ext.useTestNG) {
+            TestNGAdapter testNGConfig = ConfigureUtil.configure(ext.useTestNG, new TestNGAdapter())
+            addAdapterDependency(ext, testNGConfig.name, testNGConfig.adapterVersion, testNGConfig.spiOff)
+        }
+        if (ext.useJUnit4) {
+            JUnit4Adapter junit4Config = ConfigureUtil.configure(ext.useJUnit4, new JUnit4Adapter())
+            addAdapterDependency(ext, junit4Config.name, junit4Config.adapterVersion, false)
+            project.dependencies.add(ext.configuration, JUNIT4_ASPECT_DEPENDENCY + junit4Config.adapterVersion)
+        }
+        if (ext.useCucumberJVM) {
+            CucumberJVMAdapter cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMAdapter())
+            addAdapterDependency(ext, cucumberConfig.name, cucumberConfig.adapterVersion, false)
+        }
+    }
+
+    private void addAdapterDependency(AdaptersExtension extension, String name, String version, boolean spiOff) {
+        String dependencyString = ADAPTER_DEPENDENCIES[name] + version
+        if (spiOff) {
+            dependencyString += ":spi-off"
+        }
+        project.dependencies.add(extension.configuration, dependencyString)
+    }
+
+    private void configureTestTasks(AdaptersExtension ext) {
         project.tasks.withType(Test.class).each {
-            it.outputs.files project.files(project.file(ext.allureResultsDir))
-            it.systemProperty(ALLURE_DIR_PROPERTY, ext.allureResultsDir)
+            it.outputs.files project.files(project.file(ext.resultsFolder))
+            it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsFolder)
         }
     }
 
-    private void applyAspectjweaver(AllureExtension ext) {
-        if (ext.aspectjweaver) {
-            project.dependencies.add(
-                    ext.configuration,
-                    "io.qameta.allure:allure-java-commons:${ext.testNGAdapterVersion}")
-
+    private void applyAspectjweaver(AdaptersExtension ext) {
+        if (ext.aspectjweaver || ext.autoconfigure) {
             def aspectjConfiguration = project.configurations.maybeCreate(
                     CONFIGURATION_ASPECTJWEAVER)
 
@@ -91,5 +133,23 @@ class Allure2GradlePlugin implements Plugin<Project> {
                 }
             }
         }
+    }
+
+    private void configureAllureDownload(AllureReportExtension extension) {
+        DownloadAllureTask task = project.getTasks().withType(DownloadAllureTask.class)
+                .getByName(DownloadAllureTask.NAME)
+        task.allureVersion = extension.version
+        task.allureCliDest = project.file(project.buildDir.absolutePath + "/allure-${extension.version}")
+        task.downloadAllureLink = extension.downloadLink ?: String.format(extension.downloadLinkFormat,
+                extension.version)
+    }
+
+    private void configureReportTask(AllureReportExtension extension) {
+        AllureTask task = project.getTasks().withType(AllureTask.class).getByName(AllureTask.NAME)
+        task.resultsDirs = extension.resultsDirs
+        task.resultsGlob = extension.resultsGlob
+        task.allureVersion = extension.version
+        task.clean = extension.clean
+        task.outputDir = extension.reportDir
     }
 }

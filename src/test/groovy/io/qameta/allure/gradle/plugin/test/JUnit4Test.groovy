@@ -13,9 +13,9 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class TestNgTest {
+class JUnit4Test {
 
-    private static String DATA_DIR = "testng"
+    private static String DATA_DIR = "junit4"
 
     private BuildResult buildResult
 
@@ -37,7 +37,7 @@ class TestNgTest {
     @Test
     void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
-                .as("Build tasks test and generateAllureReport should be successfully executed")
+                .as("Build tasks test and allureReport should be successfully executed")
                 .filteredOn({task -> task.path in [":test", ":generateAllureReport"]})
                 .extracting("outcome")
                 .containsExactly(SUCCESS, SUCCESS)
@@ -60,5 +60,5 @@ class TestNgTest {
                 .as("Attachments have not been processed")
                 .hasSize(1)
     }
-
 }
+

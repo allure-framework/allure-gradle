@@ -5,6 +5,7 @@
     <test name="TestNG">
         <classes>
             <class name="io.qameta.allure.gradle.plugin.test.TestNgTest" />
+            <class name="io.qameta.allure.gradle.plugin.test.JUnit4Test" />
         </classes>
     </test>
 </suite>

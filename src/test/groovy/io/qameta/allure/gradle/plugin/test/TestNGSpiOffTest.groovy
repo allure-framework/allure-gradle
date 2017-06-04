@@ -13,9 +13,9 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class TestNgTest {
+class TestNGSpiOffTest {
 
-    private static String DATA_DIR = "testng"
+    private static String DATA_DIR = "testng-spi-off"
 
     private BuildResult buildResult
 
@@ -35,30 +35,13 @@ class TestNgTest {
     }
 
     @Test
-    void tasksAreSuccessfullyInvoked() {
+    void allureReportIsNotGenerated() {
         assertThat(buildResult.tasks)
-                .as("Build tasks test and generateAllureReport should be successfully executed")
+                .as("Build tasks generateAllureReport should fail silently if no report is generated")
                 .filteredOn({task -> task.path in [":test", ":generateAllureReport"]})
                 .extracting("outcome")
                 .containsExactly(SUCCESS, SUCCESS)
-    }
-
-    @Test
-    void reportIsGenerated() {
         File reportDir = new File(testProjectDirectory.absolutePath + "/build/reports/allure-report")
-        assertThat(reportDir.exists()).as("allure-report directory has not been generated")
-        assertThat(reportDir.listFiles().toList()).as("allure-report directory should not be empty")
-                .isNotEmpty()
+        assertThat(reportDir).doesNotExist()
     }
-
-    @Test
-    void attachmentsAreProcessed() {
-        File reportDir = new File(testProjectDirectory.absolutePath + "/build/reports/allure-report")
-        assertThat(reportDir.exists()).as("allure-report directory has not been generated")
-        File attachmentsDir = new File(reportDir.absolutePath, "/data/attachments")
-        assertThat(attachmentsDir.listFiles().toList())
-                .as("Attachments have not been processed")
-                .hasSize(1)
-    }
-
 }

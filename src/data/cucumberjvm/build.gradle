@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure'
+}
+
+allure {
+    aspectjweaver = true
+
+    useCucumberJVM {
+        adapterVersion = '2.0-BETA8'
+    }
+}
+
+allureReport {
+    version = '2.1.0'
+}
+
+repositories {
+    jcenter()
+    mavenLocal()
+}
+dependencies {
+    compile 'info.cukes:gherkin:2.12.2'
+    compile 'info.cukes:cucumber-core:1.2.5'
+    compile 'info.cukes:cucumber-java:1.2.5'
+    compile 'info.cukes:cucumber-junit:1.2.5'
+
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+    useJUnit()
+}

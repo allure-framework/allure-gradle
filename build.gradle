@@ -29,6 +29,7 @@ task createClasspathManifest {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {

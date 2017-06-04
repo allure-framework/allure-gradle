@@ -5,11 +5,14 @@ plugins {
 
 allure {
     aspectjweaver = true
-    allureVersion = '2.1.0'
-
     useTestNG {
         adapterVersion = '2.0-BETA8'
+        spiOff = true
     }
+}
+
+allureReport {
+    version = "2.1.0"
 }
 
 repositories {
@@ -22,4 +25,5 @@ dependencies {
 
 test {
     useTestNG()
+    systemProperty("allure.results.directory", project.buildDir)
 }

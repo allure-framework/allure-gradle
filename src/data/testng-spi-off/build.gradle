@@ -17,8 +17,8 @@ allureReport {
 
 repositories {
     jcenter()
-    mavenLocal()
 }
+
 dependencies {
     testCompile 'org.testng:testng:6.8'
 }

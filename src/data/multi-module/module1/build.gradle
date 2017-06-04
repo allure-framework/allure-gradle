@@ -8,15 +8,15 @@ allure {
     aspectjweaver = true
 
     useJUnit4 {
-        adapterVersion = '2.0-SNAPSHOT'
+        adapterVersion = '2.0-BETA8'
     }
 }
 
 
 repositories {
     jcenter()
-    mavenLocal()
 }
+
 dependencies {
     testCompile 'junit:junit:4.12'
 }

@@ -17,8 +17,8 @@ allureReport {
 
 repositories {
     jcenter()
-    mavenLocal()
 }
+
 dependencies {
     compile 'info.cukes:gherkin:2.12.2'
     compile 'info.cukes:cucumber-core:1.2.5'

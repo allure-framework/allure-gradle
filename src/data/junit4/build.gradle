@@ -18,8 +18,8 @@ allureReport {
 
 repositories {
     jcenter()
-    mavenLocal()
 }
+
 dependencies {
     testCompile 'junit:junit:4.12'
 }

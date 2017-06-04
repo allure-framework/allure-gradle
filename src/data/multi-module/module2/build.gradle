@@ -13,7 +13,6 @@ allure {
 
 repositories {
     jcenter()
-    mavenLocal()
 }
 
 dependencies {

@@ -5,14 +5,11 @@ plugins {
 
 allure {
     aspectjweaver = true
+    version = "2.1.0"
     useTestNG {
-        adapterVersion = '2.0-BETA8'
+        adapterVersion = '2.0-BETA9'
         spiOff = true
     }
-}
-
-allureReport {
-    version = "2.1.0"
 }
 
 repositories {

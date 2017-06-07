@@ -29,7 +29,6 @@ task createClasspathManifest {
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
@@ -46,3 +45,5 @@ test {
         suites 'src/test/resources/testng.xml'
     }
 }
+
+

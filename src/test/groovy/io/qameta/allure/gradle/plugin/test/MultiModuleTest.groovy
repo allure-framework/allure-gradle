@@ -15,7 +15,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
  */
 class MultiModuleTest {
 
-    private static String DATA_DIR = "multi-module"
+    private static String DATA_DIR = 'multi-module'
 
     private BuildResult buildResult
 
@@ -29,7 +29,7 @@ class MultiModuleTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'generateAllureReport', '--debug', '--stacktrace')
+                .withArguments('test', 'aggregatedAllureReport')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
@@ -37,17 +37,18 @@ class MultiModuleTest {
     @Test
     void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
-                .as("Build tasks test and allureReport should be successfully executed")
-                .filteredOn({task -> task.path in [":test", ":generateAllureReport"]})
-                .extracting("outcome")
-                .containsExactly(SUCCESS, SUCCESS)
+                .as('Build tasks test and allureReport should be successfully executed')
+                .filteredOn({task -> task.path in [':module1:test', ':module2:test', ':downloadAllure',
+                                                   ':aggregatedAllureReport']})
+                .extracting('outcome')
+                .containsExactly(SUCCESS, SUCCESS, SUCCESS, SUCCESS)
     }
 
     @Test
     void reportIsGenerated() {
-        File reportDir = new File(testProjectDirectory.absolutePath + "/build/reports/allure-report")
-        assertThat(reportDir.exists()).as("allure-report directory has not been generated")
-        assertThat(reportDir.listFiles().toList()).as("allure-report directory should not be empty")
+        File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
+        assertThat(reportDir.exists()).as('allure-report directory has not been generated')
+        assertThat(reportDir.listFiles().toList()).as('allure-report directory should not be empty')
                 .isNotEmpty()
     }
 }

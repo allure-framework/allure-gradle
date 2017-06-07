@@ -15,7 +15,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
  */
 class JUnit4Test {
 
-    private static String DATA_DIR = "junit4"
+    private static String DATA_DIR = 'junit4'
 
     private BuildResult buildResult
 
@@ -29,7 +29,7 @@ class JUnit4Test {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'generateAllureReport')
+                .withArguments('test', 'allure')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
@@ -37,27 +37,27 @@ class JUnit4Test {
     @Test
     void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
-                .as("Build tasks test and allureReport should be successfully executed")
-                .filteredOn({task -> task.path in [":test", ":generateAllureReport"]})
-                .extracting("outcome")
+                .as('Build tasks test and allureReport should be successfully executed')
+                .filteredOn({task -> task.path in [':test', ':allure']})
+                .extracting('outcome')
                 .containsExactly(SUCCESS, SUCCESS)
     }
 
     @Test
     void reportIsGenerated() {
-        File reportDir = new File(testProjectDirectory.absolutePath + "/build/reports/allure-report")
-        assertThat(reportDir.exists()).as("allure-report directory has not been generated")
-        assertThat(reportDir.listFiles().toList()).as("allure-report directory should not be empty")
+        File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
+        assertThat(reportDir.exists()).as('allure-report directory has not been generated')
+        assertThat(reportDir.listFiles().toList()).as('allure-report directory should not be empty')
                 .isNotEmpty()
     }
 
     @Test
     void attachmentsAreProcessed() {
-        File reportDir = new File(testProjectDirectory.absolutePath + "/build/reports/allure-report")
-        assertThat(reportDir.exists()).as("allure-report directory has not been generated")
-        File attachmentsDir = new File(reportDir.absolutePath, "/data/attachments")
+        File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
+        assertThat(reportDir.exists()).as('allure-report directory has not been generated')
+        File attachmentsDir = new File(reportDir.absolutePath, '/data/attachments')
         assertThat(attachmentsDir.listFiles().toList())
-                .as("Attachments have not been processed")
+                .as('Attachments have not been processed')
                 .hasSize(1)
     }
 }

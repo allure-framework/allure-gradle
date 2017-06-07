@@ -6,6 +6,9 @@
         <classes>
             <class name="io.qameta.allure.gradle.plugin.test.TestNgTest" />
             <class name="io.qameta.allure.gradle.plugin.test.JUnit4Test" />
+            <class name="io.qameta.allure.gradle.plugin.test.CucumberJVMTest" />
+            <class name="io.qameta.allure.gradle.plugin.test.MultiModuleTest" />
+            <class name="io.qameta.allure.gradle.plugin.test.TestNGSpiOffTest" />
         </classes>
     </test>
 </suite>

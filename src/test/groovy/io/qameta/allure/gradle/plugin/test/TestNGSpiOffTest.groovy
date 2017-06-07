@@ -29,7 +29,7 @@ class TestNGSpiOffTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'allure', '--stacktrace', '--debug')
+                .withArguments('test', 'allure')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }

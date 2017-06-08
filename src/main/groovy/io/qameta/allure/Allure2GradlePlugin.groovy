@@ -110,8 +110,8 @@ class Allure2GradlePlugin implements Plugin<Project> {
 
     private void configureTestTasks(AllureExtension ext) {
         project.tasks.withType(Test.class).each {
-            it.outputs.files project.files(project.file(ext.resultsFolder))
-            it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsFolder)
+            it.outputs.files project.files(project.file(ext.resultsDirectory))
+            it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDirectory)
         }
     }
 
@@ -149,7 +149,7 @@ class Allure2GradlePlugin implements Plugin<Project> {
     private void configureAggregatedReportTask(AllureExtension extension) {
         AggregatedAllureReportTask task = project.getTasks().withType(AggregatedAllureReportTask.class)
                 .getByName(AggregatedAllureReportTask.NAME)
-        task.resultsDirs = extension.resultsDirs
+        task.resultsDirs = extension.resultsDirectories
         task.resultsGlob = extension.resultsGlob
         task.allureVersion = extension.version
         task.clean = extension.clean
@@ -159,7 +159,7 @@ class Allure2GradlePlugin implements Plugin<Project> {
     private void configureAllureReportTask(AllureExtension extension) {
         AllureReportTask task = project.getTasks().withType(AllureReportTask.class)
                 .getByName(AllureReportTask.NAME)
-        File resultsDir = new File(extension.resultsFolder)
+        File resultsDir = new File(extension.resultsDirectory)
         resultsDir.mkdirs() //due to @InputFolder check, folder should exist
         task.resultsDir = resultsDir
         task.allureVersion = extension.version
@@ -171,6 +171,6 @@ class Allure2GradlePlugin implements Plugin<Project> {
         AllureServeTask task = project.getTasks().withType(AllureServeTask.class)
                 .getByName(AllureServeTask.NAME)
         task.allureVersion = extension.version
-        task.resultsDir = new File(extension.resultsFolder)
+        task.resultsDir = new File(extension.resultsDirectory)
     }
 }

@@ -12,7 +12,7 @@ class AllureExtension extends ReportingExtension {
 
     AllureExtension(Project project) {
         super(project)
-        this.resultsFolder = new File(project.buildDir, '/allure-results').absolutePath
+        this.resultsDirectory = new File(project.buildDir, '/allure-results').absolutePath
         this.reportDir = new File(getBaseDir(), '/allure-report').absolutePath
     }
 
@@ -28,7 +28,7 @@ class AllureExtension extends ReportingExtension {
 
     String aspectjVersion = '1.8.9'
 
-    String resultsFolder
+    String resultsDirectory
 
     Closure useTestNG
 
@@ -38,7 +38,7 @@ class AllureExtension extends ReportingExtension {
 
     String reportDir
 
-    List<String> resultsDirs = []
+    List<String> resultsDirectories = []
 
     Closure resultsGlob = {}
 

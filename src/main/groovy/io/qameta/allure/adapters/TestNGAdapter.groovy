@@ -6,6 +6,6 @@ package io.qameta.allure.adapters
 class TestNGAdapter {
 
     String name = "TestNG"
-    String adapterVersion
+    String version
     boolean spiOff
 }

@@ -8,7 +8,7 @@ allure {
     aspectjweaver = true
 
     useCucumberJVM {
-        adapterVersion = '2.0-BETA9'
+        version = '2.0-BETA9'
     }
 }
 

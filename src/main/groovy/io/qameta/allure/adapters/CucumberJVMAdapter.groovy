@@ -6,5 +6,5 @@ package io.qameta.allure.adapters
 class CucumberJVMAdapter {
 
     String name = "CucumberJVM"
-    String adapterVersion
+    String version
 }

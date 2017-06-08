@@ -7,6 +7,7 @@ import org.gradle.api.internal.ClosureBackedAction
 import org.gradle.api.reporting.Reporting
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 
 /**
@@ -37,6 +38,7 @@ abstract class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureR
         dependsOn(DownloadAllureTask.NAME)
     }
 
+    @Internal
     @Override
     AllureReportContainer getReports() {
         return new AllureReportContainer(this)

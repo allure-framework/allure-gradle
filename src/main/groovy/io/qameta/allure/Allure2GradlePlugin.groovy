@@ -87,16 +87,16 @@ class Allure2GradlePlugin implements Plugin<Project> {
     private applyAdapters(AllureExtension ext) {
         if (ext.useTestNG) {
             TestNGAdapter testNGConfig = ConfigureUtil.configure(ext.useTestNG, new TestNGAdapter())
-            addAdapterDependency(ext, testNGConfig.name, testNGConfig.adapterVersion, testNGConfig.spiOff)
+            addAdapterDependency(ext, testNGConfig.name, testNGConfig.version, testNGConfig.spiOff)
         }
         if (ext.useJUnit4) {
             JUnit4Adapter junit4Config = ConfigureUtil.configure(ext.useJUnit4, new JUnit4Adapter())
-            addAdapterDependency(ext, junit4Config.name, junit4Config.adapterVersion, false)
-            project.dependencies.add(ext.configuration, JUNIT4_ASPECT_DEPENDENCY + junit4Config.adapterVersion)
+            addAdapterDependency(ext, junit4Config.name, junit4Config.version, false)
+            project.dependencies.add(ext.configuration, JUNIT4_ASPECT_DEPENDENCY + junit4Config.version)
         }
         if (ext.useCucumberJVM) {
             CucumberJVMAdapter cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMAdapter())
-            addAdapterDependency(ext, cucumberConfig.name, cucumberConfig.adapterVersion, false)
+            addAdapterDependency(ext, cucumberConfig.name, cucumberConfig.version, false)
         }
     }
 

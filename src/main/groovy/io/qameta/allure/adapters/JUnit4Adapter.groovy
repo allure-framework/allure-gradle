@@ -6,5 +6,5 @@ package io.qameta.allure.adapters
 class JUnit4Adapter {
 
     String name = "JUnit4"
-    String adapterVersion
+    String version
 }

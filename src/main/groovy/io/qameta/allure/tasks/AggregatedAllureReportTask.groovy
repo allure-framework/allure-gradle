@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
 /**
@@ -14,6 +15,7 @@ class AggregatedAllureReportTask extends AbstractAllureReportTask {
 
     public static final String NAME = 'aggregatedAllureReport'
 
+    @Optional
     Closure resultsGlob
 
     @Input
@@ -21,14 +23,14 @@ class AggregatedAllureReportTask extends AbstractAllureReportTask {
 
     @TaskAction
     void exec() {
-        Set<String> resultsPaths = getResultsPaths()
+        Set<String> resultsPaths = collectResultsPaths()
         runReportGeneration(resultsPaths)
     }
 
-    private Set<String> getResultsPaths() {
+    private Set<String> collectResultsPaths() {
         Set<String> results = []
         if (resultsGlob) {
-            results += getResultDirectoriesByGlob()
+            results += collectResultDirectoriesByGlob()
         }
         if (resultsDirs) {
             results += resultsDirs.findAll(NON_EMPTY_DIR).toSet()
@@ -36,7 +38,7 @@ class AggregatedAllureReportTask extends AbstractAllureReportTask {
         return !results.empty ? results : collectResultsDirsFromSelfAndChildren()
     }
 
-    private Set<String> getResultDirectoriesByGlob() {
+    private Set<String> collectResultDirectoriesByGlob() {
         FileTree reportDirs = project.fileTree(project.rootDir, resultsGlob)
         Set<String> resultsDirs = []
         reportDirs.visit { FileVisitDetails fileDetails ->

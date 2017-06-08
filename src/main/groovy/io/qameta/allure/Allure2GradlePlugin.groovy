@@ -3,6 +3,7 @@ package io.qameta.allure
 import groovy.transform.CompileStatic
 import io.qameta.allure.adapters.CucumberJVMAdapter
 import io.qameta.allure.adapters.JUnit4Adapter
+import io.qameta.allure.adapters.SpockAdapter
 import io.qameta.allure.adapters.TestNGAdapter
 import io.qameta.allure.tasks.AggregatedAllureReportTask
 import io.qameta.allure.tasks.AllureReportTask
@@ -29,6 +30,7 @@ class Allure2GradlePlugin implements Plugin<Project> {
     private static final Map<String, String> ADAPTER_DEPENDENCIES =
             ['TestNG'     : 'io.qameta.allure:allure-testng:',
              'JUnit4'     : 'io.qameta.allure:allure-junit4:',
+             'Spock'      : 'io.qameta.allure:allure-spock:',
              'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:']
 
     private static final Map<String, Class> TEST_FRAMEWORKS =
@@ -97,6 +99,10 @@ class Allure2GradlePlugin implements Plugin<Project> {
         if (ext.useCucumberJVM) {
             CucumberJVMAdapter cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMAdapter())
             addAdapterDependency(ext, cucumberConfig.name, cucumberConfig.version, false)
+        }
+        if (ext.useSpock) {
+            SpockAdapter spockConfig = ConfigureUtil.configure(ext.useSpock, new SpockAdapter())
+            addAdapterDependency(ext, spockConfig.name, spockConfig.version, false)
         }
     }
 

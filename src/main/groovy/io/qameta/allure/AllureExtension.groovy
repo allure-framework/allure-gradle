@@ -36,6 +36,8 @@ class AllureExtension extends ReportingExtension {
 
     Closure useCucumberJVM
 
+    Closure useSpock
+
     String reportDir
 
     List<String> resultsDirectories = []

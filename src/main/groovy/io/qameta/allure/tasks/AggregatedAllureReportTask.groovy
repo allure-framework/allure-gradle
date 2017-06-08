@@ -14,7 +14,6 @@ class AggregatedAllureReportTask extends AbstractAllureReportTask {
 
     public static final String NAME = 'aggregatedAllureReport'
 
-    @Input
     Closure resultsGlob
 
     @Input
@@ -38,7 +37,7 @@ class AggregatedAllureReportTask extends AbstractAllureReportTask {
     }
 
     private Set<String> getResultDirectoriesByGlob() {
-        FileTree reportDirs = project.fileTree(project.buildDir, resultsGlob)
+        FileTree reportDirs = project.fileTree(project.rootDir, resultsGlob)
         Set<String> resultsDirs = []
         reportDirs.visit { FileVisitDetails fileDetails ->
             if (fileDetails.isDirectory()) {

@@ -10,7 +10,7 @@ import org.gradle.api.tasks.TaskAction
  */
 class AllureServeTask extends AbstractExecTask<AllureServeTask> {
 
-    static final String NAME = 'serve'
+    static final String NAME = 'allureServe'
 
     AllureServeTask() {
         super(AllureServeTask)

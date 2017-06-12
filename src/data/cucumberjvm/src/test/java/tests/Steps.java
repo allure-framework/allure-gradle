@@ -20,7 +20,7 @@ import org.junit.Assert;
 
 public class Steps {
 
-    private int a, b, c;
+    private static int a, b, c;
 
     @Given("^a is (\\d+)$")
     public void a_is(int arg1) throws Throwable {

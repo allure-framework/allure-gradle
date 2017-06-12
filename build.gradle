@@ -1,6 +1,7 @@
 group = 'io.qameta.allure'
 
 apply plugin: 'groovy'
+apply plugin: 'maven-publish'
 apply plugin: 'java-gradle-plugin'
 
 compileJava {
@@ -45,5 +46,3 @@ test {
         suites 'src/test/resources/testng.xml'
     }
 }
-
-

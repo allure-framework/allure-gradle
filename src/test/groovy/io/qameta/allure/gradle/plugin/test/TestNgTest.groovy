@@ -29,7 +29,7 @@ class TestNgTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'allure')
+                .withArguments('test', 'allureReport')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
@@ -38,7 +38,7 @@ class TestNgTest {
     void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
                 .as('Build tasks test and generateAllureReport should be successfully executed')
-                .filteredOn({ task -> task.path in [':test', ':allure'] })
+                .filteredOn({ task -> task.path in [':test', ':allureReport'] })
                 .extracting('outcome')
                 .containsExactly(SUCCESS, SUCCESS)
     }

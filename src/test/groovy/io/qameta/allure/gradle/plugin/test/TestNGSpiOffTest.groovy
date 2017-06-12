@@ -29,7 +29,7 @@ class TestNGSpiOffTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'allure')
+                .withArguments('test', 'allureReport')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
@@ -38,7 +38,7 @@ class TestNGSpiOffTest {
     void allureReportIsNotGenerated() {
         assertThat(buildResult.tasks)
                 .as('Build tasks generateAllureReport should fail silently if no report is generated')
-                .filteredOn({ task -> task.path in [':test', ':allure'] })
+                .filteredOn({ task -> task.path in [':test', ':allureReport'] })
                 .extracting('outcome')
                 .containsExactly(SUCCESS, SUCCESS)
         File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')

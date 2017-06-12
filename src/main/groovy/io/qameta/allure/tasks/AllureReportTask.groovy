@@ -8,7 +8,7 @@ import org.gradle.api.tasks.TaskAction
  */
 class AllureReportTask extends AbstractAllureReportTask {
 
-    static final String NAME = 'allure'
+    static final String NAME = 'allureReport'
 
     @InputDirectory
     File resultsDir

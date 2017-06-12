@@ -1,6 +1,7 @@
-package io.qameta.allure
+package io.qameta.allure.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
@@ -9,22 +10,25 @@ import org.gradle.api.tasks.TaskAction
  */
 class DownloadAllureTask extends DefaultTask {
 
-    static final String NAME = "downloadAllure"
+    static final String NAME = 'downloadAllure'
 
+    @Input
     String allureVersion
 
     @OutputDirectory
     File allureCliDest
 
+    @Input
     String downloadAllureLink
 
     @TaskAction
     downloadAllure() {
-        String buildDir = project.buildDir.absolutePath
-        String archiveDest = buildDir + "/allure-${allureVersion}.zip"
+        File buildDir = project.buildDir
+        buildDir.mkdir()
+        String archiveDest = buildDir.absolutePath + "/allure-${allureVersion}.zip"
         project.ant() {
             get(src: downloadAllureLink, dest: archiveDest, skipexisting: 'true')
-            unzip(src: archiveDest, dest: buildDir)
+            unzip(src: archiveDest, dest: allureCliDest)
         }
     }
 

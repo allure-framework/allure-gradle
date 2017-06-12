@@ -10,29 +10,45 @@ import org.gradle.api.reporting.ReportingExtension
 @CompileStatic
 class AllureExtension extends ReportingExtension {
 
-    public static String NAME = "allure"
-
     AllureExtension(Project project) {
         super(project)
-        this.allureReportDir = new File(getBaseDir(), "/allure-report").absolutePath
-        this.allureResultsDir = new File(project.getBuildDir(), "/allure-results").absolutePath
+        this.resultsDirectory = new File(project.buildDir, '/allure-results').absolutePath
+        this.reportDir = new File(getBaseDir(), '/allure-report').absolutePath
     }
 
-    String allureReportDir
+    public static final String NAME = 'allure'
 
-    String allureResultsDir
-
-    String allureVersion
-
-    String aspectjVersion = "1.8.9"
-
-    String configuration = "testCompile"
-
-    String testNGAdapterVersion
-
-    String downloadLinkFormat = "https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/%s/allure-%<s.zip"
-
-    boolean testNG
+    boolean autoconfigure = false
 
     boolean aspectjweaver
+
+    String allureJavaVersion = '2.0-BETA9'
+
+    String configuration = 'testCompile'
+
+    String aspectjVersion = '1.8.9'
+
+    String resultsDirectory
+
+    Closure useTestNG
+
+    Closure useJUnit4
+
+    Closure useCucumberJVM
+
+    Closure useSpock
+
+    String reportDir
+
+    List<String> resultsDirectories = []
+
+    Closure resultsGlob = {}
+
+    String version
+
+    String downloadLinkFormat = 'https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/%s/allure-%<s.zip'
+
+    String downloadLink
+
+    boolean clean = true
 }

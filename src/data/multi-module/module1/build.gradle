@@ -1,25 +1,26 @@
 plugins {
     id 'java'
-    id 'io.qameta.allure'
 }
+
+apply plugin: 'io.qameta.allure'
 
 allure {
     aspectjweaver = true
-    version = '2.1.0'
 
-    useTestNG {
+    useJUnit4 {
         version = '2.0-BETA9'
     }
 }
+
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    testCompile 'org.testng:testng:6.8'
+    testCompile 'junit:junit:4.12'
 }
 
 test {
-    useTestNG()
+    useJUnit()
 }

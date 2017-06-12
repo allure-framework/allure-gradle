@@ -4,12 +4,8 @@ plugins {
 }
 
 allure {
-    aspectjweaver = true
     version = '2.1.0'
-
-    useTestNG {
-        version = '2.0-BETA9'
-    }
+    autoconfigure = true
 }
 
 repositories {
@@ -17,9 +13,9 @@ repositories {
 }
 
 dependencies {
-    testCompile 'org.testng:testng:6.8'
+    testCompile 'junit:junit:4.12'
 }
 
 test {
-    useTestNG()
+    useJUnit()
 }

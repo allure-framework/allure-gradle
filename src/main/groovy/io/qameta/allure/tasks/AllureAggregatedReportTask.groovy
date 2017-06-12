@@ -11,9 +11,9 @@ import org.gradle.api.tasks.TaskAction
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class AggregatedAllureReportTask extends AbstractAllureReportTask {
+class AllureAggregatedReportTask extends AbstractAllureReportTask {
 
-    public static final String NAME = 'aggregatedAllureReport'
+    public static final String NAME = 'allureAggregatedReport'
 
     @Optional
     Closure resultsGlob

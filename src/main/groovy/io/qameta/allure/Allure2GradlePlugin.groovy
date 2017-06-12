@@ -5,7 +5,7 @@ import io.qameta.allure.adapters.CucumberJVMAdapter
 import io.qameta.allure.adapters.JUnit4Adapter
 import io.qameta.allure.adapters.SpockAdapter
 import io.qameta.allure.adapters.TestNGAdapter
-import io.qameta.allure.tasks.AggregatedAllureReportTask
+import io.qameta.allure.tasks.AllureAggregatedReportTask
 import io.qameta.allure.tasks.AllureReportTask
 import io.qameta.allure.tasks.AllureServeTask
 import io.qameta.allure.tasks.DownloadAllureTask
@@ -55,9 +55,9 @@ class Allure2GradlePlugin implements Plugin<Project> {
             if (extension?.version) {
                 project.evaluationDependsOnChildren()
                 project.tasks.create(DownloadAllureTask.NAME, DownloadAllureTask.class)
-                project.tasks.create(AggregatedAllureReportTask.NAME, AggregatedAllureReportTask.class)
                 project.tasks.create(AllureServeTask.NAME, AllureServeTask.class)
                 project.tasks.create(AllureReportTask.NAME, AllureReportTask.class)
+                project.tasks.create(AllureAggregatedReportTask.NAME, AllureAggregatedReportTask.class)
                 configureAllureDownload(extension)
                 configureAggregatedReportTask(extension)
                 configureAllureReportTask(extension)
@@ -153,8 +153,8 @@ class Allure2GradlePlugin implements Plugin<Project> {
     }
 
     private void configureAggregatedReportTask(AllureExtension extension) {
-        AggregatedAllureReportTask task = project.getTasks().withType(AggregatedAllureReportTask.class)
-                .getByName(AggregatedAllureReportTask.NAME)
+        AllureAggregatedReportTask task = project.getTasks().withType(AllureAggregatedReportTask.class)
+                .getByName(AllureAggregatedReportTask.NAME)
         task.resultsDirs = extension.resultsDirectories
         task.resultsGlob = extension.resultsGlob
         task.allureVersion = extension.version

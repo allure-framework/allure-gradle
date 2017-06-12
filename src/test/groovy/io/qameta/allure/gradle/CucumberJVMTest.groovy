@@ -1,21 +1,21 @@
-package io.qameta.allure.gradle.plugin.test
+package io.qameta.allure.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.Test
 
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.copyDataFiles
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.prepareClasspathFile
+import static io.qameta.allure.gradle.util.TestUtil.copyDataFiles
+import static io.qameta.allure.gradle.util.TestUtil.prepareClasspathFile
 import static org.assertj.core.api.Assertions.assertThat
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class JUnit4Test {
+class CucumberJVMTest {
 
-    private static String DATA_DIR = 'junit4'
+    private static String DATA_DIR = 'cucumberjvm'
 
     private BuildResult buildResult
 
@@ -37,8 +37,8 @@ class JUnit4Test {
     @Test
     void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
-                .as('Build tasks test and allureReport should be successfully executed')
-                .filteredOn({task -> task.path in [':test', ':allureReport']})
+                .as('Build task test and allureReport should be successfully executed')
+                .filteredOn({ task -> task.path in [':test', ':allureReport'] })
                 .extracting('outcome')
                 .containsExactly(SUCCESS, SUCCESS)
     }
@@ -61,4 +61,3 @@ class JUnit4Test {
                 .hasSize(1)
     }
 }
-

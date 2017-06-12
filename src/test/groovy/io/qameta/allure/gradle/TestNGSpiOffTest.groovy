@@ -1,21 +1,21 @@
-package io.qameta.allure.gradle.plugin.test
+package io.qameta.allure.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.Test
 
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.copyDataFiles
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.prepareClasspathFile
+import static io.qameta.allure.gradle.util.TestUtil.copyDataFiles
+import static io.qameta.allure.gradle.util.TestUtil.prepareClasspathFile
 import static org.assertj.core.api.Assertions.assertThat
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class MultiModuleTest {
+class TestNGSpiOffTest {
 
-    private static String DATA_DIR = 'multi-module'
+    private static String DATA_DIR = 'testng-spi-off'
 
     private BuildResult buildResult
 
@@ -29,26 +29,19 @@ class MultiModuleTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'allureAggregatedReport')
+                .withArguments('test', 'allureReport')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
 
     @Test
-    void tasksAreSuccessfullyInvoked() {
+    void allureReportIsNotGenerated() {
         assertThat(buildResult.tasks)
-                .as('Build tasks test and allureReport should be successfully executed')
-                .filteredOn({task -> task.path in [':module1:test', ':module2:test', ':downloadAllure',
-                                                   ':allureAggregatedReport']})
+                .as('Build task generateAllureReport should fail silently if no report is generated')
+                .filteredOn({ task -> task.path in [':test', ':allureReport'] })
                 .extracting('outcome')
-                .containsExactly(SUCCESS, SUCCESS, SUCCESS, SUCCESS)
-    }
-
-    @Test
-    void reportIsGenerated() {
+                .containsExactly(SUCCESS, SUCCESS)
         File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
-        assertThat(reportDir.exists()).as('allure-report directory has not been generated')
-        assertThat(reportDir.listFiles().toList()).as('allure-report directory should not be empty')
-                .isNotEmpty()
+        assertThat(reportDir.list().toList()).isEmpty()
     }
 }

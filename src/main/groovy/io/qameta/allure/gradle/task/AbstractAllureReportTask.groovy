@@ -1,7 +1,7 @@
-package io.qameta.allure.tasks
+package io.qameta.allure.gradle.task
 
-import io.qameta.allure.AllureReportContainer
-import io.qameta.allure.util.BuildUtils
+import io.qameta.allure.gradle.AllureReportContainer
+import io.qameta.allure.gradle.util.BuildUtils
 import org.gradle.api.Action
 import org.gradle.api.internal.ClosureBackedAction
 import org.gradle.api.reporting.Reporting

@@ -1,4 +1,4 @@
-package io.qameta.allure
+package io.qameta.allure.gradle
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Project

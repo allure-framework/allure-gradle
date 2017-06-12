@@ -1,4 +1,4 @@
-package io.qameta.allure.util
+package io.qameta.allure.gradle.util
 
 /**
  * @author Egor Borisov ehborisov@gmail.com

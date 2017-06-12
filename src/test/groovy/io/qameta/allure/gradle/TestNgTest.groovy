@@ -1,21 +1,21 @@
-package io.qameta.allure.gradle.plugin.test
+package io.qameta.allure.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.Test
 
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.copyDataFiles
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.prepareClasspathFile
+import static io.qameta.allure.gradle.util.TestUtil.copyDataFiles
+import static io.qameta.allure.gradle.util.TestUtil.prepareClasspathFile
 import static org.assertj.core.api.Assertions.assertThat
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class TestNGSpiOffTest {
+class TestNgTest {
 
-    private static String DATA_DIR = 'testng-spi-off'
+    private static String DATA_DIR = 'testng'
 
     private BuildResult buildResult
 
@@ -35,13 +35,30 @@ class TestNGSpiOffTest {
     }
 
     @Test
-    void allureReportIsNotGenerated() {
+    void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
-                .as('Build tasks generateAllureReport should fail silently if no report is generated')
+                .as('Build task test and generateAllureReport should be successfully executed')
                 .filteredOn({ task -> task.path in [':test', ':allureReport'] })
                 .extracting('outcome')
                 .containsExactly(SUCCESS, SUCCESS)
-        File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
-        assertThat(reportDir.list().toList()).isEmpty()
     }
+
+    @Test
+    void reportIsGenerated() {
+        File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
+        assertThat(reportDir.exists()).as('allure-report directory has not been generated')
+        assertThat(reportDir.listFiles().toList()).as('allure-report directory should not be empty')
+                .isNotEmpty()
+    }
+
+    @Test
+    void attachmentsAreProcessed() {
+        File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
+        assertThat(reportDir.exists()).as('allure-report directory has not been generated')
+        File attachmentsDir = new File(reportDir.absolutePath, '/data/attachments')
+        assertThat(attachmentsDir.listFiles().toList())
+                .as('Attachments have not been processed')
+                .hasSize(1)
+    }
+
 }

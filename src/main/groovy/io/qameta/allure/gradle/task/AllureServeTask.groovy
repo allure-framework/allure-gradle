@@ -1,6 +1,6 @@
-package io.qameta.allure.tasks
+package io.qameta.allure.gradle.task
 
-import io.qameta.allure.util.BuildUtils
+import io.qameta.allure.gradle.util.BuildUtils
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction

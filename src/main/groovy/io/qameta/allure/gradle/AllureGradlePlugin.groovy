@@ -1,14 +1,14 @@
-package io.qameta.allure
+package io.qameta.allure.gradle
 
 import groovy.transform.CompileStatic
-import io.qameta.allure.adapters.CucumberJVMAdapter
-import io.qameta.allure.adapters.JUnit4Adapter
-import io.qameta.allure.adapters.SpockAdapter
-import io.qameta.allure.adapters.TestNGAdapter
-import io.qameta.allure.tasks.AllureAggregatedReportTask
-import io.qameta.allure.tasks.AllureReportTask
-import io.qameta.allure.tasks.AllureServeTask
-import io.qameta.allure.tasks.DownloadAllureTask
+import io.qameta.allure.gradle.config.CucumberJVMConfig
+import io.qameta.allure.gradle.config.JUnit4Config
+import io.qameta.allure.gradle.config.SpockConfig
+import io.qameta.allure.gradle.config.TestNGConfig
+import io.qameta.allure.gradle.task.AllureAggregatedReportTask
+import io.qameta.allure.gradle.task.AllureReportTask
+import io.qameta.allure.gradle.task.AllureServeTask
+import io.qameta.allure.gradle.task.DownloadAllureTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.junit.JUnitTestFramework
@@ -88,20 +88,20 @@ class AllureGradlePlugin implements Plugin<Project> {
 
     private applyAdapters(AllureExtension ext) {
         if (ext.useTestNG) {
-            TestNGAdapter testNGConfig = ConfigureUtil.configure(ext.useTestNG, new TestNGAdapter())
+            TestNGConfig testNGConfig = ConfigureUtil.configure(ext.useTestNG, new TestNGConfig())
             addAdapterDependency(ext, testNGConfig.name, testNGConfig.version, testNGConfig.spiOff)
         }
         if (ext.useJUnit4) {
-            JUnit4Adapter junit4Config = ConfigureUtil.configure(ext.useJUnit4, new JUnit4Adapter())
+            JUnit4Config junit4Config = ConfigureUtil.configure(ext.useJUnit4, new JUnit4Config())
             addAdapterDependency(ext, junit4Config.name, junit4Config.version, false)
             project.dependencies.add(ext.configuration, JUNIT4_ASPECT_DEPENDENCY + junit4Config.version)
         }
         if (ext.useCucumberJVM) {
-            CucumberJVMAdapter cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMAdapter())
+            CucumberJVMConfig cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMConfig())
             addAdapterDependency(ext, cucumberConfig.name, cucumberConfig.version, false)
         }
         if (ext.useSpock) {
-            SpockAdapter spockConfig = ConfigureUtil.configure(ext.useSpock, new SpockAdapter())
+            SpockConfig spockConfig = ConfigureUtil.configure(ext.useSpock, new SpockConfig())
             addAdapterDependency(ext, spockConfig.name, spockConfig.version, false)
         }
     }

@@ -1,21 +1,21 @@
-package io.qameta.allure.gradle.plugin.test
+package io.qameta.allure.gradle
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.Test
 
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.copyDataFiles
-import static io.qameta.allure.gradle.plugin.test.util.TestUtil.prepareClasspathFile
+import static io.qameta.allure.gradle.util.TestUtil.copyDataFiles
+import static io.qameta.allure.gradle.util.TestUtil.prepareClasspathFile
 import static org.assertj.core.api.Assertions.assertThat
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class TestNgTest {
+class MultiModuleTest {
 
-    private static String DATA_DIR = 'testng'
+    private static String DATA_DIR = 'multi-module'
 
     private BuildResult buildResult
 
@@ -29,7 +29,7 @@ class TestNgTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'allureReport')
+                .withArguments('test', 'allureAggregatedReport')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
@@ -37,10 +37,11 @@ class TestNgTest {
     @Test
     void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.tasks)
-                .as('Build tasks test and generateAllureReport should be successfully executed')
-                .filteredOn({ task -> task.path in [':test', ':allureReport'] })
+                .as('Build task test and allureReport should be successfully executed')
+                .filteredOn({task -> task.path in [':module1:test', ':module2:test', ':downloadAllure',
+                                                   ':allureAggregatedReport']})
                 .extracting('outcome')
-                .containsExactly(SUCCESS, SUCCESS)
+                .containsExactly(SUCCESS, SUCCESS, SUCCESS, SUCCESS)
     }
 
     @Test
@@ -50,15 +51,4 @@ class TestNgTest {
         assertThat(reportDir.listFiles().toList()).as('allure-report directory should not be empty')
                 .isNotEmpty()
     }
-
-    @Test
-    void attachmentsAreProcessed() {
-        File reportDir = new File(testProjectDirectory.absolutePath + '/build/reports/allure-report')
-        assertThat(reportDir.exists()).as('allure-report directory has not been generated')
-        File attachmentsDir = new File(reportDir.absolutePath, '/data/attachments')
-        assertThat(attachmentsDir.listFiles().toList())
-                .as('Attachments have not been processed')
-                .hasSize(1)
-    }
-
 }

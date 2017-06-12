@@ -1,6 +1,6 @@
-package io.qameta.allure.tasks
+package io.qameta.allure.gradle.task
 
-import io.qameta.allure.AllureExtension
+import io.qameta.allure.gradle.AllureExtension
 import org.gradle.api.Project
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.FileVisitDetails

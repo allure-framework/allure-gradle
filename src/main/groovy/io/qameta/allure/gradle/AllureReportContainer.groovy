@@ -1,4 +1,4 @@
-package io.qameta.allure
+package io.qameta.allure.gradle
 
 import org.gradle.api.Task
 import org.gradle.api.reporting.ConfigurableReport

@@ -1,4 +1,4 @@
-package io.qameta.allure.gradle.plugin.test.util
+package io.qameta.allure.gradle.util
 
 import org.apache.commons.io.FileUtils
 

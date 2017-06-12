@@ -1,9 +1,9 @@
-package io.qameta.allure.adapters
+package io.qameta.allure.gradle.config
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class TestNGAdapter {
+class TestNGConfig {
 
     String name = "TestNG"
     String version

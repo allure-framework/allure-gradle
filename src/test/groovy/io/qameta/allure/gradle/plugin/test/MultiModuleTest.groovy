@@ -29,7 +29,7 @@ class MultiModuleTest {
         buildResult = GradleRunner.create()
                 .withProjectDir(testProjectDirectory)
                 .withTestKitDir(new File(testProjectDirectory.parentFile.absolutePath, '.gradle'))
-                .withArguments('test', 'aggregatedAllureReport')
+                .withArguments('test', 'allureAggregatedReport')
                 .withPluginClasspath(pluginClasspath)
                 .build()
     }
@@ -39,7 +39,7 @@ class MultiModuleTest {
         assertThat(buildResult.tasks)
                 .as('Build tasks test and allureReport should be successfully executed')
                 .filteredOn({task -> task.path in [':module1:test', ':module2:test', ':downloadAllure',
-                                                   ':aggregatedAllureReport']})
+                                                   ':allureAggregatedReport']})
                 .extracting('outcome')
                 .containsExactly(SUCCESS, SUCCESS, SUCCESS, SUCCESS)
     }

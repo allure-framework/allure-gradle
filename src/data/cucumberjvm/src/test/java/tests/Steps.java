@@ -6,6 +6,7 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.qameta.allure.Attachment;
+import org.apache.commons.io.IOUtils;
 
 import java.awt.AWTException;
 import java.awt.Rectangle;
@@ -46,14 +47,8 @@ public class Steps {
     @Attachment(type = "image/png", fileExtension = "png", value = "att")
     public byte[] attach() {
         try {
-            BufferedImage image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
-            baos.flush();
-            byte[] imageInByte = baos.toByteArray();
-            baos.close();
-            return imageInByte;
-        } catch (AWTException | IOException e) {
+            return IOUtils.toByteArray(ClassLoader.getSystemResourceAsStream("cucumber.png"));
+        } catch (IOException e) {
             return null;
         }
     }

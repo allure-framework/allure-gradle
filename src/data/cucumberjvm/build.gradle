@@ -17,6 +17,7 @@ repositories {
 }
 
 dependencies {
+    compile 'commons-io:commons-io:2.5'
     compile 'info.cukes:gherkin:2.12.2'
     compile 'info.cukes:cucumber-core:1.2.5'
     compile 'info.cukes:cucumber-java:1.2.5'

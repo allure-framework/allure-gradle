@@ -59,9 +59,9 @@ class AllureGradlePlugin implements Plugin<Project> {
                 project.tasks.create(AllureReportTask.NAME, AllureReportTask.class)
                 project.tasks.create(AllureAggregatedReportTask.NAME, AllureAggregatedReportTask.class)
                 configureAllureDownload(extension)
-                configureAggregatedReportTask(extension)
-                configureAllureReportTask(extension)
                 configureAllureServeTask(extension)
+                configureAllureReportTask(extension)
+                configureAllureAggregatedReportTask(extension)
             }
         }
     }
@@ -152,7 +152,7 @@ class AllureGradlePlugin implements Plugin<Project> {
                 extension.version)
     }
 
-    private void configureAggregatedReportTask(AllureExtension extension) {
+    private void configureAllureAggregatedReportTask(AllureExtension extension) {
         AllureAggregatedReportTask task = project.getTasks().withType(AllureAggregatedReportTask.class)
                 .getByName(AllureAggregatedReportTask.NAME)
         task.resultsDirs = extension.resultsDirectories

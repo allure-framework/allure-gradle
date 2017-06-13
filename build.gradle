@@ -1,5 +1,16 @@
 group = 'io.qameta.allure'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'ru.vyarus:gradle-quality-plugin:2.2.0'
+    }
+}
+
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'java-gradle-plugin'
@@ -39,6 +50,15 @@ dependencies {
     testCompile 'commons-io:commons-io:2.5'
     testCompile 'org.assertj:assertj-core:3.6.2'
     testRuntime files(createClasspathManifest)
+}
+
+apply plugin: 'ru.vyarus.quality'
+
+quality {
+    pmdVersion = '5.5.4'
+    checkstyleVersion = '7.6'
+    findbugsVersion = '3.0.1'
+    codenarcVersion = '0.26.0'
 }
 
 test {

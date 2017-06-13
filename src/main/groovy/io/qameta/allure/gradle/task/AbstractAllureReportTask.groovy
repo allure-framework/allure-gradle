@@ -13,10 +13,10 @@ import org.gradle.api.tasks.OutputDirectory
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-abstract class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureReportTask>
+class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureReportTask>
         implements Reporting<AllureReportContainer> {
 
-    static Closure<Boolean> NON_EMPTY_DIR = { String path ->
+    static Closure<Boolean> nonEmptyDir = { String path ->
         if (!path) {
             return false
         }
@@ -67,7 +67,7 @@ abstract class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureR
             logger.warn("Allure report is not generated, cannot find allure-commandline distribution in $workingDir")
             return
         }
-        String output = outputDir.getAbsolutePath()
+        String output = outputDir.absolutePath
         List args = ['generate'] + resutsFolders + ['-o', output]
         if (clean) {
             args += '--clean'

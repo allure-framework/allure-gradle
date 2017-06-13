@@ -33,9 +33,9 @@ class AllureAggregatedReportTask extends AbstractAllureReportTask {
             results += collectResultDirectoriesByGlob()
         }
         if (resultsDirs) {
-            results += resultsDirs.findAll(NON_EMPTY_DIR).toSet()
+            results += resultsDirs.findAll(nonEmptyDir).toSet()
         }
-        return !results.empty ? results : collectResultsDirsFromSelfAndChildren()
+        return results.empty ? collectResultsDirsFromSelfAndChildren() : results
     }
 
     private Set<String> collectResultDirectoriesByGlob() {
@@ -56,9 +56,9 @@ class AllureAggregatedReportTask extends AbstractAllureReportTask {
 
     private Set<String> collectResultsDirsFromSelfAndChildren() {
         List<Project> projects = project.childProjects.values().toList() + [project]
-        return projects.collect({
+        return projects.collect {
             project.logger.debug("Collecting folder with Allure results from project ${it.name}")
             it.exten().findByType(AllureExtension)?.resultsDirectory
-        }).findAll(NON_EMPTY_DIR).toSet()
+        }.findAll(nonEmptyDir).toSet()
     }
 }

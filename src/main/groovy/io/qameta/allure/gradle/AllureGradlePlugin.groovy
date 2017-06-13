@@ -28,15 +28,23 @@ class AllureGradlePlugin implements Plugin<Project> {
     private static final String JUNIT4_ASPECT_DEPENDENCY = 'io.qameta.allure:allure-junit4-aspect:'
     private static final String JUNIT4 = 'JUnit4'
 
+    // @formatter:off
     private static final Map<String, String> ADAPTER_DEPENDENCIES =
-            ['TestNG'     : 'io.qameta.allure:allure-testng:',
-             'JUnit4'     : 'io.qameta.allure:allure-junit4:',
-             'Spock'      : 'io.qameta.allure:allure-spock:',
-             'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:',]
+            [
+                    'TestNG': 'io.qameta.allure:allure-testng:',
+                    'JUnit4': 'io.qameta.allure:allure-junit4:',
+                    'Spock': 'io.qameta.allure:allure-spock:',
+                    'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:',
+            ]
+    // @formatter:on
 
+    // @formatter:off
     private static final Map<String, Class> TEST_FRAMEWORKS =
-            ['TestNG': TestNGTestFramework,
-             'JUnit4': JUnitTestFramework,]
+            [
+                    'TestNG': TestNGTestFramework,
+                    'JUnit4': JUnitTestFramework,
+            ]
+    // @formatter:on
 
     private Project project
 

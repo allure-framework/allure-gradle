@@ -13,7 +13,7 @@ class AllureExtension extends ReportingExtension {
     AllureExtension(Project project) {
         super(project)
         this.resultsDirectory = new File(project.buildDir, '/allure-results').absolutePath
-        this.reportDir = new File(getBaseDir(), '/allure-report').absolutePath
+        this.reportDir = new File(baseDir as File, '/allure-report').absolutePath
     }
 
     public static final String NAME = 'allure'
@@ -42,7 +42,7 @@ class AllureExtension extends ReportingExtension {
 
     List<String> resultsDirectories = []
 
-    Closure resultsGlob = {}
+    Closure resultsGlob = { }
 
     String version
 

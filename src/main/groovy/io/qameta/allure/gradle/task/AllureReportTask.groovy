@@ -15,7 +15,7 @@ class AllureReportTask extends AbstractAllureReportTask {
 
     @TaskAction
     void exec() {
-        Set<String> results = NON_EMPTY_DIR(resultsDir.absolutePath) ?
+        Set<String> results = nonEmptyDir(resultsDir.absolutePath) ?
                 [resultsDir.absolutePath].toSet() : []
         runReportGeneration(results)
     }

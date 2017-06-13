@@ -5,8 +5,12 @@ package io.qameta.allure.gradle.util
  */
 class BuildUtils {
 
-    static String getAllureExecutable() {
-        return System.getProperty('os.name').toLowerCase().indexOf('win') >= 0 ? 'allure.bat'
-                : 'allure'
+    static boolean isWindows() {
+        return System.getProperty('os.name').toLowerCase().contains('win')
     }
+
+    static String getAllureExecutable() {
+        return isWindows() ? 'allure.bat' : 'allure'
+    }
+
 }

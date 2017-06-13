@@ -15,4 +15,5 @@ class AllureReportContainer extends TaskReportContainer<Report> {
         super(ConfigurableReport, task)
         add(TaskGeneratedSingleDirectoryReport, 'allure-report', task, 'index.html')
     }
+
 }

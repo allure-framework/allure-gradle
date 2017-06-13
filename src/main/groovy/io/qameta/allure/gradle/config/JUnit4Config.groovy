@@ -5,6 +5,8 @@ package io.qameta.allure.gradle.config
  */
 class JUnit4Config {
 
-    String name = "JUnit4"
+    String name = 'JUnit4'
+
     String version
+
 }

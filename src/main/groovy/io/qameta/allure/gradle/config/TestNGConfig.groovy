@@ -5,7 +5,9 @@ package io.qameta.allure.gradle.config
  */
 class TestNGConfig {
 
-    String name = "TestNG"
+    String name = 'TestNG'
+
     String version
+
     boolean spiOff
 }

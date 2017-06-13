@@ -11,6 +11,7 @@ import io.qameta.allure.gradle.task.AllureServeTask
 import io.qameta.allure.gradle.task.DownloadAllureTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.tasks.testing.junit.JUnitTestFramework
 import org.gradle.api.internal.tasks.testing.testng.TestNGTestFramework
 import org.gradle.api.tasks.testing.Test
@@ -31,11 +32,11 @@ class AllureGradlePlugin implements Plugin<Project> {
             ['TestNG'     : 'io.qameta.allure:allure-testng:',
              'JUnit4'     : 'io.qameta.allure:allure-junit4:',
              'Spock'      : 'io.qameta.allure:allure-spock:',
-             'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:']
+             'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:',]
 
     private static final Map<String, Class> TEST_FRAMEWORKS =
-            ['TestNG': TestNGTestFramework.class,
-             'JUnit4': JUnitTestFramework.class]
+            ['TestNG': TestNGTestFramework,
+             'JUnit4': JUnitTestFramework,]
 
     private Project project
 
@@ -54,10 +55,10 @@ class AllureGradlePlugin implements Plugin<Project> {
 
             if (extension?.version) {
                 project.evaluationDependsOnChildren()
-                project.tasks.create(DownloadAllureTask.NAME, DownloadAllureTask.class)
-                project.tasks.create(AllureServeTask.NAME, AllureServeTask.class)
-                project.tasks.create(AllureReportTask.NAME, AllureReportTask.class)
-                project.tasks.create(AllureAggregatedReportTask.NAME, AllureAggregatedReportTask.class)
+                project.tasks.create(DownloadAllureTask.NAME, DownloadAllureTask)
+                project.tasks.create(AllureServeTask.NAME, AllureServeTask)
+                project.tasks.create(AllureReportTask.NAME, AllureReportTask)
+                project.tasks.create(AllureAggregatedReportTask.NAME, AllureAggregatedReportTask)
                 configureAllureDownload(extension)
                 configureAllureServeTask(extension)
                 configureAllureReportTask(extension)
@@ -67,13 +68,12 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private static AllureExtension getAdaptersExtension(Project project) {
-        project.extensions.create(AllureExtension.NAME, AllureExtension.class, project)
+        project.extensions.create(AllureExtension.NAME, AllureExtension, project)
     }
 
     private void autoconfigure(AllureExtension extension) {
         TEST_FRAMEWORKS.each { name, framework ->
-            boolean apply = project.tasks.withType(Test.class)
-                    .any { task -> framework.isInstance(task.getTestFramework()) }
+            boolean apply = project.tasks.withType(Test).any { task -> framework.isInstance(task.testFramework) }
             if (apply) {
                 project.logger.debug("Allure autoconfiguration: $name test framework found")
                 String dependencyString = ADAPTER_DEPENDENCIES[name] + extension.allureJavaVersion
@@ -115,7 +115,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureTestTasks(AllureExtension ext) {
-        project.tasks.withType(Test.class).each {
+        project.tasks.withType(Test).each {
             it.outputs.files project.files(project.file(ext.resultsDirectory))
             it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDirectory)
         }
@@ -123,8 +123,7 @@ class AllureGradlePlugin implements Plugin<Project> {
 
     private void applyAspectjweaver(AllureExtension ext) {
         if (ext.aspectjweaver || ext.autoconfigure) {
-            def aspectjConfiguration = project.configurations.maybeCreate(
-                    CONFIGURATION_ASPECTJWEAVER)
+            Configuration aspectjConfiguration = project.configurations.maybeCreate(CONFIGURATION_ASPECTJWEAVER)
 
             project.dependencies.add(CONFIGURATION_ASPECTJWEAVER,
                     "org.aspectj:aspectjweaver:${ext.aspectjVersion}")
@@ -142,8 +141,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureAllureDownload(AllureExtension extension) {
-        DownloadAllureTask task = project.getTasks().withType(DownloadAllureTask.class)
-                .getByName(DownloadAllureTask.NAME)
+        DownloadAllureTask task = project.tasks.withType(DownloadAllureTask).getByName(DownloadAllureTask.NAME)
         task.allureVersion = extension.version
         File allureDest = new File(project.rootDir, '.allure')
         allureDest.mkdir()
@@ -153,7 +151,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureAllureAggregatedReportTask(AllureExtension extension) {
-        AllureAggregatedReportTask task = project.getTasks().withType(AllureAggregatedReportTask.class)
+        AllureAggregatedReportTask task = project.tasks.withType(AllureAggregatedReportTask)
                 .getByName(AllureAggregatedReportTask.NAME)
         task.resultsDirs = extension.resultsDirectories
         task.resultsGlob = extension.resultsGlob
@@ -163,8 +161,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureAllureReportTask(AllureExtension extension) {
-        AllureReportTask task = project.getTasks().withType(AllureReportTask.class)
-                .getByName(AllureReportTask.NAME)
+        AllureReportTask task = project.tasks.withType(AllureReportTask).getByName(AllureReportTask.NAME)
         File resultsDir = new File(extension.resultsDirectory)
         resultsDir.mkdirs() //due to @InputFolder check, folder should exist
         task.resultsDir = resultsDir
@@ -174,8 +171,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureAllureServeTask(AllureExtension extension) {
-        AllureServeTask task = project.getTasks().withType(AllureServeTask.class)
-                .getByName(AllureServeTask.NAME)
+        AllureServeTask task = project.tasks.withType(AllureServeTask).getByName(AllureServeTask.NAME)
         task.allureVersion = extension.version
         task.resultsDir = new File(extension.resultsDirectory)
     }

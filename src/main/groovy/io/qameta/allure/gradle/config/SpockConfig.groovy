@@ -5,6 +5,8 @@ package io.qameta.allure.gradle.config
  */
 class SpockConfig {
 
-    String name = "Spock"
+    String name = 'Spock'
+
     String version
+
 }

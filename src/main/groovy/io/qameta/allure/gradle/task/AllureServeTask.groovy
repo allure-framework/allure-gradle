@@ -4,7 +4,6 @@ import io.qameta.allure.gradle.util.BuildUtils
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import org.gradle.internal.io.IoUtils
 
 /**
  * @author Egor Borisov ehborisov@gmail.com

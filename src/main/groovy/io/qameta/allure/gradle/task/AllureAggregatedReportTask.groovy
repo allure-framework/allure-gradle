@@ -58,7 +58,7 @@ class AllureAggregatedReportTask extends AbstractAllureReportTask {
         List<Project> projects = project.childProjects.values().toList() + [project]
         return projects.collect({
             project.logger.debug("Collecting folder with Allure results from project ${it.name}")
-            it.getExtensions().findByType(AllureExtension.class)?.resultsDirectory
+            it.exten().findByType(AllureExtension)?.resultsDirectory
         }).findAll(NON_EMPTY_DIR).toSet()
     }
 }

@@ -26,7 +26,7 @@ class DownloadAllureTask extends DefaultTask {
         File buildDir = project.buildDir
         buildDir.mkdir()
         String archiveDest = buildDir.absolutePath + "/allure-${allureVersion}.zip"
-        project.ant() {
+        project.ant {
             get(src: downloadAllureLink, dest: archiveDest, skipexisting: 'true')
             unzip(src: archiveDest, dest: allureCliDest)
         }

@@ -5,6 +5,8 @@ package io.qameta.allure.gradle.config
  */
 class CucumberJVMConfig {
 
-    String name = "CucumberJVM"
+    String name = 'CucumberJVM'
+
     String version
+
 }

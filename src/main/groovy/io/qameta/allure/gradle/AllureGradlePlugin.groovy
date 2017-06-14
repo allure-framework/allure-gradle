@@ -67,7 +67,6 @@ class AllureGradlePlugin implements Plugin<Project> {
                 project.tasks.create(AllureServeTask.NAME, AllureServeTask)
                 project.tasks.create(AllureReportTask.NAME, AllureReportTask)
                 project.tasks.create(AllureAggregatedReportTask.NAME, AllureAggregatedReportTask)
-                configureAllureDownload(extension)
                 configureAllureServeTask(extension)
                 configureAllureReportTask(extension)
                 configureAllureAggregatedReportTask(extension)
@@ -146,16 +145,6 @@ class AllureGradlePlugin implements Plugin<Project> {
                 }
             }
         }
-    }
-
-    private void configureAllureDownload(AllureExtension extension) {
-        DownloadAllureTask task = project.tasks.withType(DownloadAllureTask).getByName(DownloadAllureTask.NAME)
-        task.allureVersion = extension.version
-        File allureDest = new File(project.rootDir, '.allure')
-        allureDest.mkdir()
-        task.allureCliDest = project.file(allureDest.absolutePath)
-        task.downloadAllureLink = extension.downloadLink ?: String.format(extension.downloadLinkFormat,
-                extension.version)
     }
 
     private void configureAllureAggregatedReportTask(AllureExtension extension) {

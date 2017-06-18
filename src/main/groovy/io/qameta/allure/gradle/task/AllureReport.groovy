@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.task
 
+import io.qameta.allure.gradle.AllureExtension
 import io.qameta.allure.gradle.AllureReportContainer
 import io.qameta.allure.gradle.util.BuildUtils
 import org.gradle.api.Action
@@ -36,6 +37,7 @@ class AllureReport extends DefaultTask implements Reporting<AllureReportContaine
 
     AllureReport() {
         dependsOn(DownloadAllure.NAME)
+        configureDefaults()
     }
 
     @TaskAction
@@ -59,6 +61,16 @@ class AllureReport extends DefaultTask implements Reporting<AllureReportContaine
             if (clean) {
                 args('--clean')
             }
+        }
+    }
+
+    private void configureDefaults() {
+        AllureExtension allureExtension = project.extensions.findByType(AllureExtension)
+        if (Objects.nonNull(extensions)) {
+            resultsDirs.add(new File(allureExtension.resultsDir))
+            reportDir = new File(allureExtension.reportDir)
+            version = allureExtension.version
+            clean = allureExtension.clean
         }
     }
 

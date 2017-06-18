@@ -38,10 +38,10 @@ class TestNGSpiOffTest {
     void allureReportIsNotGenerated() {
         assertThat(buildResult.tasks)
                 .as('Build task generateAllureReport should fail silently if no report is generated')
-                .filteredOn({ task -> task.path in [':test', ':allureReport'] })
+                .filteredOn({ task -> task.path in [':test'] })
                 .extracting('outcome')
                 .containsExactly(SUCCESS)
         File resultsDir = new File(testProjectDirectory.absolutePath + '/build/allure-results')
-        assertThat(resultsDir.list().toList()).isEmpty()
+        assertThat(resultsDir.list()).isNull()
     }
 }

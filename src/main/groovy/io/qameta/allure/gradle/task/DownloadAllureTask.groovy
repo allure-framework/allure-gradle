@@ -14,31 +14,30 @@ class DownloadAllureTask extends DefaultTask {
     static final String NAME = 'downloadAllure'
 
     @Input
-    String allureVersion
-
-    @OutputDirectory
-    File allureCliDest
+    String version
 
     @Input
-    String downloadAllureLink
+    String src
+
+    @OutputDirectory
+    File dest
 
     DownloadAllureTask() {
         AllureExtension extension = project.extensions.getByType(AllureExtension)
-        allureVersion = extension.version
-        allureCliDest = project.file(new File(project.rootDir, '.allure').absolutePath)
-        downloadAllureLink = extension.downloadLink ?: String.format(extension.downloadLinkFormat,
-                extension.version)
+        version = extension.version
+        dest = project.file(new File(project.rootDir, '.allure').absolutePath)
+        src = extension.downloadLink ?: String.format(extension.downloadLinkFormat, extension.version)
     }
 
     @TaskAction
     downloadAllure() {
         File buildDir = project.buildDir
-        allureCliDest.mkdirs()
+        dest.mkdirs()
         buildDir.mkdirs()
-        String archiveDest = buildDir.absolutePath + "/allure-${allureVersion}.zip"
+        String archiveDest = buildDir.absolutePath + "/allure-${version}.zip"
         project.ant {
-            get(src: downloadAllureLink, dest: archiveDest, skipexisting: 'true')
-            unzip(src: archiveDest, dest: allureCliDest)
+            get(src: src, dest: archiveDest, skipexisting: 'true')
+            unzip(src: archiveDest, dest: dest)
         }
     }
 

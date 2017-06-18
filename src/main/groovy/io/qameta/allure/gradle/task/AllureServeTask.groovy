@@ -17,14 +17,14 @@ class AllureServeTask extends AbstractExecTask<AllureServeTask> {
     }
 
     @Input
-    String allureVersion
+    String version
 
     @Input
     File resultsDir
 
     @TaskAction
     void exec() {
-        workingDir = project.rootDir.toPath().resolve('.allure').resolve("allure-${allureVersion}")
+        workingDir = project.rootDir.toPath().resolve('.allure').resolve("allure-${version}")
                 .resolve('bin').toFile()
         if (!workingDir.exists()) {
             logger.warn("Cannot find allure-commandline distribution in $workingDir, serve command is skipped")

@@ -25,13 +25,13 @@ class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureReportTask
     }
 
     @Input
-    String allureVersion
-
-    @Input
     Boolean clean
 
+    @Input
+    String version
+
     @OutputDirectory
-    File outputDir
+    File reportDir
 
     AbstractAllureReportTask() {
         super(AbstractAllureReportTask)
@@ -61,13 +61,13 @@ class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureReportTask
             return
         }
 
-        workingDir = project.rootDir.toPath().resolve('.allure').resolve("allure-${allureVersion}")
+        workingDir = project.rootDir.toPath().resolve('.allure').resolve("allure-${version}")
                 .resolve('bin').toFile()
         if (!workingDir.exists()) {
             logger.warn("Allure report is not generated, cannot find allure-commandline distribution in $workingDir")
             return
         }
-        String output = outputDir.absolutePath
+        String output = reportDir.absolutePath
         List args = ['generate'] + resutsFolders + ['-o', output]
         if (clean) {
             args += '--clean'

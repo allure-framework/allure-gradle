@@ -152,9 +152,9 @@ class AllureGradlePlugin implements Plugin<Project> {
                 .getByName(AllureAggregatedReportTask.NAME)
         task.resultsDirs = extension.resultsDirectories
         task.resultsGlob = extension.resultsGlob
-        task.allureVersion = extension.version
+        task.version = extension.version
         task.clean = extension.clean
-        task.outputDir = new File(extension.reportDir)
+        task.reportDir = new File(extension.reportDir)
     }
 
     private void configureAllureReportTask(AllureExtension extension) {
@@ -162,14 +162,14 @@ class AllureGradlePlugin implements Plugin<Project> {
         File resultsDir = new File(extension.resultsDirectory)
         resultsDir.mkdirs() //due to @InputFolder check, folder should exist
         task.resultsDir = resultsDir
-        task.allureVersion = extension.version
-        task.outputDir = new File(extension.reportDir)
+        task.version = extension.version
+        task.reportDir = new File(extension.reportDir)
         task.clean = extension.clean
     }
 
     private void configureAllureServeTask(AllureExtension extension) {
         AllureServeTask task = project.tasks.withType(AllureServeTask).getByName(AllureServeTask.NAME)
-        task.allureVersion = extension.version
+        task.version = extension.version
         task.resultsDir = new File(extension.resultsDirectory)
     }
 }

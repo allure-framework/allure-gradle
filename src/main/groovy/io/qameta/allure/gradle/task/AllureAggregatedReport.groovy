@@ -21,10 +21,6 @@ class AllureAggregatedReport extends AbstractAllureReport {
     @Input
     List<String> resultsDirs
 
-    AllureAggregatedReport() {
-        super()
-    }
-
     @TaskAction
     void exec() {
         Set<String> resultsPaths = collectResultsPaths()

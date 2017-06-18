@@ -13,10 +13,6 @@ class AllureReport extends AbstractAllureReport {
     @InputDirectory
     File resultsDir
 
-    AllureReport() {
-        super()
-    }
-
     @TaskAction
     void exec() {
         Set<String> results = nonEmptyDir(resultsDir.absolutePath) ? [resultsDir.absolutePath].toSet() : []

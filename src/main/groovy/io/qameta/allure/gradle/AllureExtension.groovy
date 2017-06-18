@@ -10,12 +10,6 @@ import org.gradle.api.reporting.ReportingExtension
 @CompileStatic
 class AllureExtension extends ReportingExtension {
 
-    AllureExtension(Project project) {
-        super(project)
-        this.resultsDirectory = new File(project.buildDir, '/allure-results').absolutePath
-        this.reportDir = new File(baseDir as File, '/allure-report').absolutePath
-    }
-
     public static final String NAME = 'allure'
 
     boolean autoconfigure = false
@@ -28,7 +22,7 @@ class AllureExtension extends ReportingExtension {
 
     String aspectjVersion = '1.8.9'
 
-    String resultsDirectory
+    String resultsDir
 
     Closure useTestNG
 
@@ -51,4 +45,11 @@ class AllureExtension extends ReportingExtension {
     String downloadLink
 
     boolean clean = true
+
+    AllureExtension(Project project) {
+        super(project)
+        this.resultsDir = new File(project.buildDir, '/allure-results').absolutePath
+        this.reportDir = new File(baseDir as File, '/allure-report').absolutePath
+    }
+
 }

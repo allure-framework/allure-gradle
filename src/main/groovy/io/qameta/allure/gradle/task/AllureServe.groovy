@@ -32,8 +32,8 @@ class AllureServe extends DefaultTask {
         }
 
         project.exec {
-            commandLine = "$allureExecutable"
-            args = ['serve', "$resultsDir.absolutePath"]
+            commandLine("$allureExecutable")
+            args(['serve', "$resultsDir.absolutePath"])
         }
     }
 }

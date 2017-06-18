@@ -12,15 +12,15 @@ class AllureServe extends AbstractExecTask<AllureServe> {
 
     static final String NAME = 'allureServe'
 
-    AllureServe() {
-        super(AllureServe)
-    }
-
     @Input
     String version
 
     @Input
     File resultsDir
+
+    AllureServe() {
+        super(AllureServe)
+    }
 
     @TaskAction
     void exec() {

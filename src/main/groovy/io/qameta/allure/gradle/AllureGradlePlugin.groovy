@@ -161,7 +161,7 @@ class AllureGradlePlugin implements Plugin<Project> {
         AllureReport task = project.tasks.withType(AllureReport).getByName(AllureReport.NAME)
         File resultsDir = new File(extension.resultsDir)
         resultsDir.mkdirs() //due to @InputFolder check, folder should exist
-        task.resultsDir = resultsDir
+        task.resultsDirs.add(resultsDir)
         task.version = extension.version
         task.reportDir = new File(extension.reportDir)
         task.clean = extension.clean
@@ -170,6 +170,6 @@ class AllureGradlePlugin implements Plugin<Project> {
     private void configureAllureServeTask(AllureExtension extension) {
         AllureServe task = project.tasks.withType(AllureServe).getByName(AllureServe.NAME)
         task.version = extension.version
-        task.resultsDir = new File(extension.resultsDir)
+        task.resultsDirs.add(new File(extension.resultsDir))
     }
 }

@@ -3,6 +3,7 @@ package io.qameta.allure.gradle.task
 import io.qameta.allure.gradle.util.BuildUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Files
@@ -18,8 +19,8 @@ class AllureServe extends DefaultTask {
     @Input
     String version
 
-    @Input
-    File resultsDir
+    @InputFiles
+    List<File> resultsDirs = []
 
     @TaskAction
     void serveAllureReport() {
@@ -34,7 +35,10 @@ class AllureServe extends DefaultTask {
         allureExecutable.toFile().setExecutable(true)
         project.exec {
             commandLine("$allureExecutable")
-            args(['serve', "$resultsDir.absolutePath"])
+            args('server')
+            resultsDirs.each {
+                args("$it.absolutePath")
+            }
         }
     }
 }

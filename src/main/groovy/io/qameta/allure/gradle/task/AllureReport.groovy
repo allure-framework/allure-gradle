@@ -7,7 +7,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.internal.ClosureBackedAction
 import org.gradle.api.reporting.Reporting
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -22,17 +22,17 @@ class AllureReport extends DefaultTask implements Reporting<AllureReportContaine
 
     static final String NAME = 'allureReport'
 
+    @OutputDirectory
+    File reportDir
+
     @Input
     boolean clean
 
     @Input
     String version
 
-    @InputDirectory
-    File resultsDir
-
-    @OutputDirectory
-    File reportDir
+    @InputFiles
+    List<File> resultsDirs = []
 
     AllureReport() {
         dependsOn(DownloadAllure.NAME)
@@ -51,7 +51,10 @@ class AllureReport extends DefaultTask implements Reporting<AllureReportContaine
         allureExecutable.toFile().setExecutable(true)
         project.exec {
             commandLine("$allureExecutable")
-            args('generate', "$resultsDir.absolutePath")
+            args('generate')
+            resultsDirs.each {
+                args("$it.absolutePath")
+            }
             args('-o', "$reportDir.absolutePath")
             if (clean) {
                 args('--clean')

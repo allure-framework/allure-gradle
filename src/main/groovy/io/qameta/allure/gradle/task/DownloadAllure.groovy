@@ -10,7 +10,7 @@ import org.gradle.api.tasks.TaskAction
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class DownloadAllureTask extends DefaultTask {
+class DownloadAllure extends DefaultTask {
 
     static final String NAME = 'downloadAllure'
 
@@ -24,7 +24,7 @@ class DownloadAllureTask extends DefaultTask {
     @OutputDirectory
     File dest
 
-    DownloadAllureTask() {
+    DownloadAllure() {
         AllureExtension extension = project.extensions.getByType(AllureExtension)
         version = extension.version
         dest = project.file(new File(project.rootDir, '.allure').absolutePath)

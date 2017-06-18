@@ -8,12 +8,12 @@ import org.gradle.api.tasks.TaskAction
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class AllureServeTask extends AbstractExecTask<AllureServeTask> {
+class AllureServe extends AbstractExecTask<AllureServe> {
 
     static final String NAME = 'allureServe'
 
-    AllureServeTask() {
-        super(AllureServeTask)
+    AllureServe() {
+        super(AllureServe)
     }
 
     @Input

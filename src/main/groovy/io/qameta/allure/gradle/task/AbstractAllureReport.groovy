@@ -13,7 +13,7 @@ import org.gradle.api.tasks.OutputDirectory
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureReportTask>
+class AbstractAllureReport extends AbstractExecTask<AbstractAllureReport>
         implements Reporting<AllureReportContainer> {
 
     static Closure<Boolean> nonEmptyDir = { String path ->
@@ -33,9 +33,9 @@ class AbstractAllureReportTask extends AbstractExecTask<AbstractAllureReportTask
     @OutputDirectory
     File reportDir
 
-    AbstractAllureReportTask() {
-        super(AbstractAllureReportTask)
-        dependsOn(DownloadAllureTask.NAME)
+    AbstractAllureReport() {
+        super(AbstractAllureReport)
+        dependsOn(DownloadAllure.NAME)
     }
 
     @Internal

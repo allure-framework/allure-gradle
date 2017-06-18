@@ -5,10 +5,10 @@ import io.qameta.allure.gradle.config.CucumberJVMConfig
 import io.qameta.allure.gradle.config.JUnit4Config
 import io.qameta.allure.gradle.config.SpockConfig
 import io.qameta.allure.gradle.config.TestNGConfig
-import io.qameta.allure.gradle.task.AllureAggregatedReportTask
-import io.qameta.allure.gradle.task.AllureReportTask
-import io.qameta.allure.gradle.task.AllureServeTask
-import io.qameta.allure.gradle.task.DownloadAllureTask
+import io.qameta.allure.gradle.task.AllureAggregatedReport
+import io.qameta.allure.gradle.task.AllureReport
+import io.qameta.allure.gradle.task.AllureServe
+import io.qameta.allure.gradle.task.DownloadAllure
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -63,10 +63,10 @@ class AllureGradlePlugin implements Plugin<Project> {
 
             if (extension?.version) {
                 project.evaluationDependsOnChildren()
-                project.tasks.create(DownloadAllureTask.NAME, DownloadAllureTask)
-                project.tasks.create(AllureServeTask.NAME, AllureServeTask)
-                project.tasks.create(AllureReportTask.NAME, AllureReportTask)
-                project.tasks.create(AllureAggregatedReportTask.NAME, AllureAggregatedReportTask)
+                project.tasks.create(DownloadAllure.NAME, DownloadAllure)
+                project.tasks.create(AllureServe.NAME, AllureServe)
+                project.tasks.create(AllureReport.NAME, AllureReport)
+                project.tasks.create(AllureAggregatedReport.NAME, AllureAggregatedReport)
                 configureAllureServeTask(extension)
                 configureAllureReportTask(extension)
                 configureAllureAggregatedReportTask(extension)
@@ -148,8 +148,8 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureAllureAggregatedReportTask(AllureExtension extension) {
-        AllureAggregatedReportTask task = project.tasks.withType(AllureAggregatedReportTask)
-                .getByName(AllureAggregatedReportTask.NAME)
+        AllureAggregatedReport task = project.tasks.withType(AllureAggregatedReport)
+                .getByName(AllureAggregatedReport.NAME)
         task.resultsDirs = extension.resultsDirectories
         task.resultsGlob = extension.resultsGlob
         task.version = extension.version
@@ -158,7 +158,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureAllureReportTask(AllureExtension extension) {
-        AllureReportTask task = project.tasks.withType(AllureReportTask).getByName(AllureReportTask.NAME)
+        AllureReport task = project.tasks.withType(AllureReport).getByName(AllureReport.NAME)
         File resultsDir = new File(extension.resultsDirectory)
         resultsDir.mkdirs() //due to @InputFolder check, folder should exist
         task.resultsDir = resultsDir
@@ -168,7 +168,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     }
 
     private void configureAllureServeTask(AllureExtension extension) {
-        AllureServeTask task = project.tasks.withType(AllureServeTask).getByName(AllureServeTask.NAME)
+        AllureServe task = project.tasks.withType(AllureServe).getByName(AllureServe.NAME)
         task.version = extension.version
         task.resultsDir = new File(extension.resultsDirectory)
     }

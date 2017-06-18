@@ -74,29 +74,20 @@ integration provided by Gradle (currently works only for Junit4 and TestNG)
 
 `configuration` *String* (`default = 'testCompile'`) - configuration name where to bind plugin dependencies
 
-`resultsDirectory` *String* - directory for Allure results in the current project, `build\allure-results` by default
+`resultsDir` *File* - directory for Allure results in the current project, `build\allure-results` by default
+
+`reportDir` *File* - directory for Allure results in the current project, `build\allure-results` by default
 
 `allureJavaVersion` *String* - version of allure java release to be used for autoconfiguration
 
 `downloadLink` *String* - custom location of Allure distribution to download from, by default allure is downloaded from 
 bintray by sspecified version and installed to `.allure` folder in the project root.
 
-`resultsGlob` *Closure* - closure to configure FileTree with results directories a base directory of the tree is 
-in the project's root. See FileTree [documentation](https://docs.gradle.org/current/userguide/working_with_files.html)
-supports `include` and `exclude` patterns.
-
-`resultsDirectories` *List* - list of Allure results directories to be used for `aggregatedAllureReport` task
-
 ## Tasks
 
-### `allure` 
+### `allureReport` 
 
 Creates Allure report for a single-module project
 
-### `aggregatedAllureReport`
-
-Creates Allure report for a multi-module project, collection results from `resultsDirs` or `resultsGlob` if
- they are specified, or from parent project children that have folders with Allure results.
- 
-### `serve`
+### `allureServe`
 Creates Allure report for a single-module project in the tmp folder and opens it in the default browser.

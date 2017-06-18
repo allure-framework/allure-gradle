@@ -50,7 +50,7 @@ class AllureGradlePlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         this.project = project
-        AllureExtension extension = getAdaptersExtension(project)
+        AllureExtension extension = project.extensions.create(AllureExtension.NAME, AllureExtension, project)
 
         project.afterEvaluate {
             if (extension.autoconfigure) {
@@ -62,15 +62,11 @@ class AllureGradlePlugin implements Plugin<Project> {
 
             if (extension?.version) {
                 project.evaluationDependsOnChildren()
-                project.tasks.create(DownloadAllure.NAME, DownloadAllure)
                 project.tasks.create(AllureServe.NAME, AllureServe)
                 project.tasks.create(AllureReport.NAME, AllureReport)
+                project.tasks.create(DownloadAllure.NAME, DownloadAllure)
             }
         }
-    }
-
-    private static AllureExtension getAdaptersExtension(Project project) {
-        project.extensions.create(AllureExtension.NAME, AllureExtension, project)
     }
 
     private void autoconfigure(AllureExtension extension) {

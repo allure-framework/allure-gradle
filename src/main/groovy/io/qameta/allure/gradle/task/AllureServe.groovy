@@ -31,6 +31,7 @@ class AllureServe extends DefaultTask {
             return
         }
 
+        allureExecutable.toFile().setExecutable(true)
         project.exec {
             commandLine("$allureExecutable")
             args(['serve', "$resultsDir.absolutePath"])

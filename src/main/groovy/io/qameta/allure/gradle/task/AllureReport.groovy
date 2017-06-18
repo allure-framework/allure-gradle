@@ -23,6 +23,8 @@ class AllureReport extends DefaultTask implements Reporting<AllureReportContaine
 
     static final String NAME = 'allureReport'
 
+    static final String GENERATE_COMMAND = 'generate'
+
     @OutputDirectory
     File reportDir
 
@@ -53,14 +55,14 @@ class AllureReport extends DefaultTask implements Reporting<AllureReportContaine
         allureExecutable.toFile().setExecutable(true)
         project.exec {
             commandLine("$allureExecutable")
-            args('generate')
+            args(GENERATE_COMMAND)
             resultsDirs.each {
                 args("$it.absolutePath")
             }
-            args('-o', "$reportDir.absolutePath")
             if (clean) {
                 args('--clean')
             }
+            args('-o', "$reportDir.absolutePath")
         }
     }
 

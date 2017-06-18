@@ -67,7 +67,6 @@ class AllureGradlePlugin implements Plugin<Project> {
                 project.tasks.create(AllureServe.NAME, AllureServe)
                 project.tasks.create(AllureReport.NAME, AllureReport)
                 project.tasks.create(AllureAggregatedReport.NAME, AllureAggregatedReport)
-                configureAllureServeTask(extension)
                 configureAllureAggregatedReportTask(extension)
             }
         }
@@ -156,9 +155,4 @@ class AllureGradlePlugin implements Plugin<Project> {
         task.reportDir = new File(extension.reportDir)
     }
 
-    private void configureAllureServeTask(AllureExtension extension) {
-        AllureServe task = project.tasks.withType(AllureServe).getByName(AllureServe.NAME)
-        task.version = extension.version
-        task.resultsDirs.add(new File(extension.resultsDir))
-    }
 }

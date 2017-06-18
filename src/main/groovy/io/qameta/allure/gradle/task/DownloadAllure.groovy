@@ -25,10 +25,7 @@ class DownloadAllure extends DefaultTask {
     File dest
 
     DownloadAllure() {
-        AllureExtension extension = project.extensions.getByType(AllureExtension)
-        version = extension.version
-        dest = project.file(new File(project.rootDir, '.allure').absolutePath)
-        src = extension.downloadLink ?: String.format(extension.downloadLinkFormat, extension.version)
+        configureDefaults()
     }
 
     @TaskAction
@@ -43,4 +40,12 @@ class DownloadAllure extends DefaultTask {
         }
     }
 
+    private void configureDefaults() {
+        AllureExtension extension = project.extensions.getByType(AllureExtension)
+        if (Objects.nonNull(extensions)) {
+            version = extension.version
+            dest = project.file(new File(project.rootDir, '.allure').absolutePath)
+            src = extension.downloadLink ?: String.format(extension.downloadLinkFormat, extension.version)
+        }
+    }
 }

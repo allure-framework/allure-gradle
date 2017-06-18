@@ -9,7 +9,7 @@ class TestUtil {
 
      static File copyDataFiles(String dirName, boolean clean = true, boolean copy = true){
         def to = new File("build/gradle-testkit", dirName)
-        def from = new File("src/data", dirName)
+        def from = new File("src/it", dirName)
         if (to.exists() && clean) {
             FileUtils.cleanDirectory(to)
         }

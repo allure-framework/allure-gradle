@@ -34,10 +34,6 @@ class AllureExtension extends ReportingExtension {
 
     Closure useSpock
 
-    List<String> resultsDirectories = []
-
-    Closure resultsGlob = { }
-
     String version
 
     String downloadLinkFormat = 'https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/%s/allure-%<s.zip'

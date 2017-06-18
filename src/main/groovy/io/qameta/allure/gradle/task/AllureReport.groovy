@@ -59,18 +59,18 @@ class AllureReport extends DefaultTask implements Reporting<AllureReportContaine
             resultsDirs.each {
                 args("$it.absolutePath")
             }
+            args('-o', "$reportDir.absolutePath")
             if (clean) {
                 args('--clean')
             }
-            args('-o', "$reportDir.absolutePath")
         }
     }
 
     private void configureDefaults() {
         AllureExtension allureExtension = project.extensions.findByType(AllureExtension)
         if (Objects.nonNull(extensions)) {
-            resultsDirs.add(new File(allureExtension.resultsDir))
-            reportDir = new File(allureExtension.reportDir)
+            resultsDirs.add(allureExtension.resultsDir)
+            reportDir = allureExtension.reportDir
             version = allureExtension.version
             clean = allureExtension.clean
         }

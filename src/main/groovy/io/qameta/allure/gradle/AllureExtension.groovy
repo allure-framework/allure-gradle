@@ -16,13 +16,15 @@ class AllureExtension extends ReportingExtension {
 
     boolean aspectjweaver
 
+    File resultsDir
+
+    File reportDir
+
     String allureJavaVersion = '2.0-BETA9'
 
     String configuration = 'testCompile'
 
     String aspectjVersion = '1.8.9'
-
-    String resultsDir
 
     Closure useTestNG
 
@@ -31,8 +33,6 @@ class AllureExtension extends ReportingExtension {
     Closure useCucumberJVM
 
     Closure useSpock
-
-    String reportDir
 
     List<String> resultsDirectories = []
 
@@ -48,8 +48,8 @@ class AllureExtension extends ReportingExtension {
 
     AllureExtension(Project project) {
         super(project)
-        this.resultsDir = new File(project.buildDir, '/allure-results').absolutePath
-        this.reportDir = new File(baseDir as File, '/allure-report').absolutePath
+        this.resultsDir = new File(project.buildDir, '/allure-results')
+        this.reportDir = new File(baseDir as File, '/allure-report')
     }
 
 }

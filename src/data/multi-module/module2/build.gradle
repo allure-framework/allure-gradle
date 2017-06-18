@@ -1,7 +1,6 @@
 plugins {
     id 'java'
 }
-apply plugin: 'io.qameta.allure'
 
 allure {
     aspectjweaver = true

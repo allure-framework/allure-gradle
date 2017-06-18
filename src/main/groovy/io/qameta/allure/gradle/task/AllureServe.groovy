@@ -52,7 +52,7 @@ class AllureServe extends DefaultTask {
     void configureDefaults() {
         AllureExtension allureExtension = project.extensions.findByType(AllureExtension)
         if (Objects.nonNull(extensions)) {
-            resultsDirs.add(new File(allureExtension.resultsDir))
+            resultsDirs.add(allureExtension.resultsDir)
             version = allureExtension.version
         }
     }

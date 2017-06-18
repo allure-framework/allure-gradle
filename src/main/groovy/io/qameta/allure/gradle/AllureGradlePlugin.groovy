@@ -5,7 +5,6 @@ import io.qameta.allure.gradle.config.CucumberJVMConfig
 import io.qameta.allure.gradle.config.JUnit4Config
 import io.qameta.allure.gradle.config.SpockConfig
 import io.qameta.allure.gradle.config.TestNGConfig
-import io.qameta.allure.gradle.task.AllureAggregatedReport
 import io.qameta.allure.gradle.task.AllureReport
 import io.qameta.allure.gradle.task.AllureServe
 import io.qameta.allure.gradle.task.DownloadAllure
@@ -66,8 +65,6 @@ class AllureGradlePlugin implements Plugin<Project> {
                 project.tasks.create(DownloadAllure.NAME, DownloadAllure)
                 project.tasks.create(AllureServe.NAME, AllureServe)
                 project.tasks.create(AllureReport.NAME, AllureReport)
-                project.tasks.create(AllureAggregatedReport.NAME, AllureAggregatedReport)
-                configureAllureAggregatedReportTask(extension)
             }
         }
     }
@@ -144,15 +141,4 @@ class AllureGradlePlugin implements Plugin<Project> {
             }
         }
     }
-
-    private void configureAllureAggregatedReportTask(AllureExtension extension) {
-        AllureAggregatedReport task = project.tasks.withType(AllureAggregatedReport)
-                .getByName(AllureAggregatedReport.NAME)
-        task.resultsDirs = extension.resultsDirectories
-        task.resultsGlob = extension.resultsGlob
-        task.version = extension.version
-        task.clean = extension.clean
-        task.reportDir = new File(extension.reportDir)
-    }
-
 }

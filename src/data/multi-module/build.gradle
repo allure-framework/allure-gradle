@@ -3,6 +3,19 @@ plugins {
     id 'io.qameta.allure'
 }
 
-allure {
-    version = '2.1.0'
+allprojects { project ->
+
+    apply plugin: 'io.qameta.allure'
+
+    allure {
+        autoconfigure = true
+        version = '2.1.1'
+    }
+
+}
+
+import io.qameta.allure.gradle.task.AllureReport
+
+task allureAggregatedReport(type: AllureReport) {
+    resultsDirs = subprojects.allure.resultsDir
 }

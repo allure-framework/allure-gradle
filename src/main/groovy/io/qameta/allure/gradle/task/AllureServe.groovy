@@ -1,14 +1,17 @@
 package io.qameta.allure.gradle.task
 
 import io.qameta.allure.gradle.util.BuildUtils
-import org.gradle.api.tasks.AbstractExecTask
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
  */
-class AllureServe extends AbstractExecTask<AllureServe> {
+class AllureServe extends DefaultTask {
 
     static final String NAME = 'allureServe'
 
@@ -18,21 +21,19 @@ class AllureServe extends AbstractExecTask<AllureServe> {
     @Input
     File resultsDir
 
-    AllureServe() {
-        super(AllureServe)
-    }
-
     @TaskAction
-    void exec() {
-        workingDir = project.rootDir.toPath().resolve('.allure').resolve("allure-${version}")
-                .resolve('bin').toFile()
-        if (!workingDir.exists()) {
-            logger.warn("Cannot find allure-commandline distribution in $workingDir, serve command is skipped")
+    void serveAllureReport() {
+        Path allureHome = project.rootDir.toPath().resolve('.allure').resolve("allure-${version}")
+        Path allureExecutable = allureHome.resolve('bin').resolve(BuildUtils.allureExecutable).toAbsolutePath()
+
+        if (Files.notExists(allureExecutable)) {
+            logger.warn("Cannot find allure commanline in $allureHome")
             return
         }
-        String executable = BuildUtils.allureExecutable
-        new File(workingDir, executable).setExecutable(true)
-        commandLine = ["./$executable", 'serve', resultsDir.absolutePath]
-        super.exec()
+
+        project.exec {
+            commandLine = "$allureExecutable"
+            args = ['serve', "$resultsDir.absolutePath"]
+        }
     }
 }

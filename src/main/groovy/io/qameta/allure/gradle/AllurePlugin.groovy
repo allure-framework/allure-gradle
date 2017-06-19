@@ -20,7 +20,7 @@ import org.gradle.util.ConfigureUtil
  * @author Egor Borisov ehborisov@gmail.com
  */
 @CompileStatic
-class AllureGradlePlugin implements Plugin<Project> {
+class AllurePlugin implements Plugin<Project> {
 
     private static final String CONFIGURATION_ASPECTJWEAVER = 'aspectjweaverAgent'
     private static final String ALLURE_DIR_PROPERTY = 'allure.results.directory'

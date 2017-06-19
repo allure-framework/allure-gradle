@@ -9,7 +9,7 @@ pluginBundle {
     plugins {
         allurePlugin {
             id = 'io.qameta.allure'
-            displayName = 'Allure Gradle plugin'
+            displayName = 'allure-gradle'
         }
     }
 

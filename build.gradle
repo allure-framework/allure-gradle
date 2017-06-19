@@ -3,11 +3,12 @@ group = 'io.qameta.allure'
 buildscript {
     repositories {
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
+        classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
         classpath 'net.researchgate:gradle-release:2.6.0'
         classpath 'ru.vyarus:gradle-quality-plugin:2.2.0'
     }
@@ -79,7 +80,7 @@ quality {
 }
 
 test {
-    useTestNG(){
+    useTestNG() {
         suites 'src/test/resources/testng.xml'
     }
 }

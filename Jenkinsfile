@@ -14,13 +14,16 @@ pipeline {
         stage('Release') {
             when { expression { return params.RELEASE } }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'qameta-ci_bintray',
-                        usernameVariable: 'BINTRAY_USER', passwordVariable: 'BINTRAY_API_KEY')]) {
-                    sshagent(['qameta-ci_ssh']) {
-                        sh 'git checkout master && git pull origin master'
-                        sh "./gradlew release -Prelease.useAutomaticVersion=true " +
-                                "-Prelease.releaseVersion=${RELEASE_VERSION} " +
-                                "-Prelease.newVersion=${NEXT_VERSION}-SNAPSHOT"
+                configFileProvider([configFile(fileId: 'gradle.properties',
+                        targetLocation: '/home/jenkins/.gradle/gradle.properties')]) {
+                    withCredentials([usernamePassword(credentialsId: 'qameta-ci_bintray',
+                            usernameVariable: 'BINTRAY_USER', passwordVariable: 'BINTRAY_API_KEY')]) {
+                        sshagent(['qameta-ci_ssh']) {
+                            sh 'git checkout master && git pull origin master'
+                            sh "./gradlew release -Prelease.useAutomaticVersion=true " +
+                                    "-Prelease.releaseVersion=${RELEASE_VERSION} " +
+                                    "-Prelease.newVersion=${NEXT_VERSION}-SNAPSHOT"
+                        }
                     }
                 }
             }

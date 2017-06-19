@@ -7,13 +7,30 @@ buildscript {
 
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.7"
+        classpath 'net.researchgate:gradle-release:2.6.0'
         classpath 'ru.vyarus:gradle-quality-plugin:2.2.0'
     }
 }
 
 apply plugin: 'groovy'
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 apply plugin: 'java-gradle-plugin'
+
+apply from: "${rootProject.projectDir}/gradle/plugin-publish.gradle"
+apply from: "${rootProject.projectDir}/gradle/maven-publish.gradle"
+apply from: "${rootProject.projectDir}/gradle/bintray.gradle"
+apply from: "${rootProject.projectDir}/gradle/release.gradle"
+
+gradlePlugin {
+    plugins {
+        allurePlugin {
+            id = 'io.qameta.allure'
+            implementationClass = 'io.qameta.allure.gradle.AllurePlugin'
+        }
+    }
+}
+
 
 compileJava {
     sourceCompatibility = 1.8

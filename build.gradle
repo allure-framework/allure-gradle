@@ -79,9 +79,3 @@ quality {
     findbugsVersion = '3.0.1'
     codenarcVersion = '0.26.0'
 }
-
-test {
-    useTestNG() {
-        suites 'src/test/resources/testng.xml'
-    }
-}

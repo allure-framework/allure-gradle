@@ -34,7 +34,7 @@ public class MultiModuleTest {
     }
 
     @Test
-    void tasksAreSuccessfullyInvoked() {
+    public void tasksAreSuccessfullyInvoked() {
         assertThat(buildResult.getTasks())
                 .as("Build task test and allureReport should be successfully executed")
                 .filteredOn(task -> task.getPath().equals(":module1:test") || task.getPath().equals(":module2:test")

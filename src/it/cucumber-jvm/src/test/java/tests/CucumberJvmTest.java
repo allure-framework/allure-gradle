@@ -8,5 +8,5 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = {"src/test/resources/features"},
         plugin = {"io.qameta.allure.cucumberjvm.AllureCucumberJvm"})
-public class CucumberJVMTest {
+public class CucumberJvmTest {
 }

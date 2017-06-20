@@ -22,7 +22,7 @@ public class CucumberJvmTest {
 
     @BeforeClass
     public void prepareBuild() throws IOException {
-        testProjectDirectory = copyProject("cucumberjvm");
+        testProjectDirectory = copyProject("cucumber-jvm");
         List<File> pluginClasspath = readPluginClasspath();
 
         buildResult = GradleRunner.create()

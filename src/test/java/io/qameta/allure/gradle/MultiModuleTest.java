@@ -13,7 +13,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 public class MultiModuleTest {
 
     @ClassRule
-    public static GradleRunnerRule gradleRunner = new GradleRunnerRule("src/it/multi-module", "test");
+    public static GradleRunnerRule gradleRunner = new GradleRunnerRule("src/it/multi-module", "test", "allureAggregatedReport");
 
     @Test
     public void tasksAreSuccessfullyInvoked() {

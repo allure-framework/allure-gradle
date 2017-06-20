@@ -31,6 +31,7 @@ public class ReportTest {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> getFrameworks() {
         return Arrays.asList(
+                new Object[]{"src/it/test-finalized-by-report", new String[]{"test"}},
                 new Object[]{"src/it/report-task", new String[]{"allureReport"}},
                 new Object[]{"src/it/report-multi", new String[]{"allureAggregatedReport"}}
         );

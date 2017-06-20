@@ -33,7 +33,9 @@ public class FrameworkIntegrationTest {
         return Arrays.asList(
                 new Object[]{"src/it/cucumber-jvm"},
                 new Object[]{"src/it/junit4"},
-                new Object[]{"src/it/testng"}
+                new Object[]{"src/it/junit4-autoconfigure"},
+                new Object[]{"src/it/testng"},
+                new Object[]{"src/it/testng-autoconfigure"}
         );
     }
 

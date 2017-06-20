@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure'
+}
+
+repositories {
+    jcenter()
+}
+
+allure {
+    version = '2.1.0'
+    autoconfigure = true
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+    useJUnit()
+}

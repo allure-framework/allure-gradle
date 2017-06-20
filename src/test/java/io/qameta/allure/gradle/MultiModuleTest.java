@@ -1,10 +1,9 @@
 package io.qameta.allure.gradle;
 
-import io.qameta.allure.gradle.util.TestUtil;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,12 +16,12 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 
 public class MultiModuleTest {
 
-    private BuildResult buildResult;
+    private static BuildResult buildResult;
 
-    private File testProjectDirectory;
+    private static File testProjectDirectory;
 
     @BeforeClass
-    public void prepareBuild() throws IOException {
+    public static void prepareBuild() throws IOException {
         testProjectDirectory = copyProject("multi-module");
         List<File> pluginClasspath = readPluginClasspath();
 

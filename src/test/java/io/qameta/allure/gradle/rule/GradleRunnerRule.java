@@ -1,18 +1,20 @@
 package io.qameta.allure.gradle.rule;
 
-import io.qameta.allure.gradle.util.TestUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.rules.ExternalResource;
 
+import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
 
 /**
@@ -21,17 +23,21 @@ import java.util.stream.Collectors;
  */
 public class GradleRunnerRule extends ExternalResource {
 
-    private final String[] tasks;
+    private final Provider<String> projectProvider;
 
-    private final String project;
+    private final String[] tasks;
 
     private BuildResult buildResult;
 
     private File projectDir;
 
-    public GradleRunnerRule(String project, String... tasks) {
-        this.project = project;
+    public GradleRunnerRule(Provider<String> projectProvider, String... tasks) {
+        this.projectProvider = projectProvider;
         this.tasks = tasks;
+    }
+
+    public GradleRunnerRule(String project, String... tasks) {
+        this(() -> project, tasks);
     }
 
     public BuildResult getBuildResult() {
@@ -45,7 +51,7 @@ public class GradleRunnerRule extends ExternalResource {
     protected void before() throws Throwable {
         List<File> pluginClasspath = readPluginClasspath();
 
-        projectDir = copyProject(project);
+        projectDir = copyProject(projectProvider.get());
 
         buildResult = GradleRunner.create()
                 .withProjectDir(projectDir)
@@ -55,16 +61,15 @@ public class GradleRunnerRule extends ExternalResource {
                 .build();
     }
 
-    private static File copyProject(String dirName) throws IOException {
-        File to = new File("build/gradle-testkit", dirName);
-        File from = new File("src/it", dirName);
-        FileUtils.cleanDirectory(to);
+    private static File copyProject(String project) throws IOException {
+        File to = new File("build/gradle-testkit", randomAlphabetic(8));
+        File from = new File(project);
         FileUtils.copyDirectory(from, to);
         return to;
     }
 
     private static List<File> readPluginClasspath() throws IOException {
-        try (InputStream stream = TestUtil.class.getClassLoader().getResourceAsStream("plugin-classpath.txt")) {
+        try (InputStream stream = GradleRunnerRule.class.getClassLoader().getResourceAsStream("plugin-classpath.txt")) {
             return IOUtils.readLines(stream, StandardCharsets.UTF_8).stream()
                     .map(File::new).collect(Collectors.toList());
         }

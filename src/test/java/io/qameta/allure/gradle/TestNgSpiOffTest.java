@@ -13,7 +13,9 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 public class TestNgSpiOffTest {
 
     @Rule
-    public GradleRunnerRule gradleRunner = new GradleRunnerRule("src/it/testng-spi-off", "test");
+    public GradleRunnerRule gradleRunner = new GradleRunnerRule()
+            .project("src/it/testng-spi-off")
+            .tasks("test");
 
     @Test
     public void allureReportIsNotGenerated() {

@@ -8,10 +8,8 @@ allprojects { project ->
     apply plugin: 'io.qameta.allure'
 
     allure {
-        autoconfigure = true
-        version = '2.1.1'
+        version = '2.1.0'
     }
-
 }
 
 import io.qameta.allure.gradle.task.AllureReport

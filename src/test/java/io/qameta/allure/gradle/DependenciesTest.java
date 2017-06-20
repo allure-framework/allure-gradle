@@ -20,13 +20,15 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
  * 20.06.17
  */
 @RunWith(Parameterized.class)
-public class FrameworkIntegrationTest {
+public class DependenciesTest {
 
     @Parameterized.Parameter
     public String project;
 
     @Rule
-    public GradleRunnerRule gradleRunner = new GradleRunnerRule(() -> project, "test");
+    public GradleRunnerRule gradleRunner = new GradleRunnerRule()
+            .project(() -> project)
+            .tasks("test");
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> getFrameworks() {
@@ -40,7 +42,7 @@ public class FrameworkIntegrationTest {
     }
 
     @Test
-    public void shouldGenerateAllureResults() {
+    public void shouldCreateAllureResults() {
         BuildResult buildResult = gradleRunner.getBuildResult();
         assertThat(buildResult.getTasks()).as("Gradle build tasks statuses")
                 .filteredOn(task -> task.getPath().equals(":test"))

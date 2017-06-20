@@ -6,12 +6,12 @@ import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.rules.ExternalResource;
 
-import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -23,22 +23,13 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
  */
 public class GradleRunnerRule extends ExternalResource {
 
-    private final Provider<String> projectProvider;
+    private Supplier<String> projectSupplier;
 
-    private final String[] tasks;
+    private Supplier<String[]> tasksSupplier;
 
     private BuildResult buildResult;
 
     private File projectDir;
-
-    public GradleRunnerRule(Provider<String> projectProvider, String... tasks) {
-        this.projectProvider = projectProvider;
-        this.tasks = tasks;
-    }
-
-    public GradleRunnerRule(String project, String... tasks) {
-        this(() -> project, tasks);
-    }
 
     public BuildResult getBuildResult() {
         return this.buildResult;
@@ -48,24 +39,44 @@ public class GradleRunnerRule extends ExternalResource {
         return this.projectDir;
     }
 
+    public GradleRunnerRule project(Supplier<String> supplier) {
+        this.projectSupplier = supplier;
+        return this;
+    }
+
+    public GradleRunnerRule project(String project) {
+        return project(() -> project);
+    }
+
+    public GradleRunnerRule tasks(Supplier<String[]> supplier) {
+        this.tasksSupplier = supplier;
+        return this;
+    }
+
+    public GradleRunnerRule tasks(String... tasks) {
+        return tasks(() -> tasks);
+    }
+
+
     protected void before() throws Throwable {
-        List<File> pluginClasspath = readPluginClasspath();
-
-        projectDir = copyProject(projectProvider.get());
-
+        projectDir = copyProject(projectSupplier.get());
         buildResult = GradleRunner.create()
                 .withProjectDir(projectDir)
+                .withArguments(tasksSupplier.get())
                 .withTestKitDir(new File(projectDir.getParentFile().getAbsolutePath(), ".gradle"))
-                .withPluginClasspath(pluginClasspath)
-                .withArguments(tasks)
+                .withPluginClasspath(readPluginClasspath())
                 .build();
     }
 
-    private static File copyProject(String project) throws IOException {
-        File to = new File("build/gradle-testkit", randomAlphabetic(8));
-        File from = new File(project);
-        FileUtils.copyDirectory(from, to);
-        return to;
+    private static File copyProject(String project) {
+        try {
+            File to = new File("build/gradle-testkit", randomAlphabetic(8));
+            File from = new File(project);
+            FileUtils.copyDirectory(from, to);
+            return to;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static List<File> readPluginClasspath() throws IOException {

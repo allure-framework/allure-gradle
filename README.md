@@ -1,10 +1,16 @@
 [build]: https://ci.qameta.io/job/allure-gradle/job/master "Build"
 [build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-gradle/master
 
+[release]: https://github.com/allure-framework/allure-gradle/releases/latest "Release"
+[release-badge]: https://img.shields.io/github/release/allure-framework/allure-gradle.svg
+
 [bintray]: https://bintray.com/qameta/maven/allure-gradle "Bintray"
 [bintray-badge]: https://img.shields.io/bintray/v/qameta/maven/allure-gradle.svg?style=flat
 
-# Allure plugin for Gradle [![build-badge][]][build][![bintray-badge][]][bintray]
+# Allure plugin for Gradle 
+[![build-badge][]][build]
+[![release-badge][]][release]
+[![bintray-badge][]][bintray]
 
 Now Allure Plugin allows you to integrate 
 [Allure](https://docs.qameta.io/allure/latest/) into TestNG, Junit4 and Cucumber JVM gradle projects

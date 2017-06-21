@@ -27,6 +27,8 @@ public class GradleRunnerRule extends ExternalResource {
 
     private Supplier<String[]> tasksSupplier;
 
+    private Supplier<String> versionSupplier;
+
     private BuildResult buildResult;
 
     private File projectDir;
@@ -37,6 +39,11 @@ public class GradleRunnerRule extends ExternalResource {
 
     public File getProjectDir() {
         return this.projectDir;
+    }
+
+    public GradleRunnerRule version(Supplier<String> version) {
+        this.versionSupplier = version;
+        return this;
     }
 
     public GradleRunnerRule project(Supplier<String> supplier) {
@@ -63,6 +70,7 @@ public class GradleRunnerRule extends ExternalResource {
         buildResult = GradleRunner.create()
                 .withProjectDir(projectDir)
                 .withArguments(tasksSupplier.get())
+                .withGradleVersion(versionSupplier.get())
                 .withTestKitDir(new File(projectDir.getParentFile().getAbsolutePath(), ".gradle"))
                 .withPluginClasspath(readPluginClasspath())
                 .build();

@@ -22,22 +22,31 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 @RunWith(Parameterized.class)
 public class DependenciesTest {
 
-    @Parameterized.Parameter
+    @Parameterized.Parameter(0)
+    public String version;
+
+    @Parameterized.Parameter(1)
     public String project;
 
     @Rule
     public GradleRunnerRule gradleRunner = new GradleRunnerRule()
+            .version(() -> version)
             .project(() -> project)
             .tasks("test");
 
-    @Parameterized.Parameters(name = "{0}")
+    @Parameterized.Parameters(name = "{1} [{0}]")
     public static Collection<Object[]> getFrameworks() {
         return Arrays.asList(
-                new Object[]{"src/it/cucumber-jvm"},
-                new Object[]{"src/it/junit4"},
-                new Object[]{"src/it/junit4-autoconfigure"},
-                new Object[]{"src/it/testng"},
-                new Object[]{"src/it/testng-autoconfigure"}
+                new Object[]{"3.5", "src/it/cucumber-jvm"},
+                new Object[]{"4.0", "src/it/cucumber-jvm"},
+                new Object[]{"3.5", "src/it/junit4"},
+                new Object[]{"4.0", "src/it/junit4"},
+                new Object[]{"3.5", "src/it/junit4-autoconfigure"},
+                new Object[]{"4.0", "src/it/junit4-autoconfigure"},
+                new Object[]{"3.5", "src/it/testng"},
+                new Object[]{"4.0", "src/it/testng"},
+                new Object[]{"3.5", "src/it/testng-autoconfigure"},
+                new Object[]{"4.0", "src/it/testng-autoconfigure"}
         );
     }
 

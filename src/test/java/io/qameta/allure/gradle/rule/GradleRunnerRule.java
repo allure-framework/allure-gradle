@@ -41,6 +41,10 @@ public class GradleRunnerRule extends ExternalResource {
         return this.projectDir;
     }
 
+    public GradleRunnerRule version(String version) {
+        return version(() -> version);
+    }
+
     public GradleRunnerRule version(Supplier<String> version) {
         this.versionSupplier = version;
         return this;

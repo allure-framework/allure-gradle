@@ -16,7 +16,6 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'groovy'
-apply plugin: 'maven-publish'
 apply plugin: 'java-gradle-plugin'
 
 apply from: "${rootProject.projectDir}/gradle/plugin-publish.gradle"

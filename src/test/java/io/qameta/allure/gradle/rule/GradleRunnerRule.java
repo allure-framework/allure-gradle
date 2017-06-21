@@ -77,6 +77,7 @@ public class GradleRunnerRule extends ExternalResource {
                 .withGradleVersion(versionSupplier.get())
                 .withTestKitDir(new File(projectDir.getParentFile().getAbsolutePath(), ".gradle"))
                 .withPluginClasspath(readPluginClasspath())
+                .forwardOutput()
                 .build();
     }
 

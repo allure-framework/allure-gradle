@@ -13,6 +13,9 @@ import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.core.IsNot.not;
+import static org.junit.Assume.assumeThat;
 
 
 /**
@@ -46,7 +49,10 @@ public class DependenciesTest {
                 new Object[]{"3.5", "src/it/testng"},
                 new Object[]{"4.0", "src/it/testng"},
                 new Object[]{"3.5", "src/it/testng-autoconfigure"},
-                new Object[]{"4.0", "src/it/testng-autoconfigure"}
+                new Object[]{"4.0", "src/it/testng-autoconfigure"},
+                new Object[]{"3.5", "src/it/spock"},
+                new Object[]{"4.0", "src/it/spock"}
+
         );
     }
 
@@ -67,6 +73,7 @@ public class DependenciesTest {
                 .filteredOn(file -> file.getName().endsWith("result.json"))
                 .hasSize(1);
 
+        assumeThat("not implemented", project, not(containsString("spock")));
         assertThat(resultsDir.listFiles()).as("Allure results attachments")
                 .filteredOn(file -> file.getName().endsWith("attachment"))
                 .hasSize(1);

@@ -7,10 +7,7 @@
 [bintray]: https://bintray.com/qameta/maven/allure-gradle "Bintray"
 [bintray-badge]: https://img.shields.io/bintray/v/qameta/maven/allure-gradle.svg?style=flat
 
-# Allure plugin for Gradle 
-[![build-badge][]][build]
-[![release-badge][]][release]
-[![bintray-badge][]][bintray]
+# Allure plugin for Gradle [![build-badge][]][build] [![release-badge][]][release] [![bintray-badge][]][bintray]
 
 Now Allure Plugin allows you to integrate 
 [Allure](https://docs.qameta.io/allure/latest/) into TestNG, Junit4 and Cucumber JVM gradle projects

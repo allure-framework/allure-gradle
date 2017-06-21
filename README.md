@@ -1,4 +1,10 @@
-# Allure plugin for Gradle
+[build]: https://ci.qameta.io/job/allure-gradle/job/master "Build"
+[build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-gradle/master
+
+[bintray]: https://bintray.com/qameta/maven/allure-gradle "Bintray"
+[bintray-badge]: https://img.shields.io/bintray/v/qameta/maven/allure-gradle.svg?style=flat
+
+# Allure plugin for Gradle [![build-badge][]][build][![bintray-badge][]][bintray]
 
 Now Allure Plugin allows you to integrate 
 [Allure](https://docs.qameta.io/allure/latest/) into TestNG, Junit4 and Cucumber JVM gradle projects
@@ -13,7 +19,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "io.qameta.allure:allure-gradle:2.0-BETA1"
+        classpath "io.qameta.allure:allure-gradle:2.3"
     }
 }
 
@@ -21,7 +27,7 @@ apply plugin: 'io.qameta.allure'
 
 allure {
     autoconfigure = true
-    version = '2.1.0'
+    version = '2.1.1'
 }
 ```
 
@@ -29,7 +35,7 @@ allure {
 
 ```groovy
 allure {
-    version = '2.1.0'
+    version = '2.1.1'
     aspectjweaver = true
     autoconfigure = true
 
@@ -42,22 +48,22 @@ allure {
     reportDir = file('build/allure-results')
     
     useJunit4 {
-       version = '2.0-BETA9'
+       version = '2.0-BETA10'
     }
     
     useTestNG {
-       version = '2.0-BETA9'
+       version = '2.0-BETA10'
     }
     
     useCucumberJVM {
-       version = '2.0-BETA9'
+       version = '2.0-BETA10'
     }
     
     useSpock {
-       version = '2.0-BETA9'
+       version = '2.0-BETA10'
     }
     
-    downloadLink = 'https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/2.0.1/allure-2.1.0.zip'
+    downloadLink = 'https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/2.1.1/allure-2.1.1.zip'
 }
 ```
 `autoconfigure` *boolean* - a flag to specify usage of autoconfiguration, plugin will attempt to find test platform 

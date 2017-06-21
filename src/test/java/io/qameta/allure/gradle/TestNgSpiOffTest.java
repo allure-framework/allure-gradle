@@ -14,6 +14,7 @@ public class TestNgSpiOffTest {
 
     @Rule
     public GradleRunnerRule gradleRunner = new GradleRunnerRule()
+            .version("4.0")
             .project("src/it/testng-spi-off")
             .tasks("test");
 

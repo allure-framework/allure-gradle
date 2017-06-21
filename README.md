@@ -29,21 +29,17 @@ allure {
 
 ```groovy
 allure {
-    aspectjweaver = true
-    clean = true
     version = '2.1.0'
-    configuration = 'testCompile'
-    resultsDirectory = 'build/allure-results'
-    allureJavaVersion = '2.0-BETA9'
-    downloadLink = 'https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/2.0.1/allure-2.1.0.zip'
-    
+    aspectjweaver = true
+    autoconfigure = true
+
     resultsGlob = {
        include '/path/to/project/**/build/**/allure-results'
        exclude '/path/to/project/some-project/build'
     }
     
-    resultsDirectories = ['/path/to/project/module1/build/allure-results', 
-    '/path/to/project/module2/build/allure-results']
+    resultsDir = file('/path/to/project/module1/build/allure-results')
+    reportDir = file('build/allure-results')
     
     useJunit4 {
        version = '2.0-BETA9'
@@ -60,6 +56,8 @@ allure {
     useSpock {
        version = '2.0-BETA9'
     }
+    
+    downloadLink = 'https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/2.0.1/allure-2.1.0.zip'
 }
 ```
 `autoconfigure` *boolean* - a flag to specify usage of autoconfiguration, plugin will attempt to find test platform 

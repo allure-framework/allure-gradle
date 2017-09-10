@@ -128,7 +128,7 @@ class AllurePlugin implements Plugin<Project> {
 
             project.tasks.withType(Test).each { test ->
                 test.doFirst {
-                    String javaAgent = "-javaagent:${aspectjConfiguration.singleFile}"
+                    String javaAgent = "-javaagent:\"${aspectjConfiguration.singleFile}\""
                     test.jvmArgs = [javaAgent] + test.jvmArgs as Iterable
                 }
                 if (project.logger.debugEnabled) {

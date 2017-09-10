@@ -63,16 +63,7 @@ dependencies {
     testCompile 'org.apache.commons:commons-text:1.1'
 
     junit5Plugin 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4'
-
-}
-
-test {
-    doFirst {
-        def pluginsClasspathFile = new File(testClassesDirs.files[0], "/plugin-classpath.txt")
-        def pluginsClasspath = sourceSets.main.runtimeClasspath + configurations.junit5Plugin.files
-
-        pluginsClasspathFile.text = pluginsClasspath.join("\n")
-    }
+    testRuntime files(testPluginClasspath(sourceSets.main.runtimeClasspath.files + configurations.junit5Plugin.files))
 }
 
 quality {
@@ -80,4 +71,14 @@ quality {
     checkstyleVersion = '7.6'
     findbugsVersion = '3.0.1'
     codenarcVersion = '0.26.0'
+}
+
+def testPluginClasspath(Collection<File> collections) {
+    def generatedDir = new File(buildDir, "generated")
+    def pluginsClasspathFile = new File(generatedDir, "plugin-classpath.txt")
+
+    generatedDir.mkdirs()
+
+    pluginsClasspathFile.text = collections.join("\n")
+    return generatedDir
 }

@@ -17,6 +17,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'groovy'
 apply plugin: 'java-gradle-plugin'
+apply plugin: 'ru.vyarus.quality'
 
 apply from: "${rootProject.projectDir}/gradle/plugin-publish.gradle"
 apply from: "${rootProject.projectDir}/gradle/maven-publish.gradle"
@@ -44,33 +45,35 @@ compileTestJava {
     options.encoding = 'UTF-8'
 }
 
-task createClasspathManifest {
-    def outputDir = file("$buildDir/$name")
-
-    inputs.files sourceSets.main.runtimeClasspath
-    outputs.dir outputDir
-
-    doLast {
-        outputDir.mkdirs()
-        file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
-    }
-}
-
 repositories {
     mavenCentral()
 }
 
+configurations {
+    junit5Plugin
+}
+
 dependencies {
     compile localGroovy()
+
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
     testCompile 'commons-io:commons-io:2.5'
     testCompile 'org.assertj:assertj-core:3.6.2'
     testCompile 'org.apache.commons:commons-text:1.1'
-    testRuntime files(createClasspathManifest)
+
+    junit5Plugin 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4'
+
 }
 
-apply plugin: 'ru.vyarus.quality'
+test {
+    doFirst {
+        def pluginsClasspathFile = new File(testClassesDirs.files[0], "/plugin-classpath.txt")
+        def pluginsClasspath = sourceSets.main.runtimeClasspath + configurations.junit5Plugin.files
+
+        pluginsClasspathFile.text = pluginsClasspath.join("\n")
+    }
+}
 
 quality {
     pmdVersion = '5.5.4'

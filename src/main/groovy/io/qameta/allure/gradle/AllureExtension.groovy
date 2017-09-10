@@ -30,6 +30,8 @@ class AllureExtension extends ReportingExtension {
 
     Closure useJUnit4
 
+    Closure useJUnit5
+
     Closure useCucumberJVM
 
     Closure useSpock

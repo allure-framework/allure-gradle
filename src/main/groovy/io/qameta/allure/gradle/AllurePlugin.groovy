@@ -61,6 +61,8 @@ class AllurePlugin implements Plugin<Project> {
             }
             applyAdapters(extension)
             applyTestAspectjweaver(extension)
+            applyJunitPlatformTestAspectjweaver(extension)
+
             configureTestTasks(extension)
 
             if (extension?.version) {
@@ -100,7 +102,6 @@ class AllurePlugin implements Plugin<Project> {
         if (ext.useJUnit5) {
             JUnit5Config junit5Config = ConfigureUtil.configure(ext.useJUnit5, new JUnit5Config())
             addAdapterDependency(ext, junit5Config.name, junit5Config.version, false)
-            applyJunitPlatformTestAspectjweaver(ext)
         }
         if (ext.useCucumberJVM) {
             CucumberJVMConfig cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMConfig())

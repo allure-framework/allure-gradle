@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'io.qameta.allure'
     id 'org.junit.platform.gradle.plugin'
+    id 'io.qameta.allure'
 }
 
 repositories {

@@ -46,6 +46,8 @@ public class DependenciesTest {
                 new Object[]{"4.0", "src/it/junit4"},
                 new Object[]{"3.5", "src/it/junit4-autoconfigure"},
                 new Object[]{"4.0", "src/it/junit4-autoconfigure"},
+                new Object[]{"3.5", "src/it/junit5"},
+                new Object[]{"4.0", "src/it/junit5"},
                 new Object[]{"3.5", "src/it/testng"},
                 new Object[]{"4.0", "src/it/testng"},
                 new Object[]{"3.5", "src/it/testng-autoconfigure"},
@@ -74,6 +76,8 @@ public class DependenciesTest {
                 .hasSize(1);
 
         assumeThat("not implemented", project, not(containsString("spock")));
+        assumeThat("not implemented", project, not(containsString("junit5")));
+
         assertThat(resultsDir.listFiles()).as("Allure results attachments")
                 .filteredOn(file -> file.getName().endsWith("attachment"))
                 .hasSize(1);

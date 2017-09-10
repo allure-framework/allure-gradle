@@ -54,6 +54,10 @@ allure {
        version = '2.0-BETA10'
     }
     
+    useJunit5 {
+       version = '2.0-BETA10'
+    }
+
     useTestNG {
        version = '2.0-BETA10'
     }

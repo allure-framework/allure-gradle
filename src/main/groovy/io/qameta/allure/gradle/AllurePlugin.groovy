@@ -3,6 +3,7 @@ package io.qameta.allure.gradle
 import groovy.transform.CompileStatic
 import io.qameta.allure.gradle.config.CucumberJVMConfig
 import io.qameta.allure.gradle.config.JUnit4Config
+import io.qameta.allure.gradle.config.JUnit5Config
 import io.qameta.allure.gradle.config.SpockConfig
 import io.qameta.allure.gradle.config.TestNGConfig
 import io.qameta.allure.gradle.task.AllureReport
@@ -13,6 +14,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.tasks.testing.junit.JUnitTestFramework
 import org.gradle.api.internal.tasks.testing.testng.TestNGTestFramework
+import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.testing.Test
 import org.gradle.util.ConfigureUtil
 
@@ -22,7 +24,7 @@ import org.gradle.util.ConfigureUtil
 @CompileStatic
 class AllurePlugin implements Plugin<Project> {
 
-    private static final String CONFIGURATION_ASPECTJWEAVER = 'aspectjweaverAgent'
+    private static final String CONFIGURATION_ASPECTJ_WEAVER = 'aspectjWeaverAgent'
     private static final String ALLURE_DIR_PROPERTY = 'allure.results.directory'
     private static final String JUNIT4_ASPECT_DEPENDENCY = 'io.qameta.allure:allure-junit4-aspect:'
     private static final String JUNIT4 = 'JUnit4'
@@ -32,6 +34,7 @@ class AllurePlugin implements Plugin<Project> {
             [
                     'TestNG': 'io.qameta.allure:allure-testng:',
                     'JUnit4': 'io.qameta.allure:allure-junit4:',
+                    'JUnit5': 'io.qameta.allure:allure-junit5:',
                     'Spock': 'io.qameta.allure:allure-spock:',
                     'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:',
             ]
@@ -57,7 +60,9 @@ class AllurePlugin implements Plugin<Project> {
                 autoconfigure(extension)
             }
             applyAdapters(extension)
-            applyAspectjweaver(extension)
+            applyTestAspectjweaver(extension)
+            applyJunitPlatformTestAspectjweaver(extension)
+
             configureTestTasks(extension)
 
             if (extension?.version) {
@@ -94,6 +99,10 @@ class AllurePlugin implements Plugin<Project> {
             addAdapterDependency(ext, junit4Config.name, junit4Config.version, false)
             project.dependencies.add(ext.configuration, JUNIT4_ASPECT_DEPENDENCY + junit4Config.version)
         }
+        if (ext.useJUnit5) {
+            JUnit5Config junit5Config = ConfigureUtil.configure(ext.useJUnit5, new JUnit5Config())
+            addAdapterDependency(ext, junit5Config.name, junit5Config.version, false)
+        }
         if (ext.useCucumberJVM) {
             CucumberJVMConfig cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMConfig())
             addAdapterDependency(ext, cucumberConfig.name, cucumberConfig.version, false)
@@ -119,11 +128,11 @@ class AllurePlugin implements Plugin<Project> {
         }
     }
 
-    private void applyAspectjweaver(AllureExtension ext) {
+    private void applyTestAspectjweaver(AllureExtension ext) {
         if (ext.aspectjweaver || ext.autoconfigure) {
-            Configuration aspectjConfiguration = project.configurations.maybeCreate(CONFIGURATION_ASPECTJWEAVER)
+            Configuration aspectjConfiguration = project.configurations.maybeCreate(CONFIGURATION_ASPECTJ_WEAVER)
 
-            project.dependencies.add(CONFIGURATION_ASPECTJWEAVER,
+            project.dependencies.add(CONFIGURATION_ASPECTJ_WEAVER,
                     "org.aspectj:aspectjweaver:${ext.aspectjVersion}")
 
             project.tasks.withType(Test).each { test ->
@@ -133,6 +142,26 @@ class AllurePlugin implements Plugin<Project> {
                 }
                 if (project.logger.debugEnabled) {
                     project.logger.debug "jvmArgs for task $test.name $test.jvmArgs"
+                }
+            }
+        }
+    }
+
+    private void applyJunitPlatformTestAspectjweaver(AllureExtension ext) {
+        if (ext.aspectjweaver || ext.autoconfigure) {
+            Configuration aspectjConfiguration = project.configurations.maybeCreate(CONFIGURATION_ASPECTJ_WEAVER)
+
+            project.dependencies.add(CONFIGURATION_ASPECTJ_WEAVER, "org.aspectj:aspectjweaver:${ext.aspectjVersion}")
+
+            project.tasks.withType(JavaExec).each { task ->
+                if (task.name == 'junitPlatformTest') {
+                    task.doFirst {
+                        String javaAgent = "-javaagent:${aspectjConfiguration.singleFile}"
+                        task.jvmArgs = [javaAgent] + task.jvmArgs as Iterable
+                    }
+                }
+                if (project.logger.debugEnabled) {
+                    project.logger.debug "jvmArgs for task $task.name $task.jvmArgs"
                 }
             }
         }

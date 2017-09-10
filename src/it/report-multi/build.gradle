@@ -8,7 +8,7 @@ allprojects { project ->
     apply plugin: 'io.qameta.allure'
 
     allure {
-        version = '2.1.0'
+        version = '2.3.5'
     }
 }
 

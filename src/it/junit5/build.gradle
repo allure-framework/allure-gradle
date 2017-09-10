@@ -10,11 +10,11 @@ repositories {
 }
 
 allure {
-    version = '2.1.0'
+    version = '2.3.6'
     aspectjweaver = true
 
     useJUnit5 {
-        version = "2.0-BETA9"
+        version = "2.0-BETA17"
     }
 }
 

@@ -22,7 +22,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "io.qameta.allure:allure-gradle:2.3"
+        classpath "io.qameta.allure:allure-gradle:<latest>"
     }
 }
 
@@ -30,7 +30,7 @@ apply plugin: 'io.qameta.allure'
 
 allure {
     autoconfigure = true
-    version = '2.1.1'
+    version = '2.3.5'
 }
 ```
 
@@ -38,7 +38,7 @@ allure {
 
 ```groovy
 allure {
-    version = '2.1.1'
+    version = '2.3.5'
     aspectjweaver = true
     autoconfigure = true
 

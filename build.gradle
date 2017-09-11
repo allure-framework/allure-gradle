@@ -55,10 +55,10 @@ configurations {
 
 dependencies {
     compile localGroovy()
-    compile 'commons-io:commons-io:2.5'
 
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'
+    testCompile 'commons-io:commons-io:2.5'
     testCompile 'org.assertj:assertj-core:3.6.2'
     testCompile 'org.apache.commons:commons-text:1.1'
 

@@ -10,6 +10,7 @@ import org.gradle.api.tasks.TaskAction
 import java.nio.file.Files
 import java.nio.file.Path
 
+import static io.qameta.allure.gradle.util.BuildUtils.copyCategoriesInfo
 import static io.qameta.allure.gradle.util.BuildUtils.copyExecutorInfo
 
 /**
@@ -35,7 +36,6 @@ class AllureServe extends DefaultTask {
     void serveAllureReport() {
         Path allureHome = project.rootDir.toPath().resolve('.allure').resolve("allure-${version}")
         Path allureExecutable = allureHome.resolve('bin').resolve(BuildUtils.allureExecutable).toAbsolutePath()
-        Map<String, String> executorInfo = [name: 'Gradle', type: 'gradle', buildName: project.displayName]
 
         if (Files.notExists(allureExecutable)) {
             logger.warn("Cannot find allure commanline in $allureHome")
@@ -47,7 +47,8 @@ class AllureServe extends DefaultTask {
             commandLine("$allureExecutable")
             args(SERVE_COMMAND)
             resultsDirs.each {
-                copyExecutorInfo(it, executorInfo)
+                copyCategoriesInfo(it, project)
+                copyExecutorInfo(it, project)
                 args("$it.absolutePath")
             }
         }

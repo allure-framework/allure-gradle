@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 
 @RunWith(Parameterized.class)
-public class ReportTest {
+public class AggregatedReportTest {
 
     @Parameterized.Parameter(0)
     public String version;
@@ -35,9 +35,6 @@ public class ReportTest {
     @Parameterized.Parameters(name = "{1} [{0}]")
     public static Collection<Object[]> getFrameworks() {
         return Arrays.asList(
-                new Object[]{"3.5", "src/it/test-finalized-by-report", new String[]{"test"}},
-                new Object[]{"3.5", "src/it/report-task", new String[]{"allureReport"}},
-                new Object[]{"4.0", "src/it/report-task", new String[]{"allureReport"}},
                 new Object[]{"3.5", "src/it/report-multi", new String[]{"allureAggregatedReport"}},
                 new Object[]{"4.0", "src/it/report-multi", new String[]{"allureAggregatedReport"}}
         );
@@ -46,16 +43,11 @@ public class ReportTest {
     @Test
     public void shouldGenerateAllureReport() {
         BuildResult buildResult = gradleRunner.getBuildResult();
-        File resultsDir = new File(gradleRunner.getProjectDir(), "build/allure-results");
 
         assertThat(buildResult.getTasks()).as("Download allure task status")
                 .filteredOn(task -> task.getPath().equals(":downloadAllure"))
                 .extracting("outcome")
                 .containsExactly(SUCCESS);
-
-        assertThat(resultsDir.listFiles()).as("Allure executor info")
-                .filteredOn(file -> file.getName().endsWith("executor.json"))
-                .hasSize(1);
 
         File projectDir = gradleRunner.getProjectDir();
         File reportDir = new File(projectDir, "build/reports/allure-report");

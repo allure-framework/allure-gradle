@@ -8,7 +8,7 @@ allure {
     aspectjweaver = true
 
     useTestNG {
-        version = '2.0-BETA17'
+        version = '2.0-BETA18'
         spiOff = true
     }
 }

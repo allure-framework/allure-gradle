@@ -14,7 +14,7 @@ allure {
     aspectjweaver = true
 
     useJUnit5 {
-        version = "2.0-BETA17"
+        version = "2.0-BETA18"
     }
 }
 
@@ -23,5 +23,5 @@ junitPlatform {
 }
 
 dependencies {
-    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.0-M4'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.0.0'
 }

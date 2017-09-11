@@ -62,7 +62,7 @@ dependencies {
     testCompile 'org.assertj:assertj-core:3.6.2'
     testCompile 'org.apache.commons:commons-text:1.1'
 
-    junit5Plugin 'org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4'
+    junit5Plugin 'org.junit.platform:junit-platform-gradle-plugin:1.0.0'
     testRuntime files(testPluginClasspath(sourceSets.main.runtimeClasspath.files + configurations.junit5Plugin.files))
 }
 

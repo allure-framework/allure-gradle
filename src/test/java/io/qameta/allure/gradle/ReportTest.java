@@ -46,11 +46,16 @@ public class ReportTest {
     @Test
     public void shouldGenerateAllureReport() {
         BuildResult buildResult = gradleRunner.getBuildResult();
+        File resultsDir = new File(gradleRunner.getProjectDir(), "build/allure-results");
 
         assertThat(buildResult.getTasks()).as("Download allure task status")
                 .filteredOn(task -> task.getPath().equals(":downloadAllure"))
                 .extracting("outcome")
                 .containsExactly(SUCCESS);
+
+        assertThat(resultsDir.listFiles()).as("Allure executor info")
+                .filteredOn(file -> file.getName().endsWith("executor.json"))
+                .hasSize(1);
 
         File projectDir = gradleRunner.getProjectDir();
         File reportDir = new File(projectDir, "build/reports/allure-report");

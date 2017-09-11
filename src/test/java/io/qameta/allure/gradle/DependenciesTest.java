@@ -66,8 +66,7 @@ public class DependenciesTest {
                 .extracting("outcome")
                 .containsExactly(SUCCESS);
 
-        File projectDir = gradleRunner.getProjectDir();
-        File resultsDir = new File(projectDir, "build/allure-results");
+        File resultsDir = new File(gradleRunner.getProjectDir(), "build/allure-results");
         assertThat(resultsDir).as("Allure results directory")
                 .exists();
 

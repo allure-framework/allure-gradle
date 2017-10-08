@@ -50,11 +50,11 @@ allure {
     resultsDir = file('/path/to/project/module1/build/allure-results')
     reportDir = file('build/allure-results')
     
-    useJunit4 {
+    useJUnit4 {
        version = '2.0-BETA10'
     }
     
-    useJunit5 {
+    useJUnit5 {
        version = '2.0-BETA10'
     }
 

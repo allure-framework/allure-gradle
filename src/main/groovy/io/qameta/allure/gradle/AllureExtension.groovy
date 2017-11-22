@@ -20,7 +20,7 @@ class AllureExtension extends ReportingExtension {
 
     File reportDir
 
-    String allureJavaVersion = '2.0-BETA18'
+    String allureJavaVersion = '2.0-BETA21'
 
     String configuration = 'testCompile'
 

@@ -30,7 +30,7 @@ apply plugin: 'io.qameta.allure'
 
 allure {
     autoconfigure = true
-    version = '2.3.5'
+    version = '2.4.1'
 }
 ```
 
@@ -38,7 +38,7 @@ allure {
 
 ```groovy
 allure {
-    version = '2.3.5'
+    version = '2.4.1'
     aspectjweaver = true
     autoconfigure = true
 

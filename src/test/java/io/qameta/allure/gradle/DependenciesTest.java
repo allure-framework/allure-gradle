@@ -28,6 +28,7 @@ public class DependenciesTest {
 
     private static final String[][] IT_MATRIX = {
         { "src/it/cucumber-jvm",         "3.5", "4.0",        "5.0" },
+        { "src/it/cucumber2-jvm",        "3.5", "4.0",        "5.0" },
         { "src/it/junit4",               "3.5", "4.0",        "5.0" },
         { "src/it/junit4-autoconfigure", "3.5", "4.0",        "5.0" },
         { "src/it/junit4-kotlin",                             "5.0", "5.1" },

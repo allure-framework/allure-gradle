@@ -33,6 +33,7 @@ class AllurePlugin implements Plugin<Project> {
                     'JUnit5': 'io.qameta.allure:allure-junit5:',
                     'Spock': 'io.qameta.allure:allure-spock:',
                     'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:',
+                    'Cucumber2JVM': 'io.qameta.allure:allure-cucumber2-jvm:',
             ]
     // @formatter:on
 
@@ -97,6 +98,9 @@ class AllurePlugin implements Plugin<Project> {
         }
         if (ext.cucumberJVMConfig) {
             addAdapterDependency(ext, ext.cucumberJVMConfig.name, ext.cucumberJVMConfig.version, false)
+        }
+        if (ext.cucumber2JVMConfig) {
+            addAdapterDependency(ext, ext.cucumber2JVMConfig.name, ext.cucumber2JVMConfig.version, false)
         }
         if (ext.spockConfig) {
             addAdapterDependency(ext, ext.spockConfig.name, ext.spockConfig.version, false)

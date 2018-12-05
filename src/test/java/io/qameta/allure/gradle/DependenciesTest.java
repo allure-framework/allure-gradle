@@ -10,6 +10,7 @@ import org.junit.runners.Parameterized;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
@@ -24,6 +25,17 @@ import static org.junit.Assume.assumeThat;
  */
 @RunWith(Parameterized.class)
 public class DependenciesTest {
+    
+    private static final String[][] IT_MATRIX = {
+        { "src/it/cucumber-jvm",         "3.5", "4.0",        "5.0" },
+        { "src/it/junit4",               "3.5", "4.0",        "5.0" },
+        { "src/it/junit4-autoconfigure", "3.5", "4.0",        "5.0" },
+        { "src/it/junit5",               "3.5", "4.0",        "5.0" },
+        { "src/it/testng",               "3.5", "4.0",        "5.0" },
+        { "src/it/testng-autoconfigure", "3.5", "4.0",        "5.0" },
+        { "src/it/spock",                "3.5", "4.0",        "5.0" },
+        { "src/it/junit5-native",                      "4.6", "5.0" },
+    };
 
     @Parameterized.Parameter(0)
     public String version;
@@ -39,23 +51,9 @@ public class DependenciesTest {
 
     @Parameterized.Parameters(name = "{1} [{0}]")
     public static Collection<Object[]> getFrameworks() {
-        return Arrays.asList(
-                new Object[]{"3.5", "src/it/cucumber-jvm"},
-                new Object[]{"4.0", "src/it/cucumber-jvm"},
-                new Object[]{"3.5", "src/it/junit4"},
-                new Object[]{"4.0", "src/it/junit4"},
-                new Object[]{"3.5", "src/it/junit4-autoconfigure"},
-                new Object[]{"4.0", "src/it/junit4-autoconfigure"},
-                new Object[]{"3.5", "src/it/junit5"},
-                new Object[]{"4.0", "src/it/junit5"},
-                new Object[]{"3.5", "src/it/testng"},
-                new Object[]{"4.0", "src/it/testng"},
-                new Object[]{"3.5", "src/it/testng-autoconfigure"},
-                new Object[]{"4.0", "src/it/testng-autoconfigure"},
-                new Object[]{"3.5", "src/it/spock"},
-                new Object[]{"4.0", "src/it/spock"}
-
-        );
+        return Arrays.stream(IT_MATRIX)
+                .flatMap(it -> Arrays.stream(it).skip(1).map(version -> new Object[] { version, it[0] }))
+                .collect(Collectors.toList());
     }
 
     @Test

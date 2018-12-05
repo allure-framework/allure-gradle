@@ -126,6 +126,12 @@ class AllurePlugin implements Plugin<Project> {
             it.outputs.dir(ext.resultsDir)
             it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDir)
         }
+        project.tasks.withType(JavaExec).each {
+            if (it.name == 'junitPlatformTest') {
+                it.outputs.dir(ext.resultsDir)
+                it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDir)
+            }
+        }
     }
 
     private void applyTestAspectjweaver(AllureExtension ext) {

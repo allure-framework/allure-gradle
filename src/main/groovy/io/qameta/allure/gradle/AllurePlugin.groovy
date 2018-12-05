@@ -11,11 +11,13 @@ import io.qameta.allure.gradle.task.AllureServe
 import io.qameta.allure.gradle.task.DownloadAllure
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.tasks.testing.junit.JUnitTestFramework
 import org.gradle.api.internal.tasks.testing.testng.TestNGTestFramework
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.testing.Test
+import org.gradle.process.JavaForkOptions
 import org.gradle.util.ConfigureUtil
 
 /**
@@ -60,8 +62,7 @@ class AllurePlugin implements Plugin<Project> {
                 autoconfigure(extension)
             }
             applyAdapters(extension)
-            applyTestAspectjweaver(extension)
-            applyJunitPlatformTestAspectjweaver(extension)
+            applyAspectjweaver(extension)
 
             configureTestTasks(extension)
 
@@ -122,54 +123,36 @@ class AllurePlugin implements Plugin<Project> {
     }
 
     private void configureTestTasks(AllureExtension ext) {
-        project.tasks.withType(Test).each {
-            it.outputs.dir(ext.resultsDir)
-            it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDir)
-        }
-        project.tasks.withType(JavaExec).each {
-            if (it.name == 'junitPlatformTest') {
-                it.outputs.dir(ext.resultsDir)
-                it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDir)
-            }
+        configureTestTasks { Task task, JavaForkOptions test ->
+            task.outputs.dir(ext.resultsDir)
+            test.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDir)
         }
     }
-
-    private void applyTestAspectjweaver(AllureExtension ext) {
+    
+    private void applyAspectjweaver(AllureExtension ext) {
         if (ext.aspectjweaver || ext.autoconfigure) {
             Configuration aspectjConfiguration = project.configurations.maybeCreate(CONFIGURATION_ASPECTJ_WEAVER)
-
-            project.dependencies.add(CONFIGURATION_ASPECTJ_WEAVER,
-                    "org.aspectj:aspectjweaver:${ext.aspectjVersion}")
-
-            project.tasks.withType(Test).each { test ->
-                test.doFirst {
-                    String javaAgent = "-javaagent:${aspectjConfiguration.singleFile}"
+            
+            project.dependencies.add(CONFIGURATION_ASPECTJ_WEAVER, "org.aspectj:aspectjweaver:${ext.aspectjVersion}")
+            
+            String javaAgent = "-javaagent:${aspectjConfiguration.singleFile}"
+            
+            configureTestTasks { Task task, JavaForkOptions test ->
+                task.doFirst {
                     test.jvmArgs = [javaAgent] + test.jvmArgs as Iterable
                 }
                 if (project.logger.debugEnabled) {
-                    project.logger.debug "jvmArgs for task $test.name $test.jvmArgs"
-                }
+                    project.logger.debug "jvmArgs for task $task.name $test.jvmArgs"
+                } 
             }
         }
     }
-
-    private void applyJunitPlatformTestAspectjweaver(AllureExtension ext) {
-        if (ext.aspectjweaver || ext.autoconfigure) {
-            Configuration aspectjConfiguration = project.configurations.maybeCreate(CONFIGURATION_ASPECTJ_WEAVER)
-
-            project.dependencies.add(CONFIGURATION_ASPECTJ_WEAVER, "org.aspectj:aspectjweaver:${ext.aspectjVersion}")
-
-            project.tasks.withType(JavaExec).each { task ->
-                if (task.name == 'junitPlatformTest') {
-                    task.doFirst {
-                        String javaAgent = "-javaagent:${aspectjConfiguration.singleFile}"
-                        task.jvmArgs = [javaAgent] + task.jvmArgs as Iterable
-                    }
-                }
-                if (project.logger.debugEnabled) {
-                    project.logger.debug "jvmArgs for task $task.name $task.jvmArgs"
-                }
-            }
-        }
+    
+    private void configureTestTasks(Closure closure) {
+        [project.tasks.withType(Test), junitPlatformPluginTestTasks()].flatten().each { closure(it, it) }
+    }
+    
+    private Collection<JavaExec> junitPlatformPluginTestTasks() {
+        project.tasks.withType(JavaExec).findAll { JavaExec task -> task.name == 'junitPlatformTest' }
     }
 }

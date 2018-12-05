@@ -123,7 +123,7 @@ class AllurePlugin implements Plugin<Project> {
 
     private void configureTestTasks(AllureExtension ext) {
         project.tasks.withType(Test).each {
-            it.outputs.files(project.files(project.file(ext.resultsDir)))
+            it.outputs.dir(ext.resultsDir)
             it.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDir)
         }
     }

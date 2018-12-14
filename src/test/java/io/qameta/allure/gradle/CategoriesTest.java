@@ -40,7 +40,8 @@ public class CategoriesTest {
     public static Collection<Object[]> getFrameworks() {
         return Arrays.asList(
                 new Object[]{"3.5", "src/it/categories", new String[]{"allureReport"}},
-                new Object[]{"4.0", "src/it/categories", new String[]{"allureReport"}}
+                new Object[]{"4.0", "src/it/categories", new String[]{"allureReport"}},
+                new Object[]{"5.0", "src/it/categories", new String[]{"allureReport"}}
         );
     }
 

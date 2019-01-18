@@ -71,6 +71,7 @@ public class GradleRunnerRule extends ExternalResource {
 
     protected void before() throws Throwable {
         projectDir = copyProject(projectSupplier.get());
+        new File(projectDir, "settings.gradle").createNewFile();
         buildResult = GradleRunner.create()
                 .withProjectDir(projectDir)
                 .withArguments(tasksSupplier.get())

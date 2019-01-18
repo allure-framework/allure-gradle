@@ -1,11 +1,7 @@
 package io.qameta.allure.gradle
 
 import groovy.transform.CompileStatic
-import io.qameta.allure.gradle.config.CucumberJVMConfig
-import io.qameta.allure.gradle.config.JUnit4Config
-import io.qameta.allure.gradle.config.JUnit5Config
-import io.qameta.allure.gradle.config.SpockConfig
-import io.qameta.allure.gradle.config.TestNGConfig
+import io.qameta.allure.gradle.config.*
 import io.qameta.allure.gradle.task.AllureReport
 import io.qameta.allure.gradle.task.AllureServe
 import io.qameta.allure.gradle.task.DownloadAllure
@@ -128,30 +124,30 @@ class AllurePlugin implements Plugin<Project> {
             test.systemProperty(ALLURE_DIR_PROPERTY, ext.resultsDir)
         }
     }
-    
+
     private void applyAspectjweaver(AllureExtension ext) {
         if (ext.aspectjweaver || ext.autoconfigure) {
             Configuration aspectjConfiguration = project.configurations.maybeCreate(CONFIGURATION_ASPECTJ_WEAVER)
-            
+
             project.dependencies.add(CONFIGURATION_ASPECTJ_WEAVER, "org.aspectj:aspectjweaver:${ext.aspectjVersion}")
-            
+
             String javaAgent = "-javaagent:${aspectjConfiguration.singleFile}"
-            
+
             configureTestTasks { Task task, JavaForkOptions test ->
                 task.doFirst {
                     test.jvmArgs = [javaAgent] + test.jvmArgs as Iterable
                 }
                 if (project.logger.debugEnabled) {
                     project.logger.debug "jvmArgs for task $task.name $test.jvmArgs"
-                } 
+                }
             }
         }
     }
-    
+
     private void configureTestTasks(Closure closure) {
         [project.tasks.withType(Test), junitPlatformPluginTestTasks()].flatten().each { closure(it, it) }
     }
-    
+
     private Collection<JavaExec> junitPlatformPluginTestTasks() {
         project.tasks.withType(JavaExec).findAll { JavaExec task -> task.name == 'junitPlatformTest' }
     }

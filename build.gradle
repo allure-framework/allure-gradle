@@ -7,10 +7,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
-        classpath 'net.researchgate:gradle-release:2.6.0'
-        classpath 'ru.vyarus:gradle-quality-plugin:2.2.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
+        classpath 'com.gradle.publish:plugin-publish-plugin:0.10.0'
+        classpath 'net.researchgate:gradle-release:2.8.0'
+        classpath 'ru.vyarus:gradle-quality-plugin:3.3.0'
     }
 }
 

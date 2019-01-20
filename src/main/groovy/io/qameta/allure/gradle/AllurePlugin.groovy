@@ -1,7 +1,6 @@
 package io.qameta.allure.gradle
 
 import groovy.transform.CompileStatic
-import io.qameta.allure.gradle.config.*
 import io.qameta.allure.gradle.task.AllureReport
 import io.qameta.allure.gradle.task.AllureServe
 import io.qameta.allure.gradle.task.DownloadAllure
@@ -14,7 +13,6 @@ import org.gradle.api.internal.tasks.testing.testng.TestNGTestFramework
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.testing.Test
 import org.gradle.process.JavaForkOptions
-import org.gradle.util.ConfigureUtil
 
 /**
  * @author Egor Borisov ehborisov@gmail.com
@@ -73,7 +71,7 @@ class AllurePlugin implements Plugin<Project> {
 
     private void autoconfigure(AllureExtension extension) {
         TEST_FRAMEWORKS.each { name, framework ->
-            boolean apply = project.tasks.withType(Test).any { task -> framework.isInstance(task.testFramework) }
+            boolean apply = project.tasks.withType(Test).any { Test task -> framework.isInstance(task.testFramework) }
             if (apply) {
                 project.logger.debug("Allure autoconfiguration: $name test framework found")
                 String dependencyString = ADAPTER_DEPENDENCIES[name] + extension.allureJavaVersion
@@ -87,26 +85,21 @@ class AllurePlugin implements Plugin<Project> {
     }
 
     private applyAdapters(AllureExtension ext) {
-        if (ext.useTestNG) {
-            TestNGConfig testNGConfig = ConfigureUtil.configure(ext.useTestNG, new TestNGConfig())
-            addAdapterDependency(ext, testNGConfig.name, testNGConfig.version, testNGConfig.spiOff)
+        if (ext.testNGConfig) {
+            addAdapterDependency(ext, ext.testNGConfig.name, ext.testNGConfig.version, ext.testNGConfig.spiOff)
         }
-        if (ext.useJUnit4) {
-            JUnit4Config junit4Config = ConfigureUtil.configure(ext.useJUnit4, new JUnit4Config())
-            addAdapterDependency(ext, junit4Config.name, junit4Config.version, false)
-            project.dependencies.add(ext.configuration, JUNIT4_ASPECT_DEPENDENCY + junit4Config.version)
+        if (ext.junit4Config) {
+            addAdapterDependency(ext, ext.junit4Config.name, ext.junit4Config.version, false)
+            project.dependencies.add(ext.configuration, JUNIT4_ASPECT_DEPENDENCY + ext.junit4Config.version)
         }
-        if (ext.useJUnit5) {
-            JUnit5Config junit5Config = ConfigureUtil.configure(ext.useJUnit5, new JUnit5Config())
-            addAdapterDependency(ext, junit5Config.name, junit5Config.version, false)
+        if (ext.junit5Config) {
+            addAdapterDependency(ext, ext.junit5Config.name, ext.junit5Config.version, false)
         }
-        if (ext.useCucumberJVM) {
-            CucumberJVMConfig cucumberConfig = ConfigureUtil.configure(ext.useCucumberJVM, new CucumberJVMConfig())
-            addAdapterDependency(ext, cucumberConfig.name, cucumberConfig.version, false)
+        if (ext.cucumberJVMConfig) {
+            addAdapterDependency(ext, ext.cucumberJVMConfig.name, ext.cucumberJVMConfig.version, false)
         }
-        if (ext.useSpock) {
-            SpockConfig spockConfig = ConfigureUtil.configure(ext.useSpock, new SpockConfig())
-            addAdapterDependency(ext, spockConfig.name, spockConfig.version, false)
+        if (ext.spockConfig) {
+            addAdapterDependency(ext, ext.spockConfig.name, ext.spockConfig.version, false)
         }
     }
 

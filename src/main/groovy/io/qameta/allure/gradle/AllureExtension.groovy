@@ -1,6 +1,12 @@
 package io.qameta.allure.gradle
 
 import groovy.transform.CompileStatic
+import io.qameta.allure.gradle.config.CucumberJVMConfig
+import io.qameta.allure.gradle.config.JUnit4Config
+import io.qameta.allure.gradle.config.JUnit5Config
+import io.qameta.allure.gradle.config.SpockConfig
+import io.qameta.allure.gradle.config.TestNGConfig
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.reporting.ReportingExtension
 
@@ -26,15 +32,40 @@ class AllureExtension extends ReportingExtension {
 
     String aspectjVersion = '1.8.10'
 
-    Closure useTestNG
+    protected TestNGConfig testNGConfig
 
-    Closure useJUnit4
+    void useTestNG(Action<? super TestNGConfig> action) {
+        testNGConfig = new TestNGConfig()
+        action.execute(testNGConfig)
+    }
 
-    Closure useJUnit5
+    protected JUnit4Config junit4Config
 
-    Closure useCucumberJVM
+    void useJUnit4(Action<? super JUnit4Config> action) {
+        junit4Config = new JUnit4Config()
+        action.execute(junit4Config)
+    }
 
-    Closure useSpock
+    protected JUnit5Config junit5Config
+
+    void useJUnit5(Action<? super JUnit5Config> action) {
+        junit5Config = new JUnit5Config()
+        action.execute(junit5Config)
+    }
+
+    protected CucumberJVMConfig cucumberJVMConfig
+
+    void useCucumberJVM(Action<? super CucumberJVMConfig> action) {
+        cucumberJVMConfig = new CucumberJVMConfig()
+        action.execute(cucumberJVMConfig)
+    }
+
+    protected SpockConfig spockConfig
+
+    void useSpock(Action<? super SpockConfig> action) {
+        spockConfig = new SpockConfig()
+        action.execute(spockConfig)
+    }
 
     String version
 

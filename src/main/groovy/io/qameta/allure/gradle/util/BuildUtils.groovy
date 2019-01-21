@@ -38,15 +38,17 @@ class BuildUtils {
 
     static void copyCategoriesInfo(File resultsDir, Project project) {
         SourceSetContainer sourceSets = (SourceSetContainer) project.properties.get('sourceSets')
-        List<File> resourcesCategoriesFiles = sourceSets.getByName('test').resources
-                .findAll { file -> (file.name == CATEGORIES_FILE_NAME) }
+        if (sourceSets != null) {
+            List<File> resourcesCategoriesFiles = sourceSets.getByName('test').resources
+                    .findAll { file -> (file.name == CATEGORIES_FILE_NAME) }
 
-        Path resultsPath = Paths.get(resultsDir.absoluteFile.path)
-        Files.createDirectories(resultsPath)
+            Path resultsPath = Paths.get(resultsDir.absoluteFile.path)
+            Files.createDirectories(resultsPath)
 
-        if (!resourcesCategoriesFiles.isEmpty()) {
-            Path categoriesPath = resultsPath.resolve(CATEGORIES_FILE_NAME)
-            Files.write(categoriesPath, resourcesCategoriesFiles.first().text.getBytes(StandardCharsets.UTF_8))
+            if (!resourcesCategoriesFiles.isEmpty()) {
+                Path categoriesPath = resultsPath.resolve(CATEGORIES_FILE_NAME)
+                Files.write(categoriesPath, resourcesCategoriesFiles.first().text.getBytes(StandardCharsets.UTF_8))
+            }
         }
     }
 

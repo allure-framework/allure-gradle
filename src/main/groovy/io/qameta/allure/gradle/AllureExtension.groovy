@@ -69,7 +69,7 @@ class AllureExtension extends ReportingExtension {
 
     String version
 
-    String downloadLinkFormat = 'https://dl.bintray.com/qameta/generic/io/qameta/allure/allure/%s/allure-%<s.zip'
+    String downloadLinkFormat
 
     String downloadLink
 

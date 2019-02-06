@@ -43,11 +43,11 @@ class DownloadAllure extends DefaultTask {
 
     private void configureDefaults() {
         AllureExtension extension = project.extensions.getByType(AllureExtension)
+        String url = DownloadUtils.getAllureDownloadUrl(extension.version, extension.downloadLinkFormat)
         if (Objects.nonNull(extensions)) {
             version = extension.version
             dest = project.file(new File(project.rootDir, '.allure').absolutePath)
-            src = extension.downloadLink
-                    ?: DownloadUtils.getAllureDownloadUrl(extension.version, extension.downloadLinkFormat)
+            src = extension.downloadLink ?: url
         }
     }
 }

@@ -14,12 +14,12 @@ public final class DownloadUtils {
 
     public static String getAllureDownloadUrl(final String version, final String downloadUrl) {
         if (downloadUrl != null) {
-            return downloadUrl;
+            return String.format(downloadUrl, version, version);
         }
         if (versionCompare(version, "2.8.0") < 0) {
-            return BINTRAY_TEMPLATE;
+            return String.format(BINTRAY_TEMPLATE, version, version);
         } else {
-            return CENTRAL_TEMPLATE;
+            return String.format(CENTRAL_TEMPLATE, version, version);
         }
     }
 

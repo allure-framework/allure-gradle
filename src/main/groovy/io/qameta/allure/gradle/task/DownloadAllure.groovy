@@ -1,6 +1,7 @@
 package io.qameta.allure.gradle.task
 
 import io.qameta.allure.gradle.AllureExtension
+import io.qameta.allure.gradle.util.DownloadUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
@@ -45,7 +46,8 @@ class DownloadAllure extends DefaultTask {
         if (Objects.nonNull(extensions)) {
             version = extension.version
             dest = project.file(new File(project.rootDir, '.allure').absolutePath)
-            src = extension.downloadLink ?: String.format(extension.downloadLinkFormat, extension.version)
+            src = extension.downloadLink
+                    ?: DownloadUtils.getAllureDownloadUrl(extension.version, extension.downloadLinkFormat)
         }
     }
 }

@@ -36,9 +36,12 @@ public class SingleReportTest {
     public static Collection<Object[]> getFrameworks() {
         return Arrays.asList(
                 new Object[]{"3.5", "src/it/test-finalized-by-report", new String[]{"test"}},
-                new Object[]{"3.5", "src/it/report-task", new String[]{"allureReport"}},
-                new Object[]{"4.0", "src/it/report-task", new String[]{"allureReport"}},
-                new Object[]{"5.0", "src/it/report-task", new String[]{"allureReport"}}
+                new Object[]{"3.5", "src/it/report-bintray-task", new String[]{"allureReport"}},
+                new Object[]{"4.0", "src/it/report-bintray-task", new String[]{"allureReport"}},
+                new Object[]{"5.0", "src/it/report-bintray-task", new String[]{"allureReport"}},
+                new Object[]{"3.5", "src/it/report-central-task", new String[]{"allureReport"}},
+                new Object[]{"4.0", "src/it/report-central-task", new String[]{"allureReport"}},
+                new Object[]{"5.0", "src/it/report-central-task", new String[]{"allureReport"}}
         );
     }
 

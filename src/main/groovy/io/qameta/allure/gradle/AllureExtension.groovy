@@ -1,6 +1,7 @@
 package io.qameta.allure.gradle
 
 import groovy.transform.CompileStatic
+import io.qameta.allure.gradle.config.Cucumber2JVMConfig
 import io.qameta.allure.gradle.config.CucumberJVMConfig
 import io.qameta.allure.gradle.config.JUnit4Config
 import io.qameta.allure.gradle.config.JUnit5Config
@@ -58,6 +59,13 @@ class AllureExtension extends ReportingExtension {
     void useCucumberJVM(Action<? super CucumberJVMConfig> action) {
         cucumberJVMConfig = new CucumberJVMConfig()
         action.execute(cucumberJVMConfig)
+    }
+
+    protected Cucumber2JVMConfig cucumber2JVMConfig
+
+    void useCucumber2JVM(Action<? super Cucumber2JVMConfig> action) {
+        cucumber2JVMConfig = new Cucumber2JVMConfig()
+        action.execute(cucumber2JVMConfig)
     }
 
     protected SpockConfig spockConfig

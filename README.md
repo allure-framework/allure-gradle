@@ -66,6 +66,10 @@ allure {
        version = '2.0-BETA10'
     }
     
+    useCucumber2JVM {
+       version = '2.0-BETA10'
+    }
+    
     useSpock {
        version = '2.0-BETA10'
     }

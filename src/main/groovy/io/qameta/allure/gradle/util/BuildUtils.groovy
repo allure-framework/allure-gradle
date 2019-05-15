@@ -4,6 +4,10 @@ import groovy.json.JsonOutput
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 
 /**
@@ -25,8 +29,12 @@ class BuildUtils {
 
     static void copyExecutorInfo(File resultsDir, Project project) {
         Map<String, String> executorInfo = [name: 'Gradle', type: 'gradle', buildName: project.displayName]
-        File executorFile = Paths.get(resultsDir.absoluteFile.path).resolve(EXECUTOR_FILE_NAME).toFile()
-        executorFile.text = JsonOutput.toJson(executorInfo)
+
+        Path resultsPath = Paths.get(resultsDir.absoluteFile.path)
+        Files.createDirectories(resultsPath)
+
+        Path executorPath = resultsPath.resolve(EXECUTOR_FILE_NAME)
+        Files.write(executorPath, JsonOutput.toJson(executorInfo).getBytes(StandardCharsets.UTF_8))
     }
 
     static void copyCategoriesInfo(File resultsDir, Project project) {
@@ -34,9 +42,12 @@ class BuildUtils {
         List<File> resourcesCategoriesFiles = sourceSets.getByName('test').resources
                 .findAll { file -> (file.name == CATEGORIES_FILE_NAME) }
 
+        Path resultsPath = Paths.get(resultsDir.absoluteFile.path)
+        Files.createDirectories(resultsPath)
+
         if (!resourcesCategoriesFiles.isEmpty()) {
-            File categoriesFile = Paths.get(resultsDir.absoluteFile.path).resolve(CATEGORIES_FILE_NAME).toFile()
-            categoriesFile.text = resourcesCategoriesFiles.first().text
+            Path categoriesPath = resultsPath.resolve(CATEGORIES_FILE_NAME)
+            Files.write(categoriesPath, resourcesCategoriesFiles.first().text.getBytes(StandardCharsets.UTF_8))
         }
     }
 

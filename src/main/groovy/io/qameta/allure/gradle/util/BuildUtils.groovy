@@ -4,7 +4,6 @@ import groovy.json.JsonOutput
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 
-import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path

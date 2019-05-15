@@ -15,8 +15,6 @@ import java.nio.file.Paths
  */
 class BuildUtils {
 
-    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8
-
     public static final String EXECUTOR_FILE_NAME = 'executor.json'
 
     public static final String CATEGORIES_FILE_NAME = 'categories.json'
@@ -36,7 +34,7 @@ class BuildUtils {
         Files.createDirectories(resultsPath)
 
         Path executorPath = resultsPath.resolve(EXECUTOR_FILE_NAME)
-        Files.write(executorPath, JsonOutput.toJson(executorInfo).getBytes(DEFAULT_CHARSET))
+        Files.write(executorPath, JsonOutput.toJson(executorInfo).getBytes(StandardCharsets.UTF_8))
     }
 
     static void copyCategoriesInfo(File resultsDir, Project project) {
@@ -49,7 +47,7 @@ class BuildUtils {
 
         if (!resourcesCategoriesFiles.isEmpty()) {
             Path categoriesPath = resultsPath.resolve(CATEGORIES_FILE_NAME)
-            Files.write(categoriesPath, resourcesCategoriesFiles.first().text.getBytes(DEFAULT_CHARSET))
+            Files.write(categoriesPath, resourcesCategoriesFiles.first().text.getBytes(StandardCharsets.UTF_8))
         }
     }
 

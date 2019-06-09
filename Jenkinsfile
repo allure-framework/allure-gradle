@@ -15,7 +15,7 @@ pipeline {
             when { expression { return params.RELEASE } }
             steps {
                 configFileProvider([configFile(fileId: 'gradle.properties',
-                        targetLocation: '/home/jenkins/.gradle/gradle.properties')]) {
+                        targetLocation: '/root/.gradle/gradle.properties')]) {
                     withCredentials([usernamePassword(credentialsId: 'qameta-ci_bintray',
                             usernameVariable: 'BINTRAY_USER', passwordVariable: 'BINTRAY_API_KEY')]) {
                         sshagent(['qameta-ci_ssh']) {

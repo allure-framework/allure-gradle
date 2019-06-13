@@ -14,6 +14,8 @@ import java.nio.file.Paths
  */
 class BuildUtils {
 
+    public static final String TEST_SOURCE_SET = 'test'
+
     public static final String EXECUTOR_FILE_NAME = 'executor.json'
 
     public static final String CATEGORIES_FILE_NAME = 'categories.json'
@@ -38,8 +40,8 @@ class BuildUtils {
 
     static void copyCategoriesInfo(File resultsDir, Project project) {
         SourceSetContainer sourceSets = (SourceSetContainer) project.properties.get('sourceSets')
-        if (sourceSets != null) {
-            List<File> resourcesCategoriesFiles = sourceSets.getByName('test').resources
+        if (sourceSets != null && sourceSets.names.contains(TEST_SOURCE_SET)) {
+            List<File> resourcesCategoriesFiles = sourceSets.getByName(TEST_SOURCE_SET).resources
                     .findAll { file -> (file.name == CATEGORIES_FILE_NAME) }
 
             Path resultsPath = Paths.get(resultsDir.absoluteFile.path)

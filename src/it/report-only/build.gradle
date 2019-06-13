@@ -2,6 +2,17 @@ plugins {
     id 'io.qameta.allure'
 }
 
+apply plugin: 'java'
+
+sourceSets {
+    simple {
+        java {
+            srcDir 'src'
+        }
+        compileClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
 allure {
     version = '2.4.1'
 }

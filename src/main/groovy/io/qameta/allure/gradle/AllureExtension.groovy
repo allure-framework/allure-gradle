@@ -27,11 +27,19 @@ class AllureExtension extends ReportingExtension {
 
     File reportDir
 
+    String token
+
+    String endpoint
+
+    String projectId
+
     String allureJavaVersion = '2.0-BETA21'
 
     String configuration = 'testCompile'
 
     String aspectjVersion = '1.8.10'
+
+    String launchName = "Allure Gradle Launch"
 
     protected TestNGConfig testNGConfig
 

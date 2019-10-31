@@ -55,6 +55,7 @@ configurations {
 
 dependencies {
     compile localGroovy()
+    compile 'com.squareup.okhttp3:okhttp:4.2.2'
 
     testCompile gradleTestKit()
     testCompile 'junit:junit:4.12'

@@ -3,6 +3,7 @@ package io.qameta.allure.gradle
 import groovy.transform.CompileStatic
 import io.qameta.allure.gradle.task.AllureReport
 import io.qameta.allure.gradle.task.AllureServe
+import io.qameta.allure.gradle.task.AllureUpload
 import io.qameta.allure.gradle.task.DownloadAllure
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -42,7 +43,7 @@ class AllurePlugin implements Plugin<Project> {
             [
                     'TestNG': TestNGTestFramework,
                     'JUnit4': JUnitTestFramework,
-            ]
+            ] as Map<String, Class>
     // @formatter:on
 
     private Project project
@@ -66,6 +67,10 @@ class AllurePlugin implements Plugin<Project> {
                 project.tasks.create(AllureServe.NAME, AllureServe)
                 project.tasks.create(AllureReport.NAME, AllureReport)
                 project.tasks.create(DownloadAllure.NAME, DownloadAllure)
+            }
+
+            if (extension?.endpoint && extension?.token && extension?.projectId) {
+                project.tasks.create(AllureUpload.NAME, AllureUpload)
             }
         }
     }

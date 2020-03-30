@@ -28,11 +28,11 @@ class AllurePlugin implements Plugin<Project> {
     // @formatter:off
     private static final Map<String, String> ADAPTER_DEPENDENCIES =
             [
-                    'TestNG': 'io.qameta.allure:allure-testng:',
-                    'JUnit4': 'io.qameta.allure:allure-junit4:',
-                    'JUnit5': 'io.qameta.allure:allure-junit5:',
-                    'Spock': 'io.qameta.allure:allure-spock:',
-                    'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:',
+                    'TestNG'      : 'io.qameta.allure:allure-testng:',
+                    'JUnit4'      : 'io.qameta.allure:allure-junit4:',
+                    'JUnit5'      : 'io.qameta.allure:allure-junit5:',
+                    'Spock'       : 'io.qameta.allure:allure-spock:',
+                    'CucumberJVM' : 'io.qameta.allure:allure-cucumber-jvm:',
                     'Cucumber2JVM': 'io.qameta.allure:allure-cucumber2-jvm:',
             ]
     // @formatter:on
@@ -63,9 +63,15 @@ class AllurePlugin implements Plugin<Project> {
 
             if (extension?.version) {
                 project.evaluationDependsOnChildren()
-                project.tasks.create(AllureServe.NAME, AllureServe)
-                project.tasks.create(AllureReport.NAME, AllureReport)
-                project.tasks.create(DownloadAllure.NAME, DownloadAllure)
+                def allureServeTask = project.tasks.create(AllureServe.NAME, AllureServe)
+                allureServeTask.group = 'Allure Report'
+                allureServeTask.description = 'generates the report and serves it on a random port in the default browser'
+                def allureReportTask = project.tasks.create(AllureReport.NAME, AllureReport)
+                allureReportTask.group = 'Allure Report'
+                allureReportTask.description = 'generates the report'
+                def downloadAllureTask = project.tasks.create(DownloadAllure.NAME, DownloadAllure)
+                downloadAllureTask.group = 'Allure Report'
+                downloadAllureTask.description = 'downloads Allure CLI'
             }
         }
     }

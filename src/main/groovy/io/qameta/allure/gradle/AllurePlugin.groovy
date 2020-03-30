@@ -24,15 +24,16 @@ class AllurePlugin implements Plugin<Project> {
     private static final String ALLURE_DIR_PROPERTY = 'allure.results.directory'
     private static final String JUNIT4_ASPECT_DEPENDENCY = 'io.qameta.allure:allure-junit4-aspect:'
     private static final String JUNIT4 = 'JUnit4'
+    private static final String ALLURE_GROUP = 'Allure Report'
 
     // @formatter:off
     private static final Map<String, String> ADAPTER_DEPENDENCIES =
             [
-                    'TestNG'      : 'io.qameta.allure:allure-testng:',
-                    'JUnit4'      : 'io.qameta.allure:allure-junit4:',
-                    'JUnit5'      : 'io.qameta.allure:allure-junit5:',
-                    'Spock'       : 'io.qameta.allure:allure-spock:',
-                    'CucumberJVM' : 'io.qameta.allure:allure-cucumber-jvm:',
+                    'TestNG': 'io.qameta.allure:allure-testng:',
+                    'JUnit4': 'io.qameta.allure:allure-junit4:',
+                    'JUnit5': 'io.qameta.allure:allure-junit5:',
+                    'Spock': 'io.qameta.allure:allure-spock:',
+                    'CucumberJVM': 'io.qameta.allure:allure-cucumber-jvm:',
                     'Cucumber2JVM': 'io.qameta.allure:allure-cucumber2-jvm:',
             ]
     // @formatter:on
@@ -63,14 +64,15 @@ class AllurePlugin implements Plugin<Project> {
 
             if (extension?.version) {
                 project.evaluationDependsOnChildren()
-                def allureServeTask = project.tasks.create(AllureServe.NAME, AllureServe)
-                allureServeTask.group = 'Allure Report'
-                allureServeTask.description = 'Generates the report and serves it on a random port in the default browser'
-                def allureReportTask = project.tasks.create(AllureReport.NAME, AllureReport)
-                allureReportTask.group = 'Allure Report'
+                Task allureServeTask = project.tasks.create(AllureServe.NAME, AllureServe)
+                allureServeTask.group = ALLURE_GROUP
+                allureServeTask.description = 'Generates the report and serves it on' +
+                        ' a random port in the default browser'
+                Task allureReportTask = project.tasks.create(AllureReport.NAME, AllureReport)
+                allureReportTask.group = ALLURE_GROUP
                 allureReportTask.description = 'Generates the report'
-                def downloadAllureTask = project.tasks.create(DownloadAllure.NAME, DownloadAllure)
-                downloadAllureTask.group = 'Allure Report'
+                Task downloadAllureTask = project.tasks.create(DownloadAllure.NAME, DownloadAllure)
+                downloadAllureTask.group = ALLURE_GROUP
                 downloadAllureTask.description = 'Downloads Allure CLI'
             }
         }

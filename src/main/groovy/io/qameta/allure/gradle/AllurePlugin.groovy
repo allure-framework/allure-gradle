@@ -65,13 +65,13 @@ class AllurePlugin implements Plugin<Project> {
                 project.evaluationDependsOnChildren()
                 def allureServeTask = project.tasks.create(AllureServe.NAME, AllureServe)
                 allureServeTask.group = 'Allure Report'
-                allureServeTask.description = 'generates the report and serves it on a random port in the default browser'
+                allureServeTask.description = 'Generates the report and serves it on a random port in the default browser'
                 def allureReportTask = project.tasks.create(AllureReport.NAME, AllureReport)
                 allureReportTask.group = 'Allure Report'
-                allureReportTask.description = 'generates the report'
+                allureReportTask.description = 'Generates the report'
                 def downloadAllureTask = project.tasks.create(DownloadAllure.NAME, DownloadAllure)
                 downloadAllureTask.group = 'Allure Report'
-                downloadAllureTask.description = 'downloads Allure CLI'
+                downloadAllureTask.description = 'Downloads Allure CLI'
             }
         }
     }

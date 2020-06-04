@@ -31,7 +31,7 @@ class AllureExtension extends ReportingExtension {
 
     String configuration = 'testCompile'
 
-    String aspectjVersion = '1.8.10'
+    String aspectjVersion = '1.9.5'
 
     protected TestNGConfig testNGConfig
 

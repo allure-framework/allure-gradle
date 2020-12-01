@@ -38,7 +38,7 @@ class AllureServe extends DefaultTask {
         Path allureExecutable = allureHome.resolve('bin').resolve(BuildUtils.allureExecutable).toAbsolutePath()
 
         if (Files.notExists(allureExecutable)) {
-            logger.warn("Cannot find allure commanline in $allureHome")
+            logger.warn("Cannot find allure commandline in $allureHome")
             return
         }
 

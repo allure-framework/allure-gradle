@@ -29,6 +29,7 @@ class AllureServe extends DefaultTask {
     List<File> resultsDirs = []
 
     AllureServe() {
+        dependsOn(DownloadAllure.NAME)
         configureDefaults()
     }
 

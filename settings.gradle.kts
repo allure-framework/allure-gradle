@@ -34,3 +34,11 @@ if (isCiServer) {
 
 rootProject.name = "allure-gradle"
 
+includeBuild("build-logic-commons")
+includeBuild("build-logic")
+
+include("allure-base-plugin")
+include("allure-gather-plugin")
+include("allure-report-plugin")
+include("allure-plugin")
+include("testkit-junit4")

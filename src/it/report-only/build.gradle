@@ -1,7 +1,0 @@
-plugins {
-    id 'io.qameta.allure'
-}
-
-allure {
-    version = '2.4.1'
-}

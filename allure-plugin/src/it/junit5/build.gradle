@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure'
+}
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.0'
+}
+
+allure {
+    // Newer allure-java fail to gather data from JUnit5 :(
+    gather.allureJavaVersion = "2.13.5"
+}

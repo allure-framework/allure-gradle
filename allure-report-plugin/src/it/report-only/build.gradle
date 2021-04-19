@@ -1,0 +1,15 @@
+plugins {
+    id 'io.qameta.allure-report'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    allureReport(files("$buildDir/allure-results"))
+}
+
+allure {
+    version = '2.8.0'
+}

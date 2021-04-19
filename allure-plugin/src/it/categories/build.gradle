@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure'
+}
+
+dependencies {
+    allureRawResultElements(files("$buildDir/allure-results"))
+}
+
+repositories {
+    mavenCentral()
+}
+
+allure {
+}

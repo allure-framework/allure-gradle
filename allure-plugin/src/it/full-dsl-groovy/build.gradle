@@ -1,0 +1,58 @@
+plugins {
+    id("io.qameta.allure-gather")
+    id("io.qameta.allure-report")
+}
+
+// The folowing tests different syntax variations to verify if they compile
+
+allure {
+    version = "42.0"
+    gather {
+        adapters {
+            junit5 {
+                adapterVersion = "42.0"
+                enabled = true
+            }
+            spock
+            testng.adapterVersion = "43"
+            testng.enabled = false
+            // cucumberJvm(3) is not supported in Groovy DSL syntax
+            cucumber3Jvm.supportsAutoconfigureListeners = true
+            cucumber5Jvm {
+                activateOn("com.example.custom.cucumber:cucumber-core")
+            }
+            cucumber6Jvm {
+                activateOn("com.example.custom.cucumber:cucumber-core") {
+                    compileOnly("com.acme:compile-dep")
+                    runtimeOnly("com.acme:runtime-dep")
+                }
+            }
+        }
+        adapters.junit5
+        adapters.junit5.enabled = false
+    }
+    gather.adapters.spock.enabled = true
+    commandline {
+        group = "com.example"
+        module = "test"
+        extension = "jar"
+        downloadUrlPattern = "https://..."
+    }
+    commandline.group = "abcd"
+    report {
+        reportDir = layout.buildDirectory.dir("allure/reports")
+        dependsOnTests = true
+        dependsOnTests()
+    }
+    report.reportDir = file("$buildDir/allure/reports")
+    report.dependsOnTests = true
+}
+allure.gather.adapters.cucumberJvm.enabled = true
+allure.commandline.downloadUrlPattern = "localhost"
+allure.report.dependsOnTests = true
+
+tasks.register("testDsl") {
+    doLast {
+        println("groovy-dsl is ok")
+    }
+}

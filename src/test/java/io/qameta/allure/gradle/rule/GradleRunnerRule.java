@@ -113,6 +113,15 @@ public class GradleRunnerRule extends ExternalResource {
                 .build();
     }
 
+    @Override
+    protected void after() {
+        try {
+            FileUtils.forceDelete(projectDir);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to remove temporary project directory " + projectDir, e);
+        }
+    }
+
     private void checkGradleCompatibility(JavaGradle javaGradle, GradleVersion testGradle) {
         JavaVersion javaVersion = javaGradle.javaVersion;
         GradleVersion minimalGradle = javaGradle.gradleVersion;

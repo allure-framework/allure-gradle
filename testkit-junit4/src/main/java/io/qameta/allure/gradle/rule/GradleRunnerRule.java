@@ -2,6 +2,7 @@ package io.qameta.allure.gradle.rule;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.JavaVersion;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -160,7 +161,11 @@ public class GradleRunnerRule extends ExternalResource {
     }
 
     private static File copyProject(String project) {
-        File to = new File("build/gradle-testkit", randomAlphabetic(8));
+        String projectName = StringUtils.substringAfterLast(project.replace('\\', '/'), '/');
+        if (!projectName.isEmpty()) {
+            projectName += "-";
+        }
+        File to = new File("build/gradle-testkit", projectName + randomAlphabetic(8));
         File from = new File(project);
         try {
             if (!from.isDirectory() || !from.exists()) {

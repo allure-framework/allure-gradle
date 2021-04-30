@@ -34,7 +34,7 @@ class SimpleRule(
                                 "allure-gradle: added dependency {} to {} scope of {}",
                                 addedId,
                                 variantName,
-                                triggerDependency
+                                id
                             )
                         }
                     }

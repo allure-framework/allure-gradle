@@ -1,5 +1,5 @@
 plugins {
-    id("allure-gradle.build-logic.java")
+    id("allure-gradle.java")
     `java-library`
 }
 

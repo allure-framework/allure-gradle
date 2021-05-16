@@ -1,5 +1,5 @@
 plugins {
-    id("allure-gradle.build-logic.kotlin-dsl-published-plugin")
+    id("allure-gradle.kotlin-dsl-published-plugin")
 }
 
 group = "io.qameta.allure.gradle.allure"

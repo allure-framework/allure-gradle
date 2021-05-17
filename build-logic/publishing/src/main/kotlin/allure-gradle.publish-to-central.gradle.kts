@@ -3,7 +3,6 @@ import buildlogic.cleanupMavenPom
 plugins {
     id("java-library")
     id("maven-publish")
-//    id("net.researchgate.release")
 }
 
 val repoUrl = "https://github.com/allure-framework/allure-gradle"

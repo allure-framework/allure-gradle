@@ -4,4 +4,3 @@ plugins {
 }
 
 group = "io.qameta.allure"
-

@@ -6,4 +6,5 @@ plugins {
     id("allure-gradle.reproducible-builds")
     id("allure-gradle.dokka-javadoc")
     id("allure-gradle.publish-to-central")
+    id("allure-gradle.signing")
 }

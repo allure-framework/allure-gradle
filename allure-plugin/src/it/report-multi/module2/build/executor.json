@@ -1,0 +1,8 @@
+{
+  "name": "Gradle",
+  "type": "gradle",
+  "taskName": "test",
+  "buildName": "module2",
+  "projectPath": ":module2",
+  "projectVersion": "1.1"
+}

@@ -1,0 +1,19 @@
+plugins {
+    id 'groovy'
+    id 'io.qameta.allure'
+}
+
+allure {
+    aspectjweaver = true
+
+    useSpock {
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'
+}

@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure'
+}
+
+allure {
+    aspectjweaver = true
+
+    useTestNG {
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.testng:testng:6.8'
+}
+
+test {
+    useTestNG()
+}

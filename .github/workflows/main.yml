@@ -1,0 +1,43 @@
+# For more information on how to modify this file check the following link:
+# https://help.github.com/en/actions/automating-your-workflow-with-github-actions
+
+name: CI
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+# Throw OutOfMemoryError in case less than 35% is free after full GC
+# This avoids never-ending GC trashing if memory gets too low in case of a memory leak
+env:
+  _JAVA_OPTIONS: '-XX:GCTimeLimit=90 -XX:GCHeapFreeLimit=35'
+
+jobs:
+  test:
+    name: 'Tests (JDK ${{ matrix.jdk }}, ${{ matrix.os }})'
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu
+            jdk: 11
+          - os: windows
+            jdk: 8
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 50
+    - name: 'Set up JDK ${{ matrix.jdk }}'
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ matrix.jdk }}
+    - uses: burrunan/gradle-cache-action@v1
+      name: Test
+      with:
+        job-id: jdk${{ matrix.jdk }}
+        arguments: --scan --no-parallel --no-daemon build

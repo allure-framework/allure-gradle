@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - '*'
@@ -10,23 +11,19 @@ on:
 
 jobs:
   build:
-    name: "Build"
-    runs-on: ubuntu-latest
+    name: 'Tests (JDK ${{ matrix.jdk }}, ${{ matrix.os }})'
+    runs-on: ${{ matrix.os }}-latest
     strategy:
+      fail-fast: false
       matrix:
+        os: [ 'ubuntu', 'windows' ]
         java-version: [ '8.0.x', '11.0.x' ]
     steps:
       - uses: actions/checkout@v2
-
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: ${{ matrix.java-version }}
-
-      - name: Build with Gradle
-        run: ./gradlew build -x test
-
-      - name: Run tests
-        if: always()
-        run: ./gradlew --no-build-cache test
+      - name: Build
+        run: ./gradlew build

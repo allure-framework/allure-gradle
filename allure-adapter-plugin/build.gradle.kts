@@ -25,11 +25,13 @@ gradlePlugin {
     plugins {
         create("allureAdapterBasePlugin") {
             id = "io.qameta.allure-adapter-base"
+            displayName = "Plugin for adpater commons between allure plugins"
             description = "Declares common configurations for producing and consuming Allure results and reports"
             implementationClass = "io.qameta.allure.gradle.adapter.AllureAdapterBasePlugin"
         }
         create("allureAdapterPlugin") {
             id = "io.qameta.allure-adapter"
+            displayName = "Plugin for allure adapters"
             description = "Implements autoconfiguration for collecting data for Allure"
             implementationClass = "io.qameta.allure.gradle.adapter.AllureAdapterPlugin"
         }

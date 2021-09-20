@@ -28,6 +28,8 @@ gradlePlugin {
     plugins {
         create("allurePlugin") {
             id = "io.qameta.allure"
+            displayName = "Allure Framework integration plugin"
+            description = "Adds a tasks to aggregate the results from multiple projects"
             implementationClass = "io.qameta.allure.gradle.allure.AllurePlugin"
         }
     }

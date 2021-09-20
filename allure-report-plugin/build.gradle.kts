@@ -26,16 +26,19 @@ gradlePlugin {
     plugins {
         create("allureDownloadPlugin") {
             id = "io.qameta.allure-download"
+            displayName = "Plugin for downloading allure commandline"
             description = "Adds a task to download the required Allure version"
             implementationClass = "io.qameta.allure.gradle.download.AllureDownloadPlugin"
         }
         create("allureReportPlugin") {
             id = "io.qameta.allure-report"
+            displayName = "Plugin for building allure report"
             description = "Adds a task to build Allure report for the current project"
             implementationClass = "io.qameta.allure.gradle.report.AllureReportPlugin"
         }
         create("allureAggregateReportPlugin") {
             id = "io.qameta.allure-aggregate-report"
+            displayName = "Plugin for building aggregated allure report"
             description = "Adds a task to aggregate the results from multiple projects"
             implementationClass = "io.qameta.allure.gradle.report.AllureAggregateReportPlugin"
         }

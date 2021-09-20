@@ -24,6 +24,7 @@ gradlePlugin {
     plugins {
         create("allureBasePlugin") {
             id = "io.qameta.allure-base"
+            displayName = "Plugin for commons between allure plugins"
             description = "Adds a common allure extension to the project"
             implementationClass = "io.qameta.allure.gradle.base.AllureBasePlugin"
         }

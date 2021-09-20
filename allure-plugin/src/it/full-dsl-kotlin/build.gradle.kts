@@ -27,8 +27,8 @@ allure {
                 }
             }
         }
-        adapters.junit5
-        adapters.junit5.enabled.set(false)
+        frameworks.junit5
+        frameworks.junit5.enabled.set(false)
     }
     adapter.frameworks.spock.enabled.set(true)
     commandline {

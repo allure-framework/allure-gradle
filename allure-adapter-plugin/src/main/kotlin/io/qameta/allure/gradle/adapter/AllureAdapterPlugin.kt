@@ -84,9 +84,9 @@ open class AllureAdapterPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.configureSpiOffSubstitution(adapters: AdapterHandler) {
+    private fun Project.configureSpiOffSubstitution(frameworks: AdapterHandler) {
         // Substitute adapter with spi-off classifier when trimServicesFromJar == true
-        adapters.matching { it.trimServicesFromJar.get() }
+        frameworks.matching { it.trimServicesFromJar.get() }
             .all {
                 val adapterConfig = this
                 configurations.all {

@@ -16,10 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ 'ubuntu' ]
-        java-version: [ '11.0.x' ]
-#        os: [ 'ubuntu', 'windows' ]
-#        java-version: [ '8.0.x', '11.0.x' ]
+        os: [ 'ubuntu', 'windows' ]
+        java-version: [ '8.0.x', '11.0.x' ]
     steps:
       - uses: actions/checkout@v2
 

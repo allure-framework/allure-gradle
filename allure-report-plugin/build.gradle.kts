@@ -16,6 +16,12 @@ tasks.test {
     inputs.dir(layout.projectDirectory.dir("src/it")).optional()
 }
 
+pluginBundle {
+    website = "https://github.com/allure-framework/allure-gradle"
+    vcsUrl = "https://github.com/allure-framework/allure-gradle.git"
+    tags = listOf("allure", "reporting", "testing")
+}
+
 gradlePlugin {
     plugins {
         create("allureDownloadPlugin") {

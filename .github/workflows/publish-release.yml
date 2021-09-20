@@ -20,4 +20,6 @@ jobs:
       - name: Copy gradle.properties
         run: echo ${GRADLE_PUBLISH} > ~/.gradle/gradle.properties
       - name: Publish Plugins
-        run: ./gradlew publishPlugins -Pversion=${GITHUB_REF:10}
+        run: ./gradlew publishPlugins -Pversion=${GITHUB_REF:10} --no-daemon
+        env:
+          GRADLE_OPTS: -Xmx1024m

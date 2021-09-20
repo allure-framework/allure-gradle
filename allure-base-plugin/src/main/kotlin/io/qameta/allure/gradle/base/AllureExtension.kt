@@ -2,7 +2,6 @@ package io.qameta.allure.gradle.base
 
 import io.qameta.allure.gradle.util.conv
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
@@ -27,13 +26,13 @@ open class AllureExtension(
     // TODO: remove when deprecated [aspectjweaver] is removed
     private val aspectjWeaver by lazy {
         @Suppress("unchecked_cast")
-        gatherExtension
+        adapterExtension
             .let {
                 it::class.java.getMethod("getAspectjWeaver").invoke(it)
             } as Property<Boolean>
     }
 
-    @Deprecated(level = DeprecationLevel.WARNING, message = "Use gather.aspectjWeaver")
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use adapter.aspectjWeaver")
     var aspectjweaver: Boolean
         get() = aspectjWeaver.get()
         set(value) = aspectjWeaver.set(value)
@@ -41,58 +40,58 @@ open class AllureExtension(
     // TODO: remove when deprecated [aspectjweaver] is removed
     private val autoconfigureProperty by lazy {
         @Suppress("unchecked_cast")
-        gatherExtension
+        adapterExtension
             .let {
                 it::class.java.getMethod("getAutoconfigure").invoke(it)
             } as Property<Boolean>
     }
 
-    @Deprecated(level = DeprecationLevel.WARNING, message = "Use gather.autoconfigure")
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use adapter.autoconfigure")
     var autoconfigure: Boolean
         get() = autoconfigureProperty.get()
         set(value) = autoconfigureProperty.set(value)
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.cucumberJvm")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.cucumberJvm")
     fun useCucumberJVM(action: Action<in Any>) {
         action.execute(getAdapter("getCucumberJvm"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.cucumber2Jvm")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.cucumber2Jvm")
     fun useCucumber2JVM(action: Action<in Any>) {
         action.execute(getAdapter("getCucumber2Jvm"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.junit4")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.junit4")
     fun useJUnit4(action: Action<in Any>) {
         action.execute(getAdapter("getJunit4"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.junit5")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.junit5")
     fun useJUnit5(action: Action<in Any>) {
         action.execute(getAdapter("getJunit5"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.testng")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.testng")
     fun useTestNG(action: Action<in Any>) {
         action.execute(getAdapter("getTestng"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.spock")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.spock")
     fun useSpock(action: Action<in Any>) {
         action.execute(getAdapter("getSpock"))
     }
 
-    private val gatherExtension: Any
-        get() = let { it as ExtensionAware }.extensions.getByName("gather")
+    private val adapterExtension: Any
+        get() = let { it as ExtensionAware }.extensions.getByName("adapter")
 
     private fun getAdapter(adapterName: String) =
-        gatherExtension
-            .let { it::class.java.getMethod("getAdapters").invoke(it) }
+        adapterExtension
+            .let { it::class.java.getMethod("getFrameworks").invoke(it) }
             .let { it::class.java.getMethod(adapterName).invoke(it) }
 }

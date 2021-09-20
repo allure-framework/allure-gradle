@@ -40,7 +40,7 @@ open class AllureReportPlugin : Plugin<Project> {
 /**
  * The plugin adds tasks to aggregate Allure reports for the current project and its subprojects (
  * [REPORT_TASK_NAME] and [SERVE_TASK_NAME]).
- * Note: if you need to gather the data from the current project, then you need [AllureGatherPlugin.PLUGIN_NAME]
+ * Note: if you need to collect the data from the current project, then you need [AllureAdapterPlugin.PLUGIN_NAME]
  */
 open class AllureAggregateReportPlugin : Plugin<Project> {
     companion object {

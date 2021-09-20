@@ -10,14 +10,14 @@ Gradle projects plugins for building [Allure](https://docs.qameta.io/allure/late
 
 ## Basic usage
 
-`allure-gradle` plugin implements Allure data gathering (e.g. Test` tasks), and data reporting (both individual and aggregate reports).
+`allure-gradle` plugin implements Allure data collecting (e.g. Test` tasks), and data reporting (both individual and aggregate reports).
 
-Data gathering and reporting are split to different Gradle plugins, so you could apply the ones you need.
+Data colecting and reporting are split to different Gradle plugins, so you could apply the ones you need.
 
 Note: 2.9+ requires Gradle 5.0+
 
 The minimal configuration is as follows.
-It would configure test tasks to gather Allure results and add `allureReport` and `allureServe`
+It would configure test tasks to collect Allure results and add `allureReport` and `allureServe`
 tasks for report inspection.
 
 Groovy DSL:
@@ -46,7 +46,7 @@ repositories {
 }
 ```
 
-`io.qameta.allure` is a shortcut for `io.qameta.allure-gather` + `io.qameta.allure-report`,
+`io.qameta.allure` is a shortcut for `io.qameta.allure-adapter` + `io.qameta.allure-report`,
 so you could apply the plugins you need.
 
 ### Configuring Allure version
@@ -86,19 +86,19 @@ use the following command:
 If you need a report only, please use `allureReport` and `allureAggregateReport`.
 
 By default, `allureAggregate*` aggregates data from the current `project` and its `subprojects`.
-However, you need to apply `io.qameta.allure-gather` plugin to the relevant subprojects, so they
+However, you need to apply `io.qameta.allure-adapter` plugin to the relevant subprojects, so they
 provide Allure results.
 
-## Customizing data gathering
+## Customizing data collecting
 
-Data gathering is implemented via `io.qameta.allure-gather` Gradle plugin.
+Data collecting is implemented via `io.qameta.allure-adapter` Gradle plugin.
 
 The values in the sample below are the defaults.
 The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.13.9"`, however, that is the only difference.
 
 ```kotlin
 allure {
-    gather {
+    adapter {
         // Configure version for io.qameta.allure:allure-* adapters
         allureJavaVersion.set("2.13.9")
         aspectjVersion.set("1.9.5")
@@ -110,7 +110,7 @@ allure {
         // By default, categories.json is detected in src/test/resources/../categories.json,
         // However, it would be better to put the file in a well-known location and configure it explicitly
         categoriesFile.set(layout.projectDirectory.file("config/allure/categories.json"))
-        adapters {
+        frameworks {
             junit5 {
                 // Defaults to allureJavaVersion
                 adapterVersion.set("...")
@@ -140,7 +140,7 @@ allure {
 ### What if I have both JUnit5, JUnit4, and CucumberJVM on the classpath?
 
 By default, `allure-gradle` would detect all of them and apply all the listeners yielding 3 reports.
-If you need only one or two, specify the required ones via `adapters {...}` block.
+If you need only one or two, specify the required ones via `frameworks {...}` block.
 
 ### Adding custom results for reporting
 
@@ -148,7 +148,7 @@ You could add a folder with custom results via `allureRawResultElements` Gradle 
 
 ```kotlin
 plugins {
-    id("io.qameta.allure-gather-base")
+    id("io.qameta.allure-adapter-base")
 }
 
 dependencies {
@@ -172,15 +172,15 @@ However, you might want to disable them and use your own ones.
 Here's how you disable default listeners:
 
 ```kotlin
-allure.gather.adapters.junit5.autoconfigureListeners.set(false)
+allure.adapter.frameworks.junit5.autoconfigureListeners.set(false)
 ```
 
 An alternative syntax is as follows:
 
 ```kotlin
 allure {
-    gather {
-        adapters {
+    adapter {
+        frameworks {
             // Note: every time you mention an adapter, it is added to the classpath,
             // so refrain from mentioning unused adapters here
             junit5 {
@@ -201,18 +201,18 @@ allure {
 ### Aggregating results from multiple projects
 
 Suppose you have a couple of modules `/module1/build.gradle.kts`,
-`/module2/build.gradle.kts` that gather raw results for Allure:
+`/module2/build.gradle.kts` that collect raw results for Allure:
 
 ```kotlin
 // Each submodule
 plugin {
     `java-library`
-    id("io.qameta.allure-gather")
+    id("io.qameta.allure-adapter")
 }
 
 allure {
-    gather {
-        adapters {
+    adapter {
+        frameworks {
             junit5
         }
     }
@@ -388,32 +388,32 @@ Extensions:
 
   `allure` extension for `project`
 
-### io.qameta.allure-gather-base plugin
+### io.qameta.allure-adapter-base plugin
 
 Extensions:
-* io.qameta.allure.gradle.gather.AllureGatherExtension
+* io.qameta.allure.gradle.adapter.AllureAdapterExtension
 
-  `gather` extension for `allure`
+  `adapter` extension for `allure`
 
 Configurations:
 * `allureRawResultElements`
 
-  A consumable configuration that exposes the gathered raw data for building the report
+  A consumable configuration that exposes the collect raw data for building the report
 
 Tasks:
-* `copyCategories: io.qameta.allure.gradle.gather.tasks.CopyCategories`
+* `copyCategories: io.qameta.allure.gradle.adapter.tasks.CopyCategories`
 
   Copies `categories.json` to the raw results folders.
   See https://github.com/allure-framework/allure2/issues/1236
 
-### io.qameta.allure-gather plugin
+### io.qameta.allure-adapter plugin
 
-Configures automatic gathering of raw data from test tasks, adds `allure-java` adapters to the classpath.
+Configures automatic collectint of raw data from test tasks, adds `allure-java` adapters to the classpath.
 
 Configurations:
 * `allureAspectjWeaverAgent`
 
-  A configuration to declare AspectJ agent jar for data gathering
+  A configuration to declare AspectJ agent jar for data collecting
 
 ### io.qameta.allure-download plugin
 

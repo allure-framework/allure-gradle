@@ -3,7 +3,7 @@ plugins {
 }
 
 allure {
-    gather {
+    adapter {
 
     }
     report {

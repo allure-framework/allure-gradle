@@ -16,7 +16,7 @@ import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
 
 /**
  * Verifies that plugin properly adds `spi-off` dependency (the one without META-INF/services)
- * when {@link io.qameta.allure.gradle.gather.config.AdapterConfig#getAutoconfigureListeners} is {@code false}.
+ * when {@link io.qameta.allure.gradle.adapter.config.AdapterConfig#getAutoconfigureListeners} is {@code false}.
  */
 @RunWith(Parameterized.class)
 public class TestNgSpiOffTest {

@@ -5,7 +5,7 @@ plugins {
 group = "io.qameta.allure.gradle.allure"
 
 dependencies {
-    implementation(project(":allure-gather-plugin"))
+    implementation(project(":allure-adapter-plugin"))
     implementation(project(":allure-report-plugin"))
 
     testImplementation(project(":testkit-junit4"))

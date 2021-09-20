@@ -2,7 +2,6 @@ package io.qameta.allure.gradle.base
 
 import io.qameta.allure.gradle.util.conv
 import org.gradle.api.Action
-import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Property
@@ -27,13 +26,13 @@ open class AllureExtension(
     // TODO: remove when deprecated [aspectjweaver] is removed
     private val aspectjWeaver by lazy {
         @Suppress("unchecked_cast")
-        gatherExtension
+        adapterExtension
             .let {
                 it::class.java.getMethod("getAspectjWeaver").invoke(it)
             } as Property<Boolean>
     }
 
-    @Deprecated(level = DeprecationLevel.WARNING, message = "Use gather.aspectjWeaver")
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use adapter.aspectjWeaver")
     var aspectjweaver: Boolean
         get() = aspectjWeaver.get()
         set(value) = aspectjWeaver.set(value)
@@ -41,13 +40,13 @@ open class AllureExtension(
     // TODO: remove when deprecated [aspectjweaver] is removed
     private val autoconfigureProperty by lazy {
         @Suppress("unchecked_cast")
-        gatherExtension
+        adapterExtension
             .let {
                 it::class.java.getMethod("getAutoconfigure").invoke(it)
             } as Property<Boolean>
     }
 
-    @Deprecated(level = DeprecationLevel.WARNING, message = "Use gather.autoconfigure")
+    @Deprecated(level = DeprecationLevel.WARNING, message = "Use adapter.autoconfigure")
     var autoconfigure: Boolean
         get() = autoconfigureProperty.get()
         set(value) = autoconfigureProperty.set(value)
@@ -88,11 +87,11 @@ open class AllureExtension(
         action.execute(getAdapter("getSpock"))
     }
 
-    private val gatherExtension: Any
-        get() = let { it as ExtensionAware }.extensions.getByName("gather")
+    private val adapterExtension: Any
+        get() = let { it as ExtensionAware }.extensions.getByName("adapter")
 
     private fun getAdapter(adapterName: String) =
-        gatherExtension
+        adapterExtension
             .let { it::class.java.getMethod("getAdapters").invoke(it) }
             .let { it::class.java.getMethod(adapterName).invoke(it) }
 }

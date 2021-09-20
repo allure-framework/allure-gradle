@@ -3,8 +3,8 @@ plugins {
 }
 
 allure {
-    gather.adapters.spock.enabled.set(true)
-    gather {
+    adapter.adapters.spock.enabled.set(true)
+    adapter {
         allureJavaVersion.set("213")
         adapters {
             junit5

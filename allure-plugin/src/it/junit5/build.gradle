@@ -17,6 +17,6 @@ dependencies {
 }
 
 allure {
-    // Newer allure-java fail to gather data from JUnit5 :(
-    gather.allureJavaVersion = "2.13.5"
+    // Newer allure-java fail to adapter data from JUnit5 :(
+    adapter.allureJavaVersion = "2.13.5"
 }

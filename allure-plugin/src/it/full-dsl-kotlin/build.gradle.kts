@@ -1,5 +1,5 @@
 plugins {
-    id("io.qameta.allure-gather")
+    id("io.qameta.allure-adapter")
     id("io.qameta.allure-report")
 }
 
@@ -7,7 +7,7 @@ plugins {
 
 allure {
     version.set("42.0")
-    gather {
+    adapter {
         adapters {
             junit5 {
                 adapterVersion.set("42.0")
@@ -30,7 +30,7 @@ allure {
         adapters.junit5
         adapters.junit5.enabled.set(false)
     }
-    gather.adapters.spock.enabled.set(true)
+    adapter.adapters.spock.enabled.set(true)
     commandline {
         group.set("com.example")
         module.set("test")
@@ -46,7 +46,7 @@ allure {
     report.reportDir.set(buildDir.resolve("allure/reports"))
     report.dependsOnTests.set(true)
 }
-allure.gather.adapters.cucumberJvm.enabled.set(true)
+allure.adapter.adapters.cucumberJvm.enabled.set(true)
 allure.commandline.downloadUrlPattern.set("localhost")
 allure.report.dependsOnTests.set(true)
 

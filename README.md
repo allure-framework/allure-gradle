@@ -110,7 +110,7 @@ allure {
         // By default, categories.json is detected in src/test/resources/../categories.json,
         // However, it would be better to put the file in a well-known location and configure it explicitly
         categoriesFile.set(layout.projectDirectory.file("config/allure/categories.json"))
-        adapters {
+        frameworks {
             junit5 {
                 // Defaults to allureJavaVersion
                 adapterVersion.set("...")
@@ -140,7 +140,7 @@ allure {
 ### What if I have both JUnit5, JUnit4, and CucumberJVM on the classpath?
 
 By default, `allure-gradle` would detect all of them and apply all the listeners yielding 3 reports.
-If you need only one or two, specify the required ones via `adapters {...}` block.
+If you need only one or two, specify the required ones via `frameworks {...}` block.
 
 ### Adding custom results for reporting
 
@@ -172,7 +172,7 @@ However, you might want to disable them and use your own ones.
 Here's how you disable default listeners:
 
 ```kotlin
-allure.adapter.adapters.junit5.autoconfigureListeners.set(false)
+allure.adapter.frameworks.junit5.autoconfigureListeners.set(false)
 ```
 
 An alternative syntax is as follows:
@@ -180,7 +180,7 @@ An alternative syntax is as follows:
 ```kotlin
 allure {
     adapter {
-        adapters {
+        frameworks {
             // Note: every time you mention an adapter, it is added to the classpath,
             // so refrain from mentioning unused adapters here
             junit5 {
@@ -212,7 +212,7 @@ plugin {
 
 allure {
     adapter {
-        adapters {
+        frameworks {
             junit5
         }
     }

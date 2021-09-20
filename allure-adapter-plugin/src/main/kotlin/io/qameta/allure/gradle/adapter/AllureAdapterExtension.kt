@@ -69,7 +69,7 @@ open class AllureAdapterExtension @Inject constructor(
      */
     val categoriesFile: Property<RegularFile> = objects.fileProperty().conv(defaultCategoriesFile(project))
 
-    val adapters = AdapterHandler(project.container {
+    val frameworks = AdapterHandler(project.container {
         objects.newInstance<AdapterConfig>(it, objects, this).also { adapter ->
             AllureJavaAdapter.find(it)?.apply {
                 config.execute(adapter)
@@ -77,9 +77,9 @@ open class AllureAdapterExtension @Inject constructor(
         }
     })
 
-    fun adapters(action: Action<in AdapterHandler>) {
+    fun frameworks(action: Action<in AdapterHandler>) {
         // Custom type is for better Kotlin DSL
-        action.execute(adapters)
+        action.execute(frameworks)
     }
 
     fun addAspectjTo(tasks: TaskCollection<out Task>) = tasks.configureEach {
@@ -135,7 +135,7 @@ open class AllureAdapterExtension @Inject constructor(
                 // junit5.autoconfigureListeners is enabled
                 jvmArgumentProviders += ConditionalArgumentProvider(
                     project.provider {
-                        adapters.configuredAdapters[AllureJavaAdapter.junit5]?.let {
+                        frameworks.configuredAdapters[AllureJavaAdapter.junit5]?.let {
                             listOf(
                                 if (it.autoconfigureListeners.get()) {
                                     "-Djunit.jupiter.extensions.autodetection.enabled=true"

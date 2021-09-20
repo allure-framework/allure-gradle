@@ -11,7 +11,7 @@ tasks.register("printAdapters") {
     doLast {
         buildDir.mkdirs()
         file("$buildDir/printAdapters.txt").write(
-            allure.adapter.adapters.toList().collect { it.toString() }.sort().toString()
+            allure.adapter.frameworks.toList().collect { it.toString() }.sort().toString()
         )
     }
 }

@@ -8,7 +8,7 @@ plugins {
 allure {
     version = "42.0"
     adapter {
-        adapters {
+        frameworks {
             junit5 {
                 adapterVersion = "42.0"
                 enabled = true
@@ -28,10 +28,10 @@ allure {
                 }
             }
         }
-        adapters.junit5
-        adapters.junit5.enabled = false
+        frameworks.junit5
+        frameworks.junit5.enabled = false
     }
-    adapter.adapters.spock.enabled = true
+    adapter.frameworks.spock.enabled = true
     commandline {
         group = "com.example"
         module = "test"
@@ -47,7 +47,7 @@ allure {
     report.reportDir = file("$buildDir/allure/reports")
     report.dependsOnTests = true
 }
-allure.adapter.adapters.cucumberJvm.enabled = true
+allure.adapter.frameworks.cucumberJvm.enabled = true
 allure.commandline.downloadUrlPattern = "localhost"
 allure.report.dependsOnTests = true
 

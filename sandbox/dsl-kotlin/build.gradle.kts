@@ -3,10 +3,10 @@ plugins {
 }
 
 allure {
-    adapter.adapters.spock.enabled.set(true)
+    adapter.frameworks.spock.enabled.set(true)
     adapter {
         allureJavaVersion.set("213")
-        adapters {
+        frameworks {
             junit5
             cucumber2Jvm {
             }

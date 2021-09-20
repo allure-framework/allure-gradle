@@ -58,14 +58,14 @@ open class AllureAdapterPlugin : Plugin<Project> {
 
         afterEvaluate {
             // We don't know if the user updates autoconfigure value, so we delay the decision till afterEvaluate
-            adapterExtension.takeIf { it.adapters.configuredAdapters.isEmpty() }?.run {
+            adapterExtension.takeIf { it.frameworks.configuredAdapters.isEmpty() }?.run {
                 for (adapter in AllureJavaAdapter.values()) {
-                    adapters.create(adapter.name)
+                    frameworks.create(adapter.name)
                 }
             }
 
             if (GradleVersion.current() >= GradleVersion.version("6.6")) {
-                configureSpiOffSubstitution(adapterExtension.adapters)
+                configureSpiOffSubstitution(adapterExtension.frameworks)
             } else if (GradleVersion.current() >= GradleVersion.version("5.3")) {
                 // Older Gradle do not have "substitute with classifier" feature
                 // so we use ArtifactTransformation to trim META-INF/services from the jar
@@ -109,7 +109,7 @@ open class AllureAdapterPlugin : Plugin<Project> {
 
     private fun Project.autoconfigureDependencyRules(extension: AllureAdapterExtension) {
         // We need to initialize all the adapters, so we don't need lazy evaluation configureEach
-        extension.adapters.all {
+        extension.frameworks.all {
             activateOn.all {
                 val rule = this
                 dependencies {

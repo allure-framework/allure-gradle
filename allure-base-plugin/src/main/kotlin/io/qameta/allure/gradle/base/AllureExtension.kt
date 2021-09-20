@@ -52,37 +52,37 @@ open class AllureExtension(
         set(value) = autoconfigureProperty.set(value)
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.cucumberJvm")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.cucumberJvm")
     fun useCucumberJVM(action: Action<in Any>) {
         action.execute(getAdapter("getCucumberJvm"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.cucumber2Jvm")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.cucumber2Jvm")
     fun useCucumber2JVM(action: Action<in Any>) {
         action.execute(getAdapter("getCucumber2Jvm"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.junit4")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.junit4")
     fun useJUnit4(action: Action<in Any>) {
         action.execute(getAdapter("getJunit4"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.junit5")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.junit5")
     fun useJUnit5(action: Action<in Any>) {
         action.execute(getAdapter("getJunit5"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.testng")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.testng")
     fun useTestNG(action: Action<in Any>) {
         action.execute(getAdapter("getTestng"))
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use adapters.spock")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.spock")
     fun useSpock(action: Action<in Any>) {
         action.execute(getAdapter("getSpock"))
     }
@@ -92,6 +92,6 @@ open class AllureExtension(
 
     private fun getAdapter(adapterName: String) =
         adapterExtension
-            .let { it::class.java.getMethod("getAdapters").invoke(it) }
+            .let { it::class.java.getMethod("getFrameworks").invoke(it) }
             .let { it::class.java.getMethod(adapterName).invoke(it) }
 }

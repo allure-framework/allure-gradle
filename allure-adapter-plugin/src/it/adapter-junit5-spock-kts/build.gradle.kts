@@ -8,7 +8,7 @@ repositories {
 
 allure {
     adapter {
-        adapters {
+        frameworks {
             junit5 {
                 adapterVersion.set("42.0")
             }
@@ -21,7 +21,7 @@ val printAdapters by tasks.registering {
     doLast {
         buildDir.mkdirs()
         file("$buildDir/printAdapters.txt").writeText(
-            allure.adapter.adapters.toList().map { it.toString() }.sorted().toString()
+            allure.adapter.frameworks.toList().map { it.toString() }.sorted().toString()
         )
     }
 }

@@ -45,7 +45,7 @@ public class TestNgSpiOffTest {
                 .filteredOn(task -> task.getPath().equals(":test") || task.getPath().equals(":allureReport"))
                 .extracting("outcome")
                 .containsExactly(SUCCESS);
-        File resultsDir = new File(projectDir.getAbsolutePath() + "/build/allure-results/test");
+        File resultsDir = new File(projectDir.getAbsolutePath() + "/build/allure-results");
         // executor.json is always generated
         assertThat(resultsDir.listFiles())
                 .filteredOn(file -> !file.getName().equals("executor.json"))

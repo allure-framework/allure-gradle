@@ -27,15 +27,22 @@ class DefaultAutoconfigureRuleBuilder(
     override fun compileOnly(dependencyNotation: Any) = compileOnly(dependencyNotation, null)
 
     override fun compileOnly(dependencyNotation: Any, configureAction: Action<in DependencyMetadata<*>>?) {
-        deps.getOrPut("compile") { mutableListOf() } +=
-            DependencyDeclaration(dependencyNotation, configureAction)
+        val dependencyDeclaration = DependencyDeclaration(dependencyNotation, configureAction)
+        addDependencyToVariant("compile", dependencyDeclaration)
+        addDependencyToVariant("apiElements", dependencyDeclaration)
     }
 
     override fun runtimeOnly(dependencyNotation: Any) = runtimeOnly(dependencyNotation, null)
 
     override fun runtimeOnly(dependencyNotation: Any, configureAction: Action<in DependencyMetadata<*>>?) {
-        deps.getOrPut("runtime") { mutableListOf() } +=
-            DependencyDeclaration(dependencyNotation, configureAction)
+        val dependencyDeclaration = DependencyDeclaration(dependencyNotation, configureAction)
+        addDependencyToVariant("runtime", dependencyDeclaration)
+        addDependencyToVariant("runtimeElements", dependencyDeclaration)
+    }
+
+    private fun addDependencyToVariant(variantName: String, dependencyDeclaration: DependencyDeclaration) {
+        deps.getOrPut(variantName) { mutableListOf() } +=
+            dependencyDeclaration
     }
 
     fun build(): AutoconfigureRule = SimpleRule(

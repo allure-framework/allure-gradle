@@ -65,6 +65,9 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : DefaultTask(
     protected val inputFiles = project.files(resultsDirs.map { dirs -> dirs.map { project.fileTree(it) } })
 
     init {
-        dependsOn(dependsOnTests.map { if (it) emptyList<Any>() else resultsDirs })
+        dependsOn(dependsOnTests.map { if (it) resultsDirs else emptyList<Any>() })
+        // In any case, if user launches "./gradlew test allureReport" the report generation
+        // should wait for test execution
+        mustRunAfter(resultsDirs)
     }
 }

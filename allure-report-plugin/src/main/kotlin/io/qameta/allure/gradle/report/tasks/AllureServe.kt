@@ -3,7 +3,6 @@ package io.qameta.allure.gradle.report.tasks
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
@@ -24,8 +23,12 @@ open class AllureServe @Inject constructor(objects: ObjectFactory) : AllureExecT
     val host = objects.property<String>()
 
     @Internal
-    @Option(option = "port", description = "This port will be used to start web server for the report")
     val port = objects.property<Int>()
+
+    @Option(option = "port", description = "This port will be used to start web server for the report")
+    fun setPort(port: String) {
+        this.port.set(port.toInt())
+    }
 
     @TaskAction
     fun serveAllureReport() {

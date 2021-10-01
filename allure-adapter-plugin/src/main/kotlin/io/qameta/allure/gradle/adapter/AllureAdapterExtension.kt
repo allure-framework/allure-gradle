@@ -99,16 +99,16 @@ open class AllureAdapterExtension @Inject constructor(
 
     fun gatherResultsFrom(tasks: TaskCollection<out Task>) {
         project.apply<AllureAdapterBasePlugin>()
-        tasks.configureEach {
+        // This causes test task realization early :-(
+        // TODO: think of a better way to capture test dependencies without realizing the tasks
+        tasks.all {
             internalGatherResultsFrom(this)
         }
     }
 
     fun gatherResultsFrom(task: TaskProvider<out Task>) {
-        project.apply<AllureAdapterBasePlugin>()
-        task {
-            internalGatherResultsFrom(this)
-        }
+        // TODO: think of a better way to capture test dependencies without realizing the tasks
+        gatherResultsFrom(task.get())
     }
 
     fun gatherResultsFrom(task: Task) {

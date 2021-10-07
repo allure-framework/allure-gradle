@@ -121,7 +121,9 @@ open class AllureAdapterExtension @Inject constructor(
         task.run {
             // Each task should store results in its own folder
             // End user should not depend on the folder name, so we do not expose it
-            val rawResults = project.layout.buildDirectory.dir("allure-results/${task.name}").get().asFile
+            // Note: it is very important that results directory is named `allure-results`, so the folder is automatically
+            // detected by Allure Jenkins plugin.
+            val rawResults = project.layout.buildDirectory.dir("allure-raw-results/${task.name}/allure-results").get().asFile
             // See https://github.com/allure-framework/allure2/issues/1236
             // We exclude categories.json since report task would copy categories right to the folder
             // of the current task

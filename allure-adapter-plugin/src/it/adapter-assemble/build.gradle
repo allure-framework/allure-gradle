@@ -1,0 +1,20 @@
+plugins {
+    id("java")
+    id("io.qameta.allure-adapter")
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.8.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+tasks.test {
+    useJUnitPlatform()
+    doLast {
+        throw new IllegalStateException("test task must not be called when executing ./gradlew assemble")
+    }
+}

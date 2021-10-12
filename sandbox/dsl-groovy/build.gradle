@@ -1,12 +1,15 @@
 plugins {
-    id("io.qameta.allure")
+    id('java-library')
+    id('io.qameta.allure')
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 
 allure {
+    version = '2.15.0'
     adapter {
-
-    }
-    report {
-
+        allureJavaVersion = '2.15.0'
     }
 }

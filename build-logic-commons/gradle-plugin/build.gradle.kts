@@ -9,12 +9,23 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-val kotlinDslVersion = PluginDependenciesSpec { id ->
-    object : PluginDependencySpec {
-        var version: String? = null
-        override fun version(version: String?) = apply { this.version = version }
-        override fun apply(apply: Boolean) = this
-        override fun toString() = version ?: ""
+val kotlinDslVersion = object : PluginDependenciesSpec {
+    override fun id(id: String): PluginDependencySpec {
+        return object : PluginDependencySpec {
+            var version: String? = null
+            override fun version(version: String?) = apply { this.version = version }
+            override fun apply(apply: Boolean) = this
+            override fun toString() = version ?: ""
+        }
+    }
+
+    override fun alias(notation: Provider<PluginDependency>): PluginDependencySpec {
+        return object : PluginDependencySpec {
+            var version: String? = null
+            override fun version(version: String?) = apply { this.version = version }
+            override fun apply(apply: Boolean) = this
+            override fun toString() = version ?: ""
+        }
     }
 }.`kotlin-dsl`.toString()
 

@@ -1,6 +1,7 @@
 .gradle
 /build/
 /*/build/
+/sandbox/*/build/
 *.iml
 .idea/
 

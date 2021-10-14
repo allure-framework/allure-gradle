@@ -1,17 +1,15 @@
 plugins {
+    id("java-library")
     id("io.qameta.allure")
 }
 
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+}
+
 allure {
-    adapter.frameworks.spock.enabled.set(true)
+    version.set("2.15.0")
     adapter {
-        allureJavaVersion.set("213")
-        frameworks {
-            junit5
-            cucumber2Jvm {
-            }
-        }
-    }
-    report {
+        allureJavaVersion.set("2.15.0")
     }
 }

@@ -170,6 +170,7 @@ open class AllureAdapterExtension @Inject constructor(
             "taskName" to taskName,
             "buildName" to project.name,
             "projectPath" to project.path,
+            // toString is to avoid unexpected interaction of custom objects and Json serializer
             "projectVersion" to project.version.toString()
         )
         val resultsPath = Paths.get(resultsDir.absoluteFile.path)

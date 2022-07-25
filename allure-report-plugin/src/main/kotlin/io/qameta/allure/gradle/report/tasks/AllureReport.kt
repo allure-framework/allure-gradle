@@ -8,13 +8,20 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.the
+import org.gradle.process.ExecOperations
 import report
 import java.io.File
 import javax.inject.Inject
 
 open class AllureReport @Inject constructor(objects: ObjectFactory) : AllureExecTask(objects) {
+
+    interface Injected {
+        @get:Inject val execOperations: ExecOperations
+    }
+
     @OutputDirectory
     val reportDir = objects.directoryProperty().conv(
         project.the<AllureExtension>().report.reportDir.map { it.dir(this@AllureReport.name) }
@@ -36,9 +43,10 @@ open class AllureReport @Inject constructor(objects: ObjectFactory) : AllureExec
 
     @TaskAction
     fun generateAllureReport() {
+        val injected = project.objects.newInstance<Injected>()
         val rawResults = rawResults.map { it.absolutePath }
         logger.info("Input directories for $name: $rawResults")
-        project.exec {
+        injected.execOperations.exec {
             executable(allureExecutable)
             if (verbose.get()) {
                 args("--verbose")

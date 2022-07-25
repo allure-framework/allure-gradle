@@ -1,4 +1,4 @@
-import de.fayard.refreshVersions.bootstrapRefreshVersions
+import de.fayard.refreshVersions.core.bootstrapRefreshVersionsCore
 
 pluginManagement {
     repositories {
@@ -15,10 +15,10 @@ buildscript {
         gradlePluginPortal()
     }
     // See https://jmfayard.github.io/refreshVersions/setup/
-    dependencies.classpath("de.fayard.refreshVersions:refreshVersions:0.9.7")
+    dependencies.classpath("de.fayard.refreshVersions:refreshVersions:0.40.2")
 }
 
-bootstrapRefreshVersions()
+bootstrapRefreshVersionsCore()
 
 val isCiServer = System.getenv().containsKey("CI")
 

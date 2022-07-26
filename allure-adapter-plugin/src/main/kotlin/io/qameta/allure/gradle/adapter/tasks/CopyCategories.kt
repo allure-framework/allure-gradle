@@ -11,6 +11,7 @@ import org.gradle.kotlin.dsl.the
 import java.io.File
 import javax.inject.Inject
 
+@CacheableTask
 open class CopyCategories @Inject constructor(objects: ObjectFactory) : DefaultTask() {
     @Optional
     @InputFile

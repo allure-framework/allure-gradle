@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: 'Tests (JDK ${{ matrix.jdk }}, ${{ matrix.os }})'
+    name: 'Tests (JDK ${{ matrix.java-version }}, ${{ matrix.os }})'
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false

@@ -28,16 +28,16 @@ public class DependenciesTest {
 
     // The order of versions is newest, oldest, rest
     private static final String[][] IT_MATRIX = {
-        { "src/it/cucumber-jvm",         "7.0", "5.0", "6.0" },
-        { "src/it/cucumber2-jvm",        "7.0", "5.0", "6.0" },
-        { "src/it/junit4",               "7.0", "5.0", "6.0" },
-        { "src/it/junit4-autoconfigure", "7.0", "5.0", "6.0" },
-        { "src/it/junit4-kotlin",        "7.0", "5.1", "5.0" },
-        { "src/it/junit5",               "7.0", "5.0", "6.0" },
-        { "src/it/junit5-5.8.1",         "7.2", "5.0", "6.0" },
-        { "src/it/testng",               "7.0", "5.0", "6.0" },
-        { "src/it/testng-autoconfigure", "7.0", "5.0", "6.0" },
-        { "src/it/spock",                "7.0", "5.0", "6.0" },
+        { "src/it/cucumber-jvm",         "7.5.1", "7.0", "5.0", "6.0" },
+        { "src/it/cucumber2-jvm",        "7.5.1", "7.0", "5.0", "6.0" },
+        { "src/it/junit4",               "7.5.1", "7.0", "5.0", "6.0" },
+        { "src/it/junit4-autoconfigure", "7.5.1", "7.0", "5.0", "6.0" },
+        { "src/it/junit4-kotlin",        "7.5.1", "7.0", "5.1", "5.0" },
+        { "src/it/junit5",               "7.5.1", "7.0", "5.0", "6.0" },
+        { "src/it/junit5-5.8.1",         "7.5.1", "7.2", "5.0", "6.0" },
+        { "src/it/testng",               "7.5.1", "7.0", "5.0", "6.0" },
+        { "src/it/testng-autoconfigure", "7.5.1", "7.0", "5.0", "6.0" },
+        { "src/it/spock",                "7.5.1", "7.0", "5.0", "6.0" },
     };
 
     @Parameterized.Parameter(0)

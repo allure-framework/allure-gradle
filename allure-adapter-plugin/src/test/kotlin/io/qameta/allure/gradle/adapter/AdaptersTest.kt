@@ -34,6 +34,12 @@ class AdaptersTest {
         @Parameterized.Parameters(name = "{1} [{0}]")
         fun getFrameworks() = listOf(
             arrayOf(
+                "7.5.1",
+                "src/it/adapter-junit5-spock-kts",
+                arrayOf("printAdapters"),
+                "[AdapterConfig{junit5}, AdapterConfig{spock}]"
+            ),
+            arrayOf(
                 "7.0",
                 "src/it/adapter-junit5-spock-kts",
                 arrayOf("printAdapters"),
@@ -46,6 +52,11 @@ class AdaptersTest {
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]"
             ),
             arrayOf(
+                "7.5.1",
+                "src/it/adapter-all",
+                arrayOf("printAdapters"),
+                "[AdapterConfig{cucumber2Jvm}, AdapterConfig{cucumber3Jvm}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumberJvm}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{spock}, AdapterConfig{testng}]"
+            ),            arrayOf(
                 "7.0",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),

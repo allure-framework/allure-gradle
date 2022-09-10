@@ -114,6 +114,8 @@ public class GradleRunnerRule extends ExternalResource {
         List<String> args = new ArrayList<>();
         args.add("--stacktrace");
         args.add("--info");
+        // --no-daemon does not work with GradleRunner
+        args.add("-Porg.gradle.daemon=false");
         if (testGradle.compareTo(GradleVersion.version("7.0")) >= 0) {
             // Disable file watching since it prevents file removal on Windows
             // See https://github.com/gradle/gradle/pull/16977

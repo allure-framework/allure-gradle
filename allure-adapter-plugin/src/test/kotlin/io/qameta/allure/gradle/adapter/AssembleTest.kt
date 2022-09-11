@@ -36,7 +36,7 @@ class AssembleTest {
                 arrayOf("assemble")
             ),
             arrayOf(
-                "5.0",
+                "6.0",
                 "src/it/adapter-assemble",
                 arrayOf("assemble")
             )

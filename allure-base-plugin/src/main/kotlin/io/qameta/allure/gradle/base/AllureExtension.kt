@@ -4,6 +4,7 @@ import io.qameta.allure.gradle.util.conv
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.provideDelegate
@@ -11,7 +12,7 @@ import org.gradle.kotlin.dsl.provideDelegate
 /**
  * Provides API for configuring common properties for Allure.
  */
-open class AllureExtension(
+abstract class AllureExtension(
     objects: ObjectFactory
 ) {
     companion object {
@@ -22,6 +23,11 @@ open class AllureExtension(
      * `allure-commandline` version
      */
     val version: Property<String> = objects.property<String>().conv("2.19.0")
+
+    /**
+     * Default environment variables for launching `allure-commandline`.
+     */
+    abstract val environment: MapProperty<String, Any>
 
     // TODO: remove when deprecated [aspectjweaver] is removed
     private val aspectjWeaver by lazy {

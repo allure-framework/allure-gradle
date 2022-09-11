@@ -105,6 +105,9 @@ allure {
         allureJavaVersion.set("2.19.0")
         aspectjVersion.set("1.9.5")
 
+        // Customize environment variables for launching Allure
+        environment.put("JAVA_HOME", "/path/to/java_home")
+
         autoconfigure.set(true)
         autoconfigureListeners.set(true)
         aspectjWeaver.set(true)

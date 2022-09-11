@@ -46,7 +46,7 @@ class AdaptersTest {
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]"
             ),
             arrayOf(
-                "5.0",
+                "6.0",
                 "src/it/adapter-junit5-spock-kts",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]"
@@ -56,14 +56,15 @@ class AdaptersTest {
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{cucumber2Jvm}, AdapterConfig{cucumber3Jvm}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumberJvm}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{spock}, AdapterConfig{testng}]"
-            ),            arrayOf(
+            ),
+            arrayOf(
                 "7.0",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{cucumber2Jvm}, AdapterConfig{cucumber3Jvm}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumberJvm}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{spock}, AdapterConfig{testng}]"
             ),
             arrayOf(
-                "5.0",
+                "6.0",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{cucumber2Jvm}, AdapterConfig{cucumber3Jvm}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumberJvm}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{spock}, AdapterConfig{testng}]"

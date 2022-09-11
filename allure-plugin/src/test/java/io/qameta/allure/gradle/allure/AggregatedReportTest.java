@@ -35,8 +35,8 @@ public class AggregatedReportTest {
     @Parameterized.Parameters(name = "{1} [{0}]")
     public static Collection<Object[]> getFrameworks() {
         return Arrays.asList(
+                new Object[]{"7.5.1", "src/it/report-multi", new String[]{"allureAggregateReport"}},
                 new Object[]{"7.0", "src/it/report-multi", new String[]{"allureAggregateReport"}},
-                new Object[]{"5.0", "src/it/report-multi", new String[]{"allureAggregateReport"}},
                 new Object[]{"6.0", "src/it/report-multi", new String[]{"allureAggregateReport"}}
         );
     }

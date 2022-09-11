@@ -8,8 +8,9 @@ dependencies {
 }
 
 allure {
-    version.set("2.15.0")
-    adapter {
-        allureJavaVersion.set("2.15.0")
-    }
+    environment.put("TZ", "UTC")
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }

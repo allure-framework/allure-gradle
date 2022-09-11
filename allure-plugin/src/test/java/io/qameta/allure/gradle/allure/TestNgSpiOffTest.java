@@ -31,7 +31,7 @@ public class TestNgSpiOffTest {
 
     @Parameterized.Parameters(name = "{0}")
     public static Collection<String> getFrameworks() {
-        return Arrays.asList("7.5.1", "7.0", "6.0", "5.4", "5.3");
+        return Arrays.asList("7.5.1", "7.0", "6.0");
     }
 
     @Test

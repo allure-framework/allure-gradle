@@ -31,11 +31,9 @@ class DslTest {
             arrayOf("7.5.1", "src/it/full-dsl-kotlin"),
             arrayOf("7.0", "src/it/full-dsl-kotlin"),
             arrayOf("6.0", "src/it/full-dsl-kotlin"),
-            arrayOf("5.0", "src/it/full-dsl-kotlin"),
             arrayOf("7.5.1", "src/it/full-dsl-groovy"),
             arrayOf("7.0", "src/it/full-dsl-groovy"),
-            arrayOf("6.0", "src/it/full-dsl-groovy"),
-            arrayOf("5.0", "src/it/full-dsl-groovy")
+            arrayOf("6.0", "src/it/full-dsl-groovy")
         )
     }
 

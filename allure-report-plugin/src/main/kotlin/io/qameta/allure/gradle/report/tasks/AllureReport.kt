@@ -2,19 +2,21 @@ package io.qameta.allure.gradle.report.tasks
 
 import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
+import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
 import io.qameta.allure.gradle.util.conv
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.the
+import org.gradle.process.internal.ExecActionFactory
 import report
 import java.io.File
 import javax.inject.Inject
 
-open class AllureReport @Inject constructor(objects: ObjectFactory) : AllureExecTask(objects) {
+abstract class AllureReport @Inject constructor(objects: ObjectFactory) : AllureExecTask(objects) {
     @OutputDirectory
     val reportDir = objects.directoryProperty().conv(
         project.the<AllureExtension>().report.reportDir.map { it.dir(this@AllureReport.name) }
@@ -34,22 +36,25 @@ open class AllureReport @Inject constructor(objects: ObjectFactory) : AllureExec
         const val GENERATE_COMMAND = "generate"
     }
 
-    @TaskAction
-    fun generateAllureReport() {
-        val rawResults = rawResults.map { it.absolutePath }
-        logger.info("Input directories for $name: $rawResults")
-        project.exec {
-            executable(allureExecutable)
-            if (verbose.get()) {
-                args("--verbose")
+    init {
+        executable(allureExecutable.map { it.absolutePath }.lazyToString())
+        argumentProviders += ConditionalArgumentProvider(
+            project.provider {
+                val args = mutableListOf<String>()
+                if (verbose.get()) {
+                    args += "--verbose"
+                }
+                args += GENERATE_COMMAND
+                val rawResults = rawResults.get().map { it.absolutePath }
+                logger.info("Input directories for $name: $rawResults")
+                args.addAll(rawResults)
+                args += "-o"
+                args += reportDir.get().asFile.absolutePath
+                if (clean.get()) {
+                    args += "--clean"
+                }
+                args
             }
-            args(GENERATE_COMMAND)
-            args(rawResults)
-            args("-o", reportDir.get().asFile.absolutePath)
-            // TODO: replace with Gradle's delete?
-            if (clean.get()) {
-                args("--clean")
-            }
-        }
+        )
     }
 }

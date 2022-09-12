@@ -28,4 +28,4 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew --no-parallel build

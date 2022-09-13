@@ -5,7 +5,7 @@ plugins {
 group = "io.qameta.allure.gradle.report"
 
 dependencies {
-    implementation(project(":allure-base-plugin"))
+    api(project(":allure-base-plugin"))
 
     testImplementation(project(":testkit-junit4"))
     testImplementation("org.assertj:assertj-core:_")

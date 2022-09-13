@@ -29,3 +29,8 @@ jobs:
 
       - name: Build
         run: ./gradlew --no-parallel build
+
+      - name: Build Sandbox
+        run: |
+          cd sandbox
+          ./gradlew --no-parallel build

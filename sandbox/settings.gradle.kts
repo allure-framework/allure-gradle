@@ -13,3 +13,4 @@ includeBuild("../")
 
 include("dsl-kotlin")
 include("dsl-groovy")
+include("precompiled-kotlin")

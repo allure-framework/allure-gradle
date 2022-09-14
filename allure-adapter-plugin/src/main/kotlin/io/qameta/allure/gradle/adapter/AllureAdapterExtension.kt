@@ -4,6 +4,7 @@ import groovy.json.JsonOutput
 import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
 import io.qameta.allure.gradle.base.tasks.JavaAgentArgumentProvider
 import io.qameta.allure.gradle.adapter.config.*
+import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.util.conv
 import io.qameta.allure.gradle.util.forUseAtConfigurationTimeBackport
 import org.gradle.api.Action
@@ -40,9 +41,9 @@ open class AllureAdapterExtension @Inject constructor(
     /**
      * `allure-java` version (adapters for test engines)
      */
-    val allureJavaVersion: Property<String> = objects.property<String>().conv("2.13.9")
+    val allureJavaVersion: Property<String> = objects.property<String>().conv(project.the<AllureExtension>().version)
         .forUseAtConfigurationTimeBackport()
-    val aspectjVersion: Property<String> = objects.property<String>().conv("1.9.5")
+    val aspectjVersion: Property<String> = objects.property<String>().conv("1.9.9.1")
 
 
     /**

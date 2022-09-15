@@ -38,7 +38,7 @@ class TestAndAllureReportTest {
         @Parameterized.Parameters(name = "{1},  [{0}]")
         fun getFrameworks(): Array<Any> {
             val res = mutableListOf<Array<Any>>()
-            for (gradleVersion in listOf("7.2", "7.0", "6.8.3")) {
+            for (gradleVersion in listOf("7.5.1", "7.2", "7.0", "6.8.3")) {
                 for (project in listOf("src/it/junit5-5.8.1")) {
                     for (dependOnTests in listOf(true, false)) {
                         res.add(arrayOf(gradleVersion, project, dependOnTests))

@@ -18,6 +18,11 @@ jobs:
       matrix:
         os: [ 'ubuntu', 'windows' ]
         java-version: [ '8.0.x', '11.0.x' ]
+        exclude:
+          - os: windows
+            # Java 8 + Windows cause build crashes for unknown reason
+            # https://github.com/gradle/gradle/issues/3093 might be relevant
+            java-version: '8.0.x'
     steps:
       - uses: actions/checkout@v2
 

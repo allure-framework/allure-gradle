@@ -9,6 +9,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
+import org.gradle.util.GradleVersion
 import java.io.File
 
 abstract class AllureExecTask constructor(objects: ObjectFactory) : DefaultTask() {
@@ -68,6 +69,12 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : DefaultTask(
         dependsOn(dependsOnTests.map { if (it) resultsDirs else emptyList<Any>() })
         // In any case, if user launches "./gradlew test allureReport" the report generation
         // should wait for test execution
-        mustRunAfter(resultsDirs)
+        if (GradleVersion.current() < GradleVersion.version("7.5")) {
+            mustRunAfter(resultsDirs)
+        } else {
+            // See https://github.com/allure-framework/allure-gradle/issues/90
+            // See https://github.com/gradle/gradle/issues/21962
+            mustRunAfter(resultsDirs.map { it.elements })
+        }
     }
 }

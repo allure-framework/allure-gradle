@@ -31,6 +31,7 @@ public class ReportOnlyTest {
     @Parameterized.Parameters(name = "{0} [{1}]")
     public static Collection<Object[]> getFrameworks() {
         return Arrays.asList(
+                new Object[]{"src/it/report-only", "7.5.1"},
                 new Object[]{"src/it/report-only", "7.0"},
                 new Object[]{"src/it/report-only", "5.0"},
                 new Object[]{"src/it/report-only", "6.0"}

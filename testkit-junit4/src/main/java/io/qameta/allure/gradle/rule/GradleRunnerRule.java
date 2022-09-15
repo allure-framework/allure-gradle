@@ -88,7 +88,6 @@ public class GradleRunnerRule extends ExternalResource {
         String gradleVersion = versionSupplier.get();
         GradleVersion testGradle = GradleVersion.version(gradleVersion);
 
-        // tasks.named requires Gradle 5.0+
         // Configuration avoidance tasks.register requires Gradle 4.9+
         if (testGradle.compareTo(GradleVersion.version("6.0")) < 0) {
             Assert.fail("allure-gradle plugin requires Gradle 6.0+, the can't launch tests with Gradle " + testGradle);

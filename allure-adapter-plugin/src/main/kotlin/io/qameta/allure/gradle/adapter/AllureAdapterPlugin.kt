@@ -4,7 +4,6 @@ import adapter
 import io.qameta.allure.gradle.base.AllureBasePlugin
 import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.adapter.autoconfigure.BaseTrimMetaInfServices
-import io.qameta.allure.gradle.adapter.autoconfigure.TrimMetaInfServices53
 import io.qameta.allure.gradle.adapter.autoconfigure.TrimMetaInfServices54
 import io.qameta.allure.gradle.adapter.config.AdapterHandler
 import io.qameta.allure.gradle.adapter.config.AllureJavaAdapter
@@ -70,12 +69,7 @@ open class AllureAdapterPlugin : Plugin<Project> {
                 // Older Gradle do not have "substitute with classifier" feature
                 // so we use ArtifactTransformation to trim META-INF/services from the jar
                 dependencies {
-                    val transformClass = if (GradleVersion.current() >= GradleVersion.version("5.4")) {
-                        TrimMetaInfServices54::class
-                    } else {
-                        TrimMetaInfServices53::class
-                    }
-                    registerTransform(transformClass) {
+                    registerTransform(TrimMetaInfServices54::class) {
                         from.attribute(artifactType, "jar")
                         to.attribute(artifactType, BaseTrimMetaInfServices.NO_SPI_JAR)
                     }

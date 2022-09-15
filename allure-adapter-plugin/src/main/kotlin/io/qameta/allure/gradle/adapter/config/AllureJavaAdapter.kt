@@ -60,10 +60,10 @@ internal enum class AllureJavaAdapter(
             compileAndRuntime(dep) {
                 val gradleVersion = GradleVersion.current()
                 if (gradleVersion < GradleVersion.version("6.6") && trimServices.get()) {
-                    if (gradleVersion < GradleVersion.version("5.3")) {
+                    if (gradleVersion < GradleVersion.version("6.0")) {
                         throw IllegalStateException(
                             "Autoconfiguration for $name with autoconfigureListeners=false" +
-                                    " requires Gradle 5.3+. Please upgrade Gradle to 5.3+ or add ${dep.get()}:spi-off " +
+                                    " requires Gradle 6.0+. Please upgrade Gradle to 6.0+ or add ${dep.get()}:spi-off " +
                                     "to the relevant configurations (e.g. testImplementation) manually and " +
                                     "turn off autoconfiguration with $name { enabled.set(false) }"
                         )

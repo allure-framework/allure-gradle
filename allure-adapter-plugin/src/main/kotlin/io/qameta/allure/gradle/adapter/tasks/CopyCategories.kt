@@ -2,7 +2,6 @@ package io.qameta.allure.gradle.adapter.tasks
 
 import adapter
 import io.qameta.allure.gradle.base.AllureExtension
-import io.qameta.allure.gradle.util.conv
 import org.gradle.api.DefaultTask
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
@@ -17,7 +16,7 @@ open class CopyCategories @Inject constructor(objects: ObjectFactory) : DefaultT
     @SkipWhenEmpty
     @PathSensitive(PathSensitivity.NONE)
     val categoriesFile = objects.fileProperty()
-        .conv(project.the<AllureExtension>().adapter.categoriesFile)
+        .convention(project.the<AllureExtension>().adapter.categoriesFile)
 
     @Internal
     val destinationDirs = objects.setProperty<File>()
@@ -29,7 +28,7 @@ open class CopyCategories @Inject constructor(objects: ObjectFactory) : DefaultT
 
     @OutputFile
     val markerFile = objects.directoryProperty()
-        .conv(project.layout.buildDirectory.dir("copy-categories/$name"))
+        .convention(project.layout.buildDirectory.dir("copy-categories/$name"))
 
     @TaskAction
     fun run() {

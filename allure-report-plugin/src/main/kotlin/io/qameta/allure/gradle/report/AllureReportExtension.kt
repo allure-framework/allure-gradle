@@ -1,6 +1,5 @@
 package io.qameta.allure.gradle.report
 
-import io.qameta.allure.gradle.util.conv
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
@@ -25,7 +24,7 @@ open class AllureReportExtension @Inject constructor(
      * folders.
      */
     val reportDir: DirectoryProperty = objects.directoryProperty().apply {
-        conv(project.the<ReportingExtension>().baseDirectory.dir("allure-report"))
+        convention(project.the<ReportingExtension>().baseDirectory.dir("allure-report"))
     }
 
     /**
@@ -34,7 +33,7 @@ open class AllureReportExtension @Inject constructor(
      * approach: "the task should (re)build all its prerequisites", so the user could edit the source file,
      * launch `allureReport` and get the updated report with all the tests updated.
      */
-    val dependsOnTests: Property<Boolean> = objects.property<Boolean>().conv(
+    val dependsOnTests: Property<Boolean> = objects.property<Boolean>().convention(
         project.provider {
             false
         }

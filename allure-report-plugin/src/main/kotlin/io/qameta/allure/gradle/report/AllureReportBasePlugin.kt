@@ -23,10 +23,7 @@ open class AllureReportBasePlugin : Plugin<Project> {
         apply<AllureBasePlugin>()
         the<AllureExtension>().extensions.create<AllureReportExtension>(
             AllureReportExtension.NAME,
-            project,
-            // Gradle 5 can't inject objects yet
-            // TODO: remove when Gradle 5 support can be dropped
-            objects
+            project
         )
     }
 }

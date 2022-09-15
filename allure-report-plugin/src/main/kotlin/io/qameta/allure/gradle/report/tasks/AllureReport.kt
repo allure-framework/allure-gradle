@@ -3,22 +3,19 @@ package io.qameta.allure.gradle.report.tasks
 import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
 import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
-import io.qameta.allure.gradle.util.conv
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.the
-import org.gradle.process.internal.ExecActionFactory
 import report
 import java.io.File
 import javax.inject.Inject
 
 abstract class AllureReport @Inject constructor(objects: ObjectFactory) : AllureExecTask(objects) {
     @OutputDirectory
-    val reportDir = objects.directoryProperty().conv(
+    val reportDir = objects.directoryProperty().convention(
         project.the<AllureExtension>().report.reportDir.map { it.dir(this@AllureReport.name) }
     )
 
@@ -29,7 +26,7 @@ abstract class AllureReport @Inject constructor(objects: ObjectFactory) : Allure
 
     @Input
     @Option(option = "clean", description = "Clean Allure report directory before generating a new one")
-    val clean = objects.property<Boolean>().conv(false)
+    val clean = objects.property<Boolean>().convention(false)
 
     companion object {
         const val NAME = "allureReport"

@@ -17,7 +17,7 @@ open class AllureBasePlugin : Plugin<Project> {
     override fun apply(target: Project): Unit = target.run {
         // TODO: migrate to precompiled script plugin once Gradle 6.0 could be the minimal supported Gradle version
         // See https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
-        extensions.create<AllureExtension>(AllureExtension.NAME, objects)
+        extensions.create<AllureExtension>(AllureExtension.NAME)
 
         configurations.create("allureWorkaroundGradleBug") {
             isCanBeConsumed = true

@@ -14,7 +14,9 @@ Gradle projects plugins for building [Allure](https://docs.qameta.io/allure/late
 
 Data colecting and reporting are split to different Gradle plugins, so you could apply the ones you need.
 
-Note: 2.9+ requires Gradle 5.0+
+Note:
+* allure-gradle 2.9+ requires Gradle 5.0+
+* allure-gradle 2.11+ requires Gradle 6.0+
 
 The minimal configuration is as follows.
 It would configure test tasks to collect Allure results and add `allureReport` and `allureServe`

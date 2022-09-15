@@ -1,6 +1,5 @@
 package io.qameta.allure.gradle.base
 
-import io.qameta.allure.gradle.util.conv
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.ExtensionAware
@@ -22,7 +21,7 @@ abstract class AllureExtension(
     /**
      * `allure-commandline` version
      */
-    val version: Property<String> = objects.property<String>().conv("2.19.0")
+    val version: Property<String> = objects.property<String>().convention("2.19.0")
 
     /**
      * Default environment variables for launching `allure-commandline`.

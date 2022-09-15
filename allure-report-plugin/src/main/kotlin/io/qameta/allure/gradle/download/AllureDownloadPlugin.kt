@@ -5,7 +5,6 @@ import io.qameta.allure.gradle.base.AllureBasePlugin
 import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.download.tasks.DownloadAllure
 import io.qameta.allure.gradle.report.AllureReportBasePlugin
-import io.qameta.allure.gradle.util.gradleGe51
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
@@ -37,8 +36,7 @@ open class AllureDownloadPlugin : Plugin<Project> {
         val reportExtension = (allureExtension as ExtensionAware).extensions.create<AllureCommandlineExtension>(
             AllureCommandlineExtension.NAME,
             allureExtension,
-            project,
-            objects
+            project
         )
 
         val allureCommandLine = configurations.create(ALLURE_COMMANDLINE_CONFIGURATION) {
@@ -116,11 +114,8 @@ open class AllureDownloadPlugin : Plugin<Project> {
             return
         }
         repository.create()!!.apply {
-            if (gradleGe51) {
-                // content filtering is Gradle 6.2+ feature
-                content {
-                    includeModule(group, module)
-                }
+            content {
+                includeModule(group, module)
             }
         }
     }

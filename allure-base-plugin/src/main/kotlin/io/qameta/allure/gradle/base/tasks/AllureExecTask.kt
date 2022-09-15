@@ -1,7 +1,6 @@
 package io.qameta.allure.gradle.base.tasks
 
 import io.qameta.allure.gradle.base.AllureExtension
-import io.qameta.allure.gradle.util.conv
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileCollection
@@ -22,13 +21,13 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : Exec() {
 
     @Internal
     @Option(option = "verbose", description = "Switch on the verbose mode")
-    val verbose = objects.property<Boolean>().conv(false)
+    val verbose = objects.property<Boolean>().convention(false)
 
     /**
      * Gradle's [Exec.executable] does not support [Provider<String>], and it uses [Object.toString],
      * so we create an object that calls [Provider.get] in its [Object.toString].
      */
-    protected fun<T> Provider<T>.lazyToString() = object {
+    protected fun <T> Provider<T>.lazyToString() = object {
         override fun toString(): String = this@lazyToString.get().toString()
     }
 
@@ -42,7 +41,7 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : Exec() {
     }
 
     @get:Internal
-    protected val allureExecutable = objects.property<File>().conv(
+    protected val allureExecutable = objects.property<File>().convention(
         project.provider {
             val homeDir = allureHome.get().asFile
             val binDir = homeDir.resolve("bin")
@@ -75,7 +74,7 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : Exec() {
      * However, in certain cases only report re-execution is needed, then `skipDependsOn` would be useful.
      */
     @Input
-    val dependsOnTests = objects.property<Boolean>().conv(false)
+    val dependsOnTests = objects.property<Boolean>().convention(false)
 
     @get:Internal
     protected val rawResults: Provider<FileCollection> =

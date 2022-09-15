@@ -5,12 +5,10 @@ import io.qameta.allure.gradle.adapter.AllureAdapterExtension
 import io.qameta.allure.gradle.adapter.autoconfigure.AutoconfigureRule
 import io.qameta.allure.gradle.adapter.autoconfigure.AutoconfigureRuleBuilder
 import io.qameta.allure.gradle.adapter.autoconfigure.DefaultAutoconfigureRuleBuilder
-import io.qameta.allure.gradle.util.conv
-import io.qameta.allure.gradle.util.domainObjectSetBackport
-import io.qameta.allure.gradle.util.forUseAtConfigurationTimeBackport
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.property
+import org.gradle.kotlin.dsl.domainObjectSet
 import javax.inject.Inject
 
 open class AdapterConfig @Inject constructor(
@@ -23,7 +21,7 @@ open class AdapterConfig @Inject constructor(
      * The value defaults to [AllureExtension.allureJavaVersion]
      */
     val adapterVersion = objects.property<String>()
-        .conv(allureAdapterExtension.allureJavaVersion)
+        .convention(allureAdapterExtension.allureJavaVersion)
 
     @Deprecated(
         level = DeprecationLevel.WARNING,
@@ -37,11 +35,10 @@ open class AdapterConfig @Inject constructor(
     /**
      * By default, the adapter is enabled. This property allows deactivating the adapter.
      */
-    val enabled = objects.property<Boolean>().conv(true)
+    val enabled = objects.property<Boolean>().convention(true)
 
     val autoconfigureListeners = objects.property<Boolean>()
-        .forUseAtConfigurationTimeBackport()
-        .conv(
+        .convention(
             enabled.map { it && allureAdapterExtension.autoconfigureListeners.get() }
         )
 
@@ -57,8 +54,7 @@ open class AdapterConfig @Inject constructor(
      * Autoconfigure listeners is available only for the subset of adapters only (e.g [AdapterHandlerScope.testng],
      * [AdapterHandlerScope.junit5])
      */
-    val supportsAutoconfigureListeners = objects.property<Boolean>().conv(false)
-        .forUseAtConfigurationTimeBackport()
+    val supportsAutoconfigureListeners = objects.property<Boolean>().convention(false)
 
     /**
      * Returns `true` if `META-INF/services` should be removed from the dependency.
@@ -66,7 +62,7 @@ open class AdapterConfig @Inject constructor(
     internal val trimServicesFromJar =
         supportsAutoconfigureListeners.map { it && !autoconfigureListeners.get() }
 
-    internal val activateOn = objects.domainObjectSetBackport<AutoconfigureRule>()
+    internal val activateOn = objects.domainObjectSet(AutoconfigureRule::class)
 
     /**
      * Adds a basic autoconfigure rule: add [adapterDependency] to `compile` and `runtime` classpath

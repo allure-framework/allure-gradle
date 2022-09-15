@@ -94,13 +94,15 @@ provide Allure results.
 Data collecting is implemented via `io.qameta.allure-adapter` Gradle plugin.
 
 The values in the sample below are the defaults.
-The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.13.9"`, however, that is the only difference.
+The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.19.0"`, however, that is the only difference.
 
 ```kotlin
 allure {
+    version.set("2.19.0")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
-        allureJavaVersion.set("2.13.9")
+        // It defaults to allure.version
+        allureJavaVersion.set("2.19.0")
         aspectjVersion.set("1.9.5")
 
         autoconfigure.set(true)

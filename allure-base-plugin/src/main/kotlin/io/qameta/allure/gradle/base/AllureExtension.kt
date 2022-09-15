@@ -21,7 +21,7 @@ open class AllureExtension(
     /**
      * `allure-commandline` version
      */
-    val version: Property<String> = objects.property<String>().conv("2.13.6")
+    val version: Property<String> = objects.property<String>().conv("2.19.0")
 
     // TODO: remove when deprecated [aspectjweaver] is removed
     private val aspectjWeaver by lazy {

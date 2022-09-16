@@ -1,12 +1,10 @@
 package io.qameta.allure.gradle.adapter
 
 import groovy.json.JsonOutput
-import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
-import io.qameta.allure.gradle.base.tasks.JavaAgentArgumentProvider
 import io.qameta.allure.gradle.adapter.config.*
 import io.qameta.allure.gradle.base.AllureExtension
-import io.qameta.allure.gradle.util.conv
-import io.qameta.allure.gradle.util.forUseAtConfigurationTimeBackport
+import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
+import io.qameta.allure.gradle.base.tasks.JavaAgentArgumentProvider
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -41,34 +39,32 @@ open class AllureAdapterExtension @Inject constructor(
     /**
      * `allure-java` version (adapters for test engines)
      */
-    val allureJavaVersion: Property<String> = objects.property<String>().conv(project.the<AllureExtension>().version)
-        .forUseAtConfigurationTimeBackport()
-    val aspectjVersion: Property<String> = objects.property<String>().conv("1.9.9.1")
+    val allureJavaVersion: Property<String> =
+        objects.property<String>().convention(project.the<AllureExtension>().version)
+    val aspectjVersion: Property<String> = objects.property<String>().convention("1.9.9.1")
 
 
     /**
      * Automatically add the relevant test engine adapters
      */
-    val autoconfigure: Property<Boolean> = objects.property<Boolean>().conv(true)
-        .forUseAtConfigurationTimeBackport()
+    val autoconfigure: Property<Boolean> = objects.property<Boolean>().convention(true)
 
     /**
      * Configure default listeners by default (e.g. JUnit5, TestNG).
      * This should be disabled if the project uses custom listeners
      */
-    val autoconfigureListeners: Property<Boolean> = objects.property<Boolean>().conv(autoconfigure)
+    val autoconfigureListeners: Property<Boolean> = objects.property<Boolean>().convention(autoconfigure)
 
     /**
      * Automatically add AspectJ waver
      */
-    val aspectjWeaver = objects.property<Boolean>().conv(autoconfigure)
-        .forUseAtConfigurationTimeBackport()
+    val aspectjWeaver = objects.property<Boolean>().convention(autoconfigure)
 
     /**
      * Path to `categories.json` file for Allure.
      * The default path is `test/resources/**/categories.json`.
      */
-    val categoriesFile: Property<RegularFile> = objects.fileProperty().conv(defaultCategoriesFile(project))
+    val categoriesFile: Property<RegularFile> = objects.fileProperty().convention(defaultCategoriesFile(project))
 
     val frameworks = AdapterHandler(project.container {
         objects.newInstance<AdapterConfig>(it, objects, this).also { adapter ->

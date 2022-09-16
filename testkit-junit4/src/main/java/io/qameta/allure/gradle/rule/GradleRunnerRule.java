@@ -1,25 +1,22 @@
 package io.qameta.allure.gradle.rule;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.JavaVersion;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.util.GradleVersion;
+import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.rules.ExternalResource;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -91,10 +88,9 @@ public class GradleRunnerRule extends ExternalResource {
         String gradleVersion = versionSupplier.get();
         GradleVersion testGradle = GradleVersion.version(gradleVersion);
 
-        // tasks.named requires Gradle 5.0+
         // Configuration avoidance tasks.register requires Gradle 4.9+
-        if (testGradle.compareTo(GradleVersion.version("5.0")) < 0) {
-            Assume.assumeTrue("Gradle " + testGradle + " is not supported, please upgrade to 5.0+", false);
+        if (testGradle.compareTo(GradleVersion.version("6.0")) < 0) {
+            Assert.fail("allure-gradle plugin requires Gradle 6.0+, the can't launch tests with Gradle " + testGradle);
         }
 
         Optional<JavaGradle> gradleRequirement = Stream.of(

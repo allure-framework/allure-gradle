@@ -28,10 +28,7 @@ open class AllureAdapterBasePlugin : Plugin<Project> {
         val allureExtension = the<AllureExtension>()
         allureExtension.extensions.create<AllureAdapterExtension>(
             AllureAdapterExtension.NAME,
-            project,
-            // Gradle 5 can't inject objects yet
-            // TODO: remove when Gradle 5 support can be dropped
-            objects
+            project
         )
 
         val rawResultElements = configurations.create(ALLURE_RAW_RESULT_ELEMENTS_CONFIGURATION_NAME) {

@@ -7,6 +7,7 @@ plugins {
 
 allure {
     version = "42.0"
+    environment["TZ"] = "UTC"
     adapter {
         frameworks {
             junit5 {

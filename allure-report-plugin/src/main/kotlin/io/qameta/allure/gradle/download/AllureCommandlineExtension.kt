@@ -1,7 +1,6 @@
 package io.qameta.allure.gradle.download
 
 import io.qameta.allure.gradle.base.AllureExtension
-import io.qameta.allure.gradle.util.conv
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.property
@@ -25,7 +24,7 @@ open class AllureCommandlineExtension @Inject constructor(
      * The property corresponds to `[organization]` pattern in [downloadUrlPattern]
      */
     val group = objects.property<String>()
-        .conv(project.provider {
+        .convention(project.provider {
             // TODO: Provider.orElse(Provider) is Gradle 5.6+
             if (downloadUrlPattern.isPresent) {
                 "custom.io.qameta.allure"
@@ -40,7 +39,7 @@ open class AllureCommandlineExtension @Inject constructor(
      * It corresponds to `[module]` pattern in [downloadUrlPattern]
      */
     val module = objects.property<String>()
-        .conv(allureExtension.version.map {
+        .convention(allureExtension.version.map {
             val normalized = it.replace(Regex("\\d+")) {
                 it.value.padStart(5, '0')
             }
@@ -57,7 +56,7 @@ open class AllureCommandlineExtension @Inject constructor(
      * It corresponds to `[ext]` pattern in [downloadUrlPattern]
      */
     val extension = objects.property<String>()
-        .conv("zip")
+        .convention("zip")
 
     /**
      * By default, allure-commandline is received from Maven Central, so the property is unset.

@@ -40,7 +40,6 @@ public class CategoriesTest {
         return Arrays.asList(
                 new Object[]{"7.5.1", "src/it/categories", new String[]{"allureReport"}},
                 new Object[]{"7.0", "src/it/categories", new String[]{"allureReport"}},
-                new Object[]{"5.0", "src/it/categories", new String[]{"allureReport"}},
                 new Object[]{"6.0", "src/it/categories", new String[]{"allureReport"}}
         );
     }

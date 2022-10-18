@@ -8,7 +8,6 @@ import io.qameta.allure.gradle.adapter.tasks.CopyCategories
 import io.qameta.allure.gradle.util.categoryDocumentation
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.*
 
@@ -34,6 +33,7 @@ open class AllureAdapterBasePlugin : Plugin<Project> {
         val rawResultElements = configurations.create(ALLURE_RAW_RESULT_ELEMENTS_CONFIGURATION_NAME) {
             description =
                 "The configuration exposes Allure raw results (simple-result.json, executor.json) for reporting"
+            isVisible = false
             isCanBeConsumed = true
             isCanBeResolved = false
             attributes {
@@ -72,22 +72,5 @@ open class AllureAdapterBasePlugin : Plugin<Project> {
         copyCategoriesElements.outgoing.artifact(copyCategories.flatMap { it.markerFile }) {
             builtBy(copyCategories)
         }
-
-        // Workaround for https://github.com/gradle/gradle/issues/6875
-        target.afterEvaluate {
-            configurations.findByName("archives")?.let { archives ->
-                removeArtifactsFromArchives(archives, rawResultElements)
-                removeArtifactsFromArchives(archives, copyCategoriesElements)
-            }
-        }
-    }
-
-    private fun Project.removeArtifactsFromArchives(archives: Configuration, elements: Configuration) {
-        val allureResultNames = elements.outgoing.artifacts.mapTo(mutableSetOf()) { it.name }
-        if (allureResultNames.isEmpty()) {
-            return
-        }
-        logger.debug("Will remove artifacts $allureResultNames (outgoing artifacts of $elements) from $archives configuration to workaround https://github.com/gradle/gradle/issues/6875")
-        archives.outgoing.artifacts.removeIf { it.name in allureResultNames }
     }
 }

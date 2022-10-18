@@ -66,6 +66,8 @@ open class AllureAdapterExtension @Inject constructor(
      */
     val categoriesFile: Property<RegularFile> = objects.fileProperty().convention(defaultCategoriesFile(project))
 
+    private val allureResultsDir = project.layout.buildDirectory.dir("allure-results")
+
     val frameworks = AdapterHandler(project.container {
         objects.newInstance<AdapterConfig>(it, objects, this).also { adapter ->
             AllureJavaAdapter.find(it)?.apply {
@@ -96,20 +98,23 @@ open class AllureAdapterExtension @Inject constructor(
 
     fun gatherResultsFrom(tasks: TaskCollection<out Task>) {
         project.apply<AllureAdapterBasePlugin>()
-        // This causes test task realization early :-(
-        // TODO: think of a better way to capture test dependencies without realizing the tasks
-        tasks.all {
+        tasks.names.onEach { exposeArtifact(tasks.named(it))  }
+        tasks.configureEach {
             internalGatherResultsFrom(this)
         }
     }
 
     fun gatherResultsFrom(task: TaskProvider<out Task>) {
-        // TODO: think of a better way to capture test dependencies without realizing the tasks
-        gatherResultsFrom(task.get())
+        project.apply<AllureAdapterBasePlugin>()
+        exposeArtifact(task)
+        task.configure {
+            internalGatherResultsFrom(this)
+        }
     }
 
     fun gatherResultsFrom(task: Task) {
         project.apply<AllureAdapterBasePlugin>()
+        exposeArtifact(project.tasks.named(task.name))
         internalGatherResultsFrom(task)
     }
 
@@ -118,7 +123,7 @@ open class AllureAdapterExtension @Inject constructor(
         task.run {
             // Each task should store results in its own folder
             // End user should not depend on the folder name, so we do not expose it
-            val rawResults = project.layout.buildDirectory.dir("allure-results").get().asFile
+            val rawResults = allureResultsDir.get().asFile
             // See https://github.com/allure-framework/allure2/issues/1236
             // We exclude categories.json since report task would copy categories right to the folder
             // of the current task
@@ -150,13 +155,15 @@ open class AllureAdapterExtension @Inject constructor(
                 // TODO: remove dependence on project at the execution time for compatibility with configuration cache
                 generateExecutorInfo(rawResults, project, task.name)
             }
+        }
+    }
 
-            // Expose the gathered raw results
-            val allureResults =
-                project.configurations[AllureAdapterBasePlugin.ALLURE_RAW_RESULT_ELEMENTS_CONFIGURATION_NAME]
-            allureResults.outgoing.artifact(rawResults) {
-                builtBy(task)
-            }
+    private fun exposeArtifact(task: TaskProvider<*>) {
+        // Expose the gathered raw results
+        val allureResults =
+            project.configurations[AllureAdapterBasePlugin.ALLURE_RAW_RESULT_ELEMENTS_CONFIGURATION_NAME]
+        allureResults.outgoing.artifact(allureResultsDir) {
+            builtBy(task)
         }
     }
 

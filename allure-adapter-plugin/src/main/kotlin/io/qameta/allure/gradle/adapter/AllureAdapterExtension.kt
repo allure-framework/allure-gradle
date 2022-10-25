@@ -98,7 +98,11 @@ open class AllureAdapterExtension @Inject constructor(
 
     fun gatherResultsFrom(tasks: TaskCollection<out Task>) {
         project.apply<AllureAdapterBasePlugin>()
-        tasks.names.onEach { exposeArtifact(tasks.named(it))  }
+        project.afterEvaluate {
+            tasks.names.forEach {
+                exposeArtifact(tasks.named(it))
+            }
+        }
         tasks.configureEach {
             internalGatherResultsFrom(this)
         }

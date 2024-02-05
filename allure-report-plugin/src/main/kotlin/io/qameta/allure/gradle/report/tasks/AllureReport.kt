@@ -28,6 +28,11 @@ abstract class AllureReport @Inject constructor(objects: ObjectFactory) : Allure
     @Option(option = "clean", description = "Clean Allure report directory before generating a new one")
     val clean = objects.property<Boolean>().convention(false)
 
+    @Input
+    val singleFile = objects.property<Boolean>().convention(
+        project.the<AllureExtension>().report.singleFile
+    )
+
     companion object {
         const val NAME = "allureReport"
         const val GENERATE_COMMAND = "generate"
@@ -49,6 +54,9 @@ abstract class AllureReport @Inject constructor(objects: ObjectFactory) : Allure
                 args += reportDir.get().asFile.absolutePath
                 if (clean.get()) {
                     args += "--clean"
+                }
+                if (singleFile.get()) {
+                    args += "--single-file"
                 }
                 args
             }

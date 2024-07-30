@@ -31,7 +31,7 @@ jobs:
             # https://github.com/gradle/gradle/issues/3093 might be relevant
             java-version: '8.0.x'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4

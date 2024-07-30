@@ -40,8 +40,8 @@ open class AllureAdapterExtension @Inject constructor(
      * `allure-java` version (adapters for test engines)
      */
     val allureJavaVersion: Property<String> =
-        objects.property<String>().convention(project.the<AllureExtension>().version)
-    val aspectjVersion: Property<String> = objects.property<String>().convention("1.9.9.1")
+        objects.property<String>().convention("2.28.0")
+    val aspectjVersion: Property<String> = objects.property<String>().convention("1.9.22.1")
 
 
     /**

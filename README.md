@@ -57,7 +57,7 @@ Groovy DSL:
 
 ```groovy
 allure {
-    value = "2.8.0"
+    value = "2.30.0"
 }
 ```
 
@@ -65,7 +65,7 @@ Kotlin DSL:
 
 ```kotlin
 allure {
-    value.set("2.8.0")
+    value.set("2.30.0")
 }
 ```
 
@@ -100,12 +100,12 @@ The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.
 
 ```kotlin
 allure {
-    version.set("2.19.0")
+    version.set("2.30.0")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
         // It defaults to allure.version
-        allureJavaVersion.set("2.19.0")
-        aspectjVersion.set("1.9.5")
+        allureJavaVersion.set("2.28.0")
+        aspectjVersion.set("1.9.22.1")
 
         // Customize environment variables for launching Allure
         environment.put("JAVA_HOME", "/path/to/java_home")
@@ -342,7 +342,7 @@ If you have a customized version, you could configure it as follows:
 ```kotlin
 allure {
     // This configures the common Allure version, so it is used for commandline as well
-    version.set("2.8.0")
+    version.set("2.30.0")
 
     commandline {
         // The following patterns are supported: `[group]`, `[module]`, `[version]`, `[extension]`

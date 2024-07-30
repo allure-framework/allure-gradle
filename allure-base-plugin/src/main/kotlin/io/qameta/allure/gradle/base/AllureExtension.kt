@@ -21,7 +21,7 @@ abstract class AllureExtension(
     /**
      * `allure-commandline` version
      */
-    val version: Property<String> = objects.property<String>().convention("2.19.0")
+    val version: Property<String> = objects.property<String>().convention("2.30.0")
 
     /**
      * Default environment variables for launching `allure-commandline`.

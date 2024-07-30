@@ -47,7 +47,6 @@ allure {
     report.reportDir.set(buildDir.resolve("allure/reports"))
     report.dependsOnTests.set(true)
 }
-allure.adapter.frameworks.cucumberJvm.enabled.set(true)
 allure.commandline.downloadUrlPattern.set("localhost")
 allure.report.dependsOnTests.set(true)
 

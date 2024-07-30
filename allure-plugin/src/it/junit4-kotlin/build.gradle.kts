@@ -6,8 +6,12 @@ plugins {
 allure {
     version.set("2.8.1")
 
-    useJUnit4 {
-        version = "2.9.0"
+    adapter {
+        frameworks {
+            junit4 {
+                adapterVersion.set("2.9.0")
+            }
+        }
     }
 }
 

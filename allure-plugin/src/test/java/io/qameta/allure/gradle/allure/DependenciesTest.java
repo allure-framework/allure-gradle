@@ -28,8 +28,7 @@ public class DependenciesTest {
 
     // The order of versions is newest, oldest, rest
     private static final String[][] IT_MATRIX = {
-        { "src/it/cucumber-jvm",         "7.5.1", "7.0", "6.0" },
-        { "src/it/cucumber2-jvm",        "7.5.1", "7.0", "6.0" },
+        { "src/it/cucumber7-jvm",        "7.5.1", "7.0", "6.0" },
         { "src/it/junit4",               "7.5.1", "7.0", "6.0" },
         { "src/it/junit4-autoconfigure", "7.5.1", "7.0", "6.0" },
         { "src/it/junit4-kotlin",        "7.5.1", "7.0", "6.0" },

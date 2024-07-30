@@ -48,4 +48,14 @@ open class AllureReportExtension @Inject constructor(
     fun dependsOnTests() {
         dependsOnTests.set(true)
     }
+
+    /**
+     * By default, Allure generates multi-file reports.
+     * To generate single-file reports, set this property to true.
+     */
+    val singleFile: Property<Boolean> = objects.property<Boolean>().convention(
+        project.provider {
+            false
+        }
+    )
 }

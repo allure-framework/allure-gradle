@@ -14,12 +14,10 @@ open class AdapterHandler @Inject constructor(
     val junit5 by lazyCreating
     val testng by lazyCreating
     val spock by lazyCreating
-    val cucumberJvm by lazyCreating
-    val cucumber2Jvm by lazyCreating
-    val cucumber3Jvm by lazyCreating
     val cucumber4Jvm by lazyCreating
     val cucumber5Jvm by lazyCreating
     val cucumber6Jvm by lazyCreating
+    val cucumber7Jvm by lazyCreating
 
     fun cucumberJvm(majorVersion: Int) = maybeCreate(
         if (majorVersion == 1) "cucumberJvm" else "cucumber${majorVersion}Jvm"

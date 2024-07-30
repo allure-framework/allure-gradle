@@ -32,12 +32,10 @@ internal enum class AllureJavaAdapter(
     spock("spock", {
         activateOn("org.spockframework:spock-core")
     }),
-    cucumberJvm("cucumber-jvm", cucumberJvm(1)),
-    cucumber2Jvm("cucumber2-jvm", cucumberJvm(2)),
-    cucumber3Jvm("cucumber3-jvm", cucumberJvm(3)),
     cucumber4Jvm("cucumber4-jvm", cucumberJvm(4)),
     cucumber5Jvm("cucumber5-jvm", cucumberJvm(5)),
     cucumber6Jvm("cucumber6-jvm", cucumberJvm(6)),
+    cucumber7Jvm("cucumber7-jvm", cucumberJvm(7)),
     ;
 
     companion object {

@@ -1,10 +1,7 @@
-[build]: https://ci.qameta.io/job/allure-gradle/job/master "Build"
-[build-badge]: https://ci.qameta.io/buildStatus/icon?job=allure-gradle/master
-
 [release]: https://github.com/allure-framework/allure-gradle/releases/latest "Release"
 [release-badge]: https://img.shields.io/github/release/allure-framework/allure-gradle.svg
 
-# Allure plugin for Gradle [![build-badge][]][build] [![release-badge][]][release]
+# Allure plugin for Gradle [![Build](https://github.com/allure-framework/allure-gradle/actions/workflows/build.yml/badge.svg)](https://github.com/allure-framework/allure-gradle/actions/workflows/build.yml) [![release-badge][]][release]
 
 Gradle projects plugins for building [Allure](https://docs.qameta.io/allure/latest/) reports for TestNG, JUnit4, JUnit5, Cucumber JVM, and Spock tests.
 

@@ -298,6 +298,9 @@ allure {
         // configures a base directory for all the reports
         // Each task creates its own subfolder there
         reportDir.set(project.reporting.baseDirectory.dir("allure-report"))
+
+        // Enable single file generation to open without serving.
+        singleFile = true
     }
 }
 ```

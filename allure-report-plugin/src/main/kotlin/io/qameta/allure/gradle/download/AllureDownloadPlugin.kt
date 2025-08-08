@@ -1,6 +1,4 @@
 package io.qameta.allure.gradle.download
-
-import commandline
 import io.qameta.allure.gradle.base.AllureBasePlugin
 import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.download.tasks.DownloadAllure
@@ -8,11 +6,9 @@ import io.qameta.allure.gradle.report.AllureReportBasePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.dsl.RepositoryHandler
-import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.internal.Factory
 import org.gradle.kotlin.dsl.*
-import org.gradle.util.GradleVersion
 
 /**
  * The plugin Adds [DownloadAllure] task.
@@ -39,7 +35,7 @@ open class AllureDownloadPlugin : Plugin<Project> {
             project
         )
 
-        val allureCommandLine = configurations.create(ALLURE_COMMANDLINE_CONFIGURATION) {
+        val allureCommandLine = configurations.register(ALLURE_COMMANDLINE_CONFIGURATION) {
             isCanBeResolved = true
             isCanBeConsumed = false
             defaultDependencies {
@@ -49,7 +45,7 @@ open class AllureDownloadPlugin : Plugin<Project> {
                 val version = allureExtension.version.get()
                 add(project.dependencies.create("$group:$module:$version$fileExtension"))
 
-                allureExtension.commandline.downloadUrlPattern.orNull?.let { link ->
+                reportExtension.downloadUrlPattern.orNull?.let { link ->
                     val formattedLink = formatLink(link, group, module, version)
                     declareCustomAllureCommandlineRepository(group, module, formattedLink)
                 }
@@ -63,7 +59,7 @@ open class AllureDownloadPlugin : Plugin<Project> {
 
     /**
      * `IvyArtifactRepository` supports patterns, however, we do not use it since
-     * artifact declaration requries separate `repository url` + `layoutPattern`.
+     * artifact declaration requires separate `repository url` + `layoutPattern`.
      * Parsing URLs is non-trivial, so we replace patterns and build a single URL.
      * That works as long as we need a single binary from the said repository
      * which is good enough.
@@ -87,36 +83,27 @@ open class AllureDownloadPlugin : Plugin<Project> {
     private fun Project.declareCustomAllureCommandlineRepository(group: String, module: String, link: String) {
         repositories {
             exclusiveRepo(group, module) {
-                ivy {
-                    url = uri(link)
-                    patternLayout {
-                        // Link should already be formatted, so no pattern needed here
-                        artifact("")
-                    }
-                    metadataSources { // skip downloading ivy.xml
-                        artifact()
-                    }
+                url = uri(link)
+                patternLayout {
+                    // Link should already be formatted, so no pattern needed here
+                    artifact("")
+                }
+                metadataSources { // skip downloading ivy.xml
+                    artifact()
                 }
             }
         }
     }
 
-    fun RepositoryHandler.exclusiveRepo(group: String, module: String, repository: Factory<out ArtifactRepository>) {
-        val gradleGe62 = GradleVersion.current() >= GradleVersion.version("6.2")
-        if (gradleGe62) {
-            // exclusiveContent is Gradle 6.2+ feature
-            exclusiveContent {
-                filter {
-                    includeModule(group, module)
-                }
-                forRepository(repository)
-            }
-            return
-        }
-        repository.create()!!.apply {
-            content {
-                includeModule(group, module)
-            }
+    fun RepositoryHandler.exclusiveRepo(
+        group: String,
+        module: String,
+        configure: IvyArtifactRepository.() -> Unit
+    ) {
+        // Create an Ivy repository using public API and restrict its content to a single module
+        ivy {
+            configure()
+            content { includeModule(group, module) }
         }
     }
 }

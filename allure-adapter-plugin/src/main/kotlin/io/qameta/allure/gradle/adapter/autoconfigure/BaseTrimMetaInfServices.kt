@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter.autoconfigure
 
+import org.gradle.api.artifacts.transform.CacheableTransform
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
@@ -12,6 +13,7 @@ import java.util.jar.JarOutputStream
  * Removes `META-INF/services` folder from a jar.
  * It enables to automatically transform `allure-junit5` to `allure-junit5:spi-off`.
  */
+@CacheableTransform
 abstract class BaseTrimMetaInfServices : TransformAction<TransformParameters.None> {
     companion object {
         val ARTIFACT_TYPE_ATTRIBUTE = Attribute.of("artifactType", String::class.java)

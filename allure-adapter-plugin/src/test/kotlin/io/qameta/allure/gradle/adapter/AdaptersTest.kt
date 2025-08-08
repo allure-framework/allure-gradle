@@ -34,37 +34,37 @@ class AdaptersTest {
         @Parameterized.Parameters(name = "{1} [{0}]")
         fun getFrameworks() = listOf(
             arrayOf(
-                "7.5.1",
+                "9.0.0",
                 "src/it/adapter-junit5-spock-kts",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]"
             ),
             arrayOf(
-                "7.0",
+                "8.14.3",
                 "src/it/adapter-junit5-spock-kts",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]"
             ),
             arrayOf(
-                "6.0",
+                "8.11.1",
                 "src/it/adapter-junit5-spock-kts",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]"
             ),
             arrayOf(
-                "7.5.1",
+                "9.0.0",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{spock}, AdapterConfig{testng}]"
             ),
             arrayOf(
-                "7.0",
+                "8.11.1",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{spock}, AdapterConfig{testng}]"
             ),
             arrayOf(
-                "6.0",
+                "8.14.3",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{spock}, AdapterConfig{testng}]"

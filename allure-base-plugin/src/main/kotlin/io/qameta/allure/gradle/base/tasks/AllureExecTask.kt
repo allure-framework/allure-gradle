@@ -7,14 +7,23 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.the
-import org.gradle.util.GradleVersion
+import org.gradle.work.DisableCachingByDefault
 import java.io.File
+import javax.inject.Inject
 
-abstract class AllureExecTask constructor(objects: ObjectFactory) : Exec() {
+@DisableCachingByDefault(because = "Not worth caching")
+abstract class AllureExecTask() : Exec() {
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val providers: ProviderFactory
+
     @InputDirectory
     @PathSensitive(PathSensitivity.NONE)
     val allureHome = objects.directoryProperty()
@@ -27,7 +36,7 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : Exec() {
      * Gradle's [Exec.executable] does not support [Provider<String>], and it uses [Object.toString],
      * so we create an object that calls [Provider.get] in its [Object.toString].
      */
-    protected fun <T> Provider<T>.lazyToString() = object {
+    protected fun <T: Any> Provider<T>.lazyToString() = object {
         override fun toString(): String = this@lazyToString.get().toString()
     }
 
@@ -42,7 +51,7 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : Exec() {
 
     @get:Internal
     protected val allureExecutable = objects.property<File>().convention(
-        project.provider {
+        providers.provider {
             val homeDir = allureHome.get().asFile
             val binDir = homeDir.resolve("bin")
 
@@ -94,13 +103,9 @@ abstract class AllureExecTask constructor(objects: ObjectFactory) : Exec() {
         dependsOn(dependsOnTests.map { if (it) resultsDirs else emptyList<Any>() })
         // In any case, if user launches "./gradlew test allureReport" the report generation
         // should wait for test execution
-        if (GradleVersion.current() < GradleVersion.version("7.5")) {
-            mustRunAfter(resultsDirs)
-        } else {
-            // See https://github.com/allure-framework/allure-gradle/issues/90
-            // See https://github.com/gradle/gradle/issues/21962
-            mustRunAfter(resultsDirs.map { it.elements })
-        }
+        // See https://github.com/allure-framework/allure-gradle/issues/90
+        // See https://github.com/gradle/gradle/issues/21962
+        mustRunAfter(resultsDirs.map { it.elements })
     }
 
     override fun exec() {

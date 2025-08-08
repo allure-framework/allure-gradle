@@ -31,12 +31,17 @@ class AssembleTest {
         @Parameterized.Parameters(name = "{1} [{0}]")
         fun getFrameworks() = listOf(
             arrayOf(
-                "7.0",
+                "9.0.0",
                 "src/it/adapter-assemble",
                 arrayOf("assemble")
             ),
             arrayOf(
-                "6.0",
+                "8.14.3",
+                "src/it/adapter-assemble",
+                arrayOf("assemble")
+            ),
+            arrayOf(
+                "8.11.1",
                 "src/it/adapter-assemble",
                 arrayOf("assemble")
             )

@@ -1,17 +1,15 @@
 package io.qameta.allure.gradle.report
 
-import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.reporting.ReportingExtension
 import org.gradle.kotlin.dsl.property
-import org.gradle.kotlin.dsl.the
 import javax.inject.Inject
 
 open class AllureReportExtension @Inject constructor(
-    private val project: Project,
-    objects: ObjectFactory
+    private val reporting: ReportingExtension,
+    objects: ObjectFactory,
 ) {
     companion object {
         const val NAME = "report"
@@ -24,7 +22,7 @@ open class AllureReportExtension @Inject constructor(
      * folders.
      */
     val reportDir: DirectoryProperty = objects.directoryProperty().apply {
-        convention(project.the<ReportingExtension>().baseDirectory.dir("allure-report"))
+        convention(reporting.baseDirectory.dir("allure-report"))
     }
 
     /**
@@ -34,9 +32,7 @@ open class AllureReportExtension @Inject constructor(
      * launch `allureReport` and get the updated report with all the tests updated.
      */
     val dependsOnTests: Property<Boolean> = objects.property<Boolean>().convention(
-        project.provider {
-            false
-        }
+        false
     )
 
     /**
@@ -54,8 +50,6 @@ open class AllureReportExtension @Inject constructor(
      * To generate single-file reports, set this property to true.
      */
     val singleFile: Property<Boolean> = objects.property<Boolean>().convention(
-        project.provider {
-            false
-        }
+        false
     )
 }

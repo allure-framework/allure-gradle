@@ -4,17 +4,15 @@ plugins {
     `java-base`
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 tasks.withType<JavaCompile>().configureEach {
     inputs.property("java.version", System.getProperty("java.version"))
     inputs.property("java.vm.version", System.getProperty("java.vm.version"))
     options.apply {
+        release = 8
         encoding = "UTF-8"
         compilerArgs.add("-Xlint:deprecation")
+        // Suppress warnings about obsolete source/target options on newer JDKs while keeping -Werror
+        compilerArgs.add("-Xlint:-options")
         compilerArgs.add("-Werror")
     }
 }

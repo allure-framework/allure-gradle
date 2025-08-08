@@ -5,6 +5,7 @@ import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.base.dsl.extensions
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.reporting.ReportingExtension
 import org.gradle.kotlin.dsl.*
 
 /**
@@ -23,7 +24,7 @@ open class AllureReportBasePlugin : Plugin<Project> {
         apply<AllureBasePlugin>()
         the<AllureExtension>().extensions.create<AllureReportExtension>(
             AllureReportExtension.NAME,
-            project
+            project.the<ReportingExtension>()
         )
     }
 }

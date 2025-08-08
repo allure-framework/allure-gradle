@@ -3,10 +3,6 @@ package io.qameta.allure.gradle.report
 import io.qameta.allure.gradle.base.metadata.AllureResultType
 import io.qameta.allure.gradle.download.AllureDownloadPlugin
 import io.qameta.allure.gradle.download.tasks.DownloadAllure
-import io.qameta.allure.gradle.report.AllureAggregateReportPlugin.Companion.REPORT_TASK_NAME
-import io.qameta.allure.gradle.report.AllureAggregateReportPlugin.Companion.SERVE_TASK_NAME
-import io.qameta.allure.gradle.report.AllureReportPlugin.Companion.REPORT_TASK_NAME
-import io.qameta.allure.gradle.report.AllureReportPlugin.Companion.SERVE_TASK_NAME
 import io.qameta.allure.gradle.report.tasks.AllureReport
 import io.qameta.allure.gradle.report.tasks.AllureServe
 import org.gradle.api.Plugin
@@ -117,7 +113,7 @@ internal fun Project.registerReportTasks(
         group = LifecycleBasePlugin.VERIFICATION_GROUP
         dependsOn(download)
         // This dependency ensures categories.json files are copied by the relevant copyCategories task
-        // It enables users to update cagetories.json file in src/..., launch allureReport
+        // It enables users to update categories.json file in src/..., launch allureReport
         // and see the improved report without running the tests again
         dependsOn(allureGenerateCategories)
         allureHome.set(download.flatMap { it.destinationDir })

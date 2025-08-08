@@ -1,19 +1,16 @@
 plugins {
     id("allure-gradle.java")
+    id("allure-gradle.repositories")
     `java-library`
 }
 
 group = "io.qameta.allure.gradle.testkit"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
-    api("junit:junit:_")
+    api(libs.junit4)
 
     implementation(gradleTestKit())
-    implementation("commons-io:commons-io:_")
-    implementation("org.apache.commons:commons-text:_")
+    implementation(libs.commons.io)
+    implementation(libs.commons.text)
 }
 

@@ -3,6 +3,8 @@ package io.qameta.allure.gradle.adapter.tasks
 import adapter
 import io.qameta.allure.gradle.base.AllureExtension
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.setProperty
@@ -10,7 +12,17 @@ import org.gradle.kotlin.dsl.the
 import java.io.File
 import javax.inject.Inject
 
-open class CopyCategories @Inject constructor(objects: ObjectFactory) : DefaultTask() {
+@CacheableTask
+abstract class CopyCategories : DefaultTask() {
+    @get:Inject
+    abstract val objects: ObjectFactory
+
+    @get:Inject
+    abstract val layout: ProjectLayout
+
+    @get:Inject
+    abstract val fs: FileSystemOperations
+
     @Optional
     @InputFile
     @SkipWhenEmpty
@@ -28,7 +40,7 @@ open class CopyCategories @Inject constructor(objects: ObjectFactory) : DefaultT
 
     @OutputFile
     val markerFile = objects.directoryProperty()
-        .convention(project.layout.buildDirectory.dir("copy-categories/$name"))
+        .convention(layout.buildDirectory.dir("copy-categories/$name"))
 
     @TaskAction
     fun run() {
@@ -36,7 +48,7 @@ open class CopyCategories @Inject constructor(objects: ObjectFactory) : DefaultT
         var didWork = false
         for (dir in destinationDirs.get()) {
             logger.warn("Copying $categories to $dir")
-            didWork = didWork or project.copy {
+            didWork = didWork or fs.copy {
                 into(dir)
                 from(categories) {
                     rename {

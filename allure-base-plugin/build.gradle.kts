@@ -6,7 +6,7 @@ group = "io.qameta.allure.gradle.base"
 
 dependencies {
     testImplementation(project(":testkit-junit4"))
-    testImplementation("org.assertj:assertj-core:_")
+    testImplementation(libs.assertjCore)
 }
 
 tasks.test {
@@ -14,19 +14,16 @@ tasks.test {
     inputs.dir(layout.projectDirectory.dir("src/it")).optional()
 }
 
-pluginBundle {
+gradlePlugin {
     website = "https://github.com/allure-framework/allure-gradle"
     vcsUrl = "https://github.com/allure-framework/allure-gradle.git"
-    tags = listOf("allure", "reporting", "testing")
-}
-
-gradlePlugin {
     plugins {
-        create("allureBasePlugin") {
+        register("allureBasePlugin") {
             id = "io.qameta.allure-base"
             displayName = "Plugin for commons between allure plugins"
             description = "Adds a common allure extension to the project"
             implementationClass = "io.qameta.allure.gradle.base.AllureBasePlugin"
+            tags = listOf("allure", "reporting", "testing")
         }
     }
 }

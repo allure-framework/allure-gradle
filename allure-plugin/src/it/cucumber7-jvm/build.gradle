@@ -7,7 +7,7 @@ allure {
     adapter {
         frameworks {
             cucumber7jvm {
-                version = "2.28.0"
+                version = "2.29.1"
             }
         }
     }

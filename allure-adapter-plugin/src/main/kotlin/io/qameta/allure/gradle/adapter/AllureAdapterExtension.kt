@@ -9,6 +9,7 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.RegularFile
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -40,8 +41,8 @@ open class AllureAdapterExtension @Inject constructor(
      * `allure-java` version (adapters for test engines)
      */
     val allureJavaVersion: Property<String> =
-        objects.property<String>().convention("2.28.0")
-    val aspectjVersion: Property<String> = objects.property<String>().convention("1.9.22.1")
+        objects.property<String>().convention("2.29.1")
+    val aspectjVersion: Property<String> = objects.property<String>().convention("1.9.24")
 
 
     /**
@@ -64,7 +65,7 @@ open class AllureAdapterExtension @Inject constructor(
      * Path to `categories.json` file for Allure.
      * The default path is `test/resources/**/categories.json`.
      */
-    val categoriesFile: Property<RegularFile> = objects.fileProperty().convention(defaultCategoriesFile(project))
+    val categoriesFile: RegularFileProperty = objects.fileProperty().convention(defaultCategoriesFile(project))
 
     private val allureResultsDir = project.layout.buildDirectory.dir("allure-results")
 
@@ -98,12 +99,9 @@ open class AllureAdapterExtension @Inject constructor(
 
     fun gatherResultsFrom(tasks: TaskCollection<out Task>) {
         project.apply<AllureAdapterBasePlugin>()
-        project.afterEvaluate {
-            tasks.names.forEach {
-                exposeArtifact(tasks.named(it))
-            }
-        }
         tasks.configureEach {
+            // Expose outgoing artifact and configure per-task without relying on afterEvaluate
+            exposeArtifact(project.tasks.named(name))
             internalGatherResultsFrom(this)
         }
     }

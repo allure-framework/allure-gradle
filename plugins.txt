@@ -1,6 +1,0 @@
-    plugins {
-        id("ru.vyarus.quality") version "4.5.0"
-        id("com.gradle.plugin-publish") version "0.14.0"
-        id("com.github.vlsi.gradle-extensions") version "1.74"
-    }
-

@@ -26,7 +26,7 @@ jobs:
         os: [ 'ubuntu', 'windows' ]
         java-version: [ '17.0.x', '21.0.x' ]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4

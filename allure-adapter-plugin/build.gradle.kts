@@ -7,7 +7,7 @@ group = "io.qameta.allure.gradle.adapter"
 dependencies {
     api(project(":allure-base-plugin"))
     testImplementation(project(":testkit-junit4"))
-    testImplementation("org.assertj:assertj-core:_")
+    testImplementation(libs.assertjCore)
 }
 
 tasks.test {
@@ -15,25 +15,24 @@ tasks.test {
     inputs.dir(layout.projectDirectory.dir("src/it")).optional()
 }
 
-pluginBundle {
+gradlePlugin {
     website = "https://github.com/allure-framework/allure-gradle"
     vcsUrl = "https://github.com/allure-framework/allure-gradle.git"
-    tags = listOf("allure", "reporting", "testing")
-}
-
-gradlePlugin {
+    val pluginTags = listOf("allure", "reporting", "testing")
     plugins {
-        create("allureAdapterBasePlugin") {
+        register("allureAdapterBase") {
             id = "io.qameta.allure-adapter-base"
             displayName = "Plugin for adpater commons between allure plugins"
             description = "Declares common configurations for producing and consuming Allure results and reports"
             implementationClass = "io.qameta.allure.gradle.adapter.AllureAdapterBasePlugin"
+            tags = pluginTags
         }
-        create("allureAdapterPlugin") {
+        register("allureAdapter") {
             id = "io.qameta.allure-adapter"
             displayName = "Plugin for allure adapters"
             description = "Implements autoconfiguration for collecting data for Allure"
             implementationClass = "io.qameta.allure.gradle.adapter.AllureAdapterPlugin"
+            tags = pluginTags
         }
     }
 }

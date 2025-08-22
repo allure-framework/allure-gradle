@@ -1,5 +1,3 @@
-import buildlogic.plugin
-
 plugins {
     id("allure-gradle.kotlin-dsl-gradle-plugin")
 }
@@ -11,5 +9,8 @@ repositories {
 }
 
 dependencies {
-    implementation(plugin("io.github.gradle-nexus.publish-plugin", "1.1.0"))
+    implementation(project(":basics"))
+    implementation(project(":jvm"))
+    implementation(libs.nexusPublishPlugin)
+    implementation(libs.versionCatalogUpdatePlugin)
 }

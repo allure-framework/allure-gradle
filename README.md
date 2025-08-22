@@ -9,11 +9,12 @@ Gradle projects plugins for building [Allure](https://docs.qameta.io/allure/late
 
 `allure-gradle` plugin implements Allure data collecting (e.g. Test` tasks), and data reporting (both individual and aggregate reports).
 
-Data colecting and reporting are split to different Gradle plugins, so you could apply the ones you need.
+Data collecting and reporting are split to different Gradle plugins, so you could apply the ones you need.
 
 Note:
 * allure-gradle 2.9+ requires Gradle 5.0+
 * allure-gradle 2.11+ requires Gradle 6.0+
+* allure-gradle 3.0+ requires Gradle 8.11+
 
 The minimal configuration is as follows.
 It would configure test tasks to collect Allure results and add `allureReport` and `allureServe`
@@ -54,7 +55,7 @@ Groovy DSL:
 
 ```groovy
 allure {
-    value = "2.30.0"
+    value = "2.34.1"
 }
 ```
 
@@ -62,7 +63,7 @@ Kotlin DSL:
 
 ```kotlin
 allure {
-    value.set("2.30.0")
+    value.set("2.34.1")
 }
 ```
 
@@ -97,11 +98,11 @@ The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.
 
 ```kotlin
 allure {
-    version.set("2.30.0")
+    version.set("2.34.1")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
         // It defaults to allure.version
-        allureJavaVersion.set("2.28.0")
+        allureJavaVersion.set("2.29.1")
         aspectjVersion.set("1.9.22.1")
 
         // Customize environment variables for launching Allure
@@ -252,7 +253,7 @@ you can configure the set of modules as follows:
 // By default, aggregate-report aggregates allprojects (current + subprojects)
 // So we want to exclude module3 since it has no data for Allure
 configurations.allureAggregateReport.dependencies.remove(
-        project.dependencies.create(project(":module3"))
+        project.dependencies.register(project(":module3"))
 )
 
 // Removing the default allprojects:
@@ -342,7 +343,7 @@ If you have a customized version, you could configure it as follows:
 ```kotlin
 allure {
     // This configures the common Allure version, so it is used for commandline as well
-    version.set("2.30.0")
+    version.set("2.34.1")
 
     commandline {
         // The following patterns are supported: `[group]`, `[module]`, `[version]`, `[extension]`
@@ -487,3 +488,64 @@ Tasks:
 * `allureAggregateServe: io.qameta.allure.gradle.report.tasks.AllureServe`
 
   Launches a web server for browsing Allure aggregate report
+
+## Compatibility and Spock 2 notes
+
+The 3.x line targets modern Gradle and JVMs and aligns Spock with JUnit Platform:
+
+- Minimal supported Gradle version: 8.11 (tested with 8.11.1, 8.14.3, 9.0.0)
+- Java 17 and 21 are supported
+- Spock 2 (Groovy 4) runs on JUnit Platform and should use the `allure-spock2` adapter
+
+### Using Spock 2 with Allure
+
+When using Spock 2.x, ensure:
+
+- JUnit Platform is enabled for your test task:
+
+  Groovy DSL:
+
+  ```groovy
+  test {
+      useJUnitPlatform()
+  }
+  ```
+
+- The Allure adapter for Spock 2 is on the classpath (the plugin auto-configures it when Spock is detected):
+
+  `io.qameta.allure:allure-spock2:<allureJavaVersion>`
+
+- If your environment is missing JUnit Platform at test runtime, add the launcher explicitly (some setups require this at runtime):
+
+  ```groovy
+  dependencies {
+      testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+  }
+  ```
+
+### Consistent attachments in examples
+
+Example tests across engines now produce a single Allure attachment for consistency. For Spock 2:
+
+```groovy
+import io.qameta.allure.Attachment
+import io.qameta.allure.Step
+import spock.lang.Specification
+
+class SpockTest extends Specification {
+    def "example"() {
+        when:
+        stepMethod()
+        then:
+        true
+    }
+
+    @Step("step")
+    void stepMethod() { attachment() }
+
+    @Attachment(value = "attachment", type = "text/plain")
+    String attachment() { "<p>HELLO</p>" }
+}
+```
+
+This mirrors the JUnit 4 sample and ensures Allure results contain one `*attachment` file per executed test across frameworks.

@@ -1,5 +1,3 @@
-import de.fayard.refreshVersions.bootstrapRefreshVersions
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -7,28 +5,23 @@ pluginManagement {
 }
 
 plugins {
-    `gradle-enterprise`
+    id("com.gradle.develocity") version "4.1"
 }
 
 buildscript {
     repositories {
         gradlePluginPortal()
     }
-    // See https://jmfayard.github.io/refreshVersions/setup/
-    dependencies.classpath("de.fayard.refreshVersions:refreshVersions:0.9.7")
 }
 
-bootstrapRefreshVersions()
-
-val isCiServer = System.getenv().containsKey("CI")
-
-if (isCiServer) {
-    gradleEnterprise {
-        buildScan {
-            termsOfServiceUrl = "https://gradle.com/terms-of-service"
-            termsOfServiceAgree = "yes"
+develocity {
+    buildScan {
+        publishing.onlyIf { System.getenv().containsKey("CI") }
+        if (System.getenv().containsKey("CI")) {
             tag("CI")
         }
+        termsOfUseUrl.set("https://gradle.com/help/legal-terms-of-use")
+        termsOfUseAgree.set("yes")
     }
 }
 

@@ -4,9 +4,8 @@ plugins {
 
 group = "allure-gradle"
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+tasks.withType<JavaCompile>().configureEach {
+    options.release = 8
 }
 
 val kotlinDslVersion = PluginDependenciesSpec { id ->
@@ -20,9 +19,4 @@ val kotlinDslVersion = PluginDependenciesSpec { id ->
 
 dependencies {
     implementation("org.gradle.kotlin.kotlin-dsl:org.gradle.kotlin.kotlin-dsl.gradle.plugin:$kotlinDslVersion")
-//    implementation("org.gradle.kotlin:gradle-kotlin-dsl-conventions:0.7.0")
-}
-
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
 }

@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.insecure;
 
 
 /**
@@ -83,22 +83,24 @@ public class GradleRunnerRule extends ExternalResource {
     }
 
     protected void before() throws Throwable {
-        projectDir = copyProject(projectSupplier.get());
+        String projectPath = projectSupplier.get();
+        projectDir = copyProject(projectPath);
         new File(projectDir, "settings.gradle").createNewFile();
         String gradleVersion = versionSupplier.get();
         GradleVersion testGradle = GradleVersion.version(gradleVersion);
 
         // Configuration avoidance tasks.register requires Gradle 4.9+
-        if (testGradle.compareTo(GradleVersion.version("6.0")) < 0) {
-            Assert.fail("allure-gradle plugin requires Gradle 6.0+, the can't launch tests with Gradle " + testGradle);
+        if (testGradle.compareTo(GradleVersion.version("8.11")) < 0) {
+            Assert.fail("allure-gradle plugin requires Gradle 8.11+, the can't launch tests with Gradle " + testGradle);
         }
 
         Optional<JavaGradle> gradleRequirement = Stream.of(
+                new JavaGradle(JavaVersion.VERSION_21, "8.5"),
+                new JavaGradle(JavaVersion.VERSION_17, "7.3"),
                 new JavaGradle(JavaVersion.VERSION_16, "7.0"),
                 new JavaGradle(JavaVersion.VERSION_15, "6.7"),
-                new JavaGradle(JavaVersion.VERSION_14, "6.3"),
-                new JavaGradle(JavaVersion.VERSION_11, "5.0"),
-                new JavaGradle(JavaVersion.VERSION_1_8, "2.0"))
+                new JavaGradle(JavaVersion.VERSION_14, "6.3")
+           )
                 .filter(v -> v.javaVersion.compareTo(JavaVersion.current()) <= 0)
                 .findFirst();
         if (!gradleRequirement.isPresent()) {
@@ -163,7 +165,7 @@ public class GradleRunnerRule extends ExternalResource {
         if (!projectName.isEmpty()) {
             projectName += "-";
         }
-        File to = new File("build/gradle-testkit", projectName + randomAlphabetic(8));
+        File to = new File("build/gradle-testkit", projectName + insecure().nextAlphabetic(8));
         File from = new File(project);
         try {
             if (!from.isDirectory() || !from.exists()) {

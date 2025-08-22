@@ -8,7 +8,7 @@ dependencies {
     api(project(":allure-base-plugin"))
 
     testImplementation(project(":testkit-junit4"))
-    testImplementation("org.assertj:assertj-core:_")
+    testImplementation(libs.assertjCore)
 }
 
 tasks.test {
@@ -16,31 +16,31 @@ tasks.test {
     inputs.dir(layout.projectDirectory.dir("src/it")).optional()
 }
 
-pluginBundle {
+gradlePlugin {
     website = "https://github.com/allure-framework/allure-gradle"
     vcsUrl = "https://github.com/allure-framework/allure-gradle.git"
-    tags = listOf("allure", "reporting", "testing")
-}
-
-gradlePlugin {
+    val pluginTags = listOf("allure", "reporting", "testing")
     plugins {
-        create("allureDownloadPlugin") {
+        register("allureDownloadPlugin") {
             id = "io.qameta.allure-download"
             displayName = "Plugin for downloading allure commandline"
             description = "Adds a task to download the required Allure version"
             implementationClass = "io.qameta.allure.gradle.download.AllureDownloadPlugin"
+            tags = pluginTags
         }
-        create("allureReportPlugin") {
+        register("allureReportPlugin") {
             id = "io.qameta.allure-report"
             displayName = "Plugin for building allure report"
             description = "Adds a task to build Allure report for the current project"
             implementationClass = "io.qameta.allure.gradle.report.AllureReportPlugin"
+            tags = pluginTags
         }
-        create("allureAggregateReportPlugin") {
+        register("allureAggregateReportPlugin") {
             id = "io.qameta.allure-aggregate-report"
             displayName = "Plugin for building aggregated allure report"
             description = "Adds a task to aggregate the results from multiple projects"
             implementationClass = "io.qameta.allure.gradle.report.AllureAggregateReportPlugin"
+            tags = pluginTags
         }
     }
 }

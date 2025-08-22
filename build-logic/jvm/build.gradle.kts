@@ -1,5 +1,7 @@
 import buildlogic.embeddedKotlinDsl
 import buildlogic.plugin
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("allure-gradle.kotlin-dsl-gradle-plugin")
@@ -13,7 +15,14 @@ repositories {
 
 dependencies {
     implementation(embeddedKotlinDsl())
-    implementation(plugin("com.github.vlsi.gradle-extensions", "1.74"))
+    implementation(libs.vlciGradleExtensionsPlugin)
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin")
-    implementation(plugin("org.jetbrains.dokka", "1.4.32"))
+    implementation(libs.dokkaPlugin)
+}
+
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        languageVersion = KotlinVersion.KOTLIN_1_8
+        apiVersion = KotlinVersion.KOTLIN_1_8
+    }
 }

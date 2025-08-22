@@ -29,8 +29,11 @@ internal enum class AllureJavaAdapter(
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
         }
     }),
-    spock("spock", {
-        activateOn("org.spockframework:spock-core")
+    // Spock 2 runs on JUnit Platform, Allure provides allure-spock2 for it
+    spock("spock2", {
+        activateOn("org.spockframework:spock-core") {
+            compileAndRuntime(adapterDependency)
+        }
     }),
     cucumber4Jvm("cucumber4-jvm", cucumberJvm(4)),
     cucumber5Jvm("cucumber5-jvm", cucumberJvm(5)),

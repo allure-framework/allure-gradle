@@ -19,7 +19,7 @@ open class AllureBasePlugin : Plugin<Project> {
         // See https://docs.gradle.org/current/userguide/custom_plugins.html#sec:precompiled_plugins
         extensions.create<AllureExtension>(AllureExtension.NAME)
 
-        configurations.create("allureWorkaroundGradleBug") {
+        configurations.register("allureWorkaroundGradleBug") {
             isCanBeConsumed = true
             isCanBeResolved = false
             isVisible = false

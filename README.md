@@ -55,7 +55,7 @@ Groovy DSL:
 
 ```groovy
 allure {
-    value = "2.34.1"
+    version = "2.34.1"
 }
 ```
 
@@ -63,7 +63,7 @@ Kotlin DSL:
 
 ```kotlin
 allure {
-    value.set("2.34.1")
+    version = "2.34.1"
 }
 ```
 

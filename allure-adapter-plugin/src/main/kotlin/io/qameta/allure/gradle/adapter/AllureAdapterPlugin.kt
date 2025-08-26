@@ -16,7 +16,6 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
- 
 
 /**
  * The plugin instruments [Test] and [JavaExec] tasks so they collect data for Allure.

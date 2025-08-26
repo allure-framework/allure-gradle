@@ -1,12 +1,14 @@
-name: Build
+name: Publish
+
+permissions:
+  contents: read
 
 on:
   release:
     types: [published]
 
 jobs:
-  release:
-    name: 'Release'
+  publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5

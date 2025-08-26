@@ -17,7 +17,6 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 
-
 /**
  * The plugin instruments [Test] and [JavaExec] tasks so they collect data for Allure.
  * The data is collected into [AllureAdapterBasePlugin.ALLURE_RAW_RESULT_ELEMENTS_CONFIGURATION_NAME] configuration.

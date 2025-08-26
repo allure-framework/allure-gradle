@@ -28,12 +28,12 @@ class DslTest {
         @JvmStatic
         @Parameterized.Parameters(name = "{1} [{0}]")
         fun getFrameworks() = listOf(
-            arrayOf("7.5.1", "src/it/full-dsl-kotlin"),
-            arrayOf("7.0", "src/it/full-dsl-kotlin"),
-            arrayOf("6.0", "src/it/full-dsl-kotlin"),
-            arrayOf("7.5.1", "src/it/full-dsl-groovy"),
-            arrayOf("7.0", "src/it/full-dsl-groovy"),
-            arrayOf("6.0", "src/it/full-dsl-groovy")
+            arrayOf("9.0.0", "src/it/full-dsl-kotlin"),
+            arrayOf("8.14.3", "src/it/full-dsl-kotlin"),
+            arrayOf("8.11.1", "src/it/full-dsl-kotlin"),
+            arrayOf("9.0.0", "src/it/full-dsl-groovy"),
+            arrayOf("8.14.3", "src/it/full-dsl-groovy"),
+            arrayOf("8.11.1", "src/it/full-dsl-groovy"),
         )
     }
 

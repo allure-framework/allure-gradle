@@ -16,7 +16,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
-import org.gradle.util.GradleVersion
+ 
 
 /**
  * The plugin instruments [Test] and [JavaExec] tasks so they collect data for Allure.
@@ -59,22 +59,12 @@ open class AllureAdapterPlugin : Plugin<Project> {
             // We don't know if the user updates autoconfigure value, so we delay the decision till afterEvaluate
             adapterExtension.takeIf { it.frameworks.configuredAdapters.isEmpty() }?.run {
                 for (adapter in AllureJavaAdapter.values()) {
-                    frameworks.create(adapter.name)
+                    frameworks.register(adapter.name)
                 }
             }
 
-            if (GradleVersion.current() >= GradleVersion.version("6.6")) {
-                configureSpiOffSubstitution(adapterExtension.frameworks)
-            } else if (GradleVersion.current() >= GradleVersion.version("5.3")) {
-                // Older Gradle do not have "substitute with classifier" feature
-                // so we use ArtifactTransformation to trim META-INF/services from the jar
-                dependencies {
-                    registerTransform(TrimMetaInfServices54::class) {
-                        from.attribute(artifactType, "jar")
-                        to.attribute(artifactType, BaseTrimMetaInfServices.NO_SPI_JAR)
-                    }
-                }
-            }
+            // Gradle 9+ path only: use dependency substitution with classifier and drop legacy transform path
+            configureSpiOffSubstitution(adapterExtension.frameworks)
         }
     }
 

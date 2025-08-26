@@ -3,17 +3,17 @@ package io.qameta.allure.gradle.report.tasks
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
 import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
+import org.gradle.work.DisableCachingByDefault
 import java.io.InputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
-abstract class AllureServe @Inject constructor(objects: ObjectFactory) : AllureExecTask(objects) {
+@DisableCachingByDefault(because = "Not worth caching")
+abstract class AllureServe : AllureExecTask() {
     companion object {
         const val NAME = "allureServe"
         const val SERVE_COMMAND = "serve"

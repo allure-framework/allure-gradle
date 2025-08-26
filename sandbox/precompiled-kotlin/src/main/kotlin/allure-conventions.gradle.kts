@@ -3,7 +3,7 @@ plugins {
     id("io.qameta.allure")
 }
 
-val allureVersion = "2.17.22"
+val allureVersion = "2.30.0"
 
 allure {
     version.set(allureVersion)

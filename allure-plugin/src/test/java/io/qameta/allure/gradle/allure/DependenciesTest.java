@@ -28,15 +28,15 @@ public class DependenciesTest {
 
     // The order of versions is newest, oldest, rest
     private static final String[][] IT_MATRIX = {
-        { "src/it/cucumber7-jvm",        "7.5.1", "7.0", "6.0" },
-        { "src/it/junit4",               "7.5.1", "7.0", "6.0" },
-        { "src/it/junit4-autoconfigure", "7.5.1", "7.0", "6.0" },
-        { "src/it/junit4-kotlin",        "7.5.1", "7.0", "6.0" },
-        { "src/it/junit5",               "7.5.1", "7.0", "6.0" },
-        { "src/it/junit5-5.8.1",         "7.5.1", "7.2", "6.0" },
-        { "src/it/testng",               "7.5.1", "7.0", "6.0" },
-        { "src/it/testng-autoconfigure", "7.5.1", "7.0", "6.0" },
-        { "src/it/spock",                "7.5.1", "7.0", "6.0" },
+        { "src/it/cucumber7-jvm",        "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/junit4",               "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/junit4-autoconfigure", "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/junit4-kotlin",        "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/junit5",               "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/junit5-5.8.1",         "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/testng",               "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/testng-autoconfigure", "9.0.0", "8.14.3", "8.11.1" },
+        { "src/it/spock",                "9.0.0", "8.14.3", "8.11.1" },
     };
 
     @Parameterized.Parameter(0)
@@ -74,9 +74,7 @@ public class DependenciesTest {
                 .filteredOn(file -> file.getName().endsWith("result.json"))
                 .hasSize(1);
 
-        assumeThat("not implemented", project, not(containsString("spock")));
-        assumeThat("not implemented", project, not(containsString("junit5")));
-
+        // All sample ITs are expected to produce a single attachment.
         assertThat(resultsDir.listFiles()).as("Allure results attachments")
                 .filteredOn(file -> file.getName().endsWith("attachment"))
                 .hasSize(1);

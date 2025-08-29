@@ -17,13 +17,26 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17.0.x'
+
+      - name: Set up GPG
+        run: echo -n "${GPG_PRIVATE_KEY}" | base64 --decode > ${GITHUB_WORKSPACE}/${GPG_KEY_ID}.gpg
+        env:
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+
       - name: Build Plugins
         run: ./gradlew build -Pversion=${GITHUB_REF:10}
       - name: Copy gradle.properties
         run: echo ${GRADLE_PUBLISH} > ~/.gradle/gradle.properties
       - name: Publish Plugins
-        run: ./gradlew publishPlugins -Pversion=${GITHUB_REF:10} --no-daemon
+        run: |
+          ./gradlew publishPlugins -Pversion=${GITHUB_REF:10} --no-daemon \
+                    -Psigning.keyId=${GPG_KEY_ID} \
+                    -Psigning.password=${GPG_PASSPHRASE} \
+                    -Psigning.secretKeyRingFile=${GITHUB_WORKSPACE}/${GPG_KEY_ID}.gpg
         env:
           GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
           GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
           GRADLE_OPTS: -Xmx1024m
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}

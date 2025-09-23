@@ -1,5 +1,5 @@
 [libraries]
-assertjCore = "org.assertj:assertj-core:3.27.5"
+assertjCore = "org.assertj:assertj-core:3.27.6"
 commons-io = "commons-io:commons-io:2.20.0"
 commons-text = "org.apache.commons:commons-text:1.14.0"
 dokkaPlugin = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:2.0.0"

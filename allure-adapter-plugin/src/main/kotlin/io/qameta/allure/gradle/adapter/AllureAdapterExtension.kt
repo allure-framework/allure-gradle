@@ -99,9 +99,9 @@ open class AllureAdapterExtension @Inject constructor(
 
     fun gatherResultsFrom(tasks: TaskCollection<out Task>) {
         project.apply<AllureAdapterBasePlugin>()
+        // Expose outgoing artifact without relying on afterEvaluate
+        exposeArtifact(tasks)
         tasks.configureEach {
-            // Expose outgoing artifact and configure per-task without relying on afterEvaluate
-            exposeArtifact(project.tasks.named(name))
             internalGatherResultsFrom(this)
         }
     }
@@ -160,15 +160,14 @@ open class AllureAdapterExtension @Inject constructor(
         }
     }
 
-    private fun exposeArtifact(task: TaskProvider<*>) {
+    private fun exposeArtifact(taskOrTasks: Any) {
         // Expose the gathered raw results
         val allureResults =
             project.configurations[AllureAdapterBasePlugin.ALLURE_RAW_RESULT_ELEMENTS_CONFIGURATION_NAME]
         allureResults.outgoing.artifact(allureResultsDir) {
-            builtBy(task)
+            builtBy(taskOrTasks)
         }
     }
-
     private fun generateExecutorInfo(resultsDir: File, project: Project, taskName: String) {
         val executorInfo = mapOf(
             "name" to "Gradle",

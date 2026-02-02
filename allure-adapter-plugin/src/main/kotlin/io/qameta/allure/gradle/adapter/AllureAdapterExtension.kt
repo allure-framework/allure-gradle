@@ -126,10 +126,9 @@ open class AllureAdapterExtension @Inject constructor(
             // Each task should store results in its own folder
             // End user should not depend on the folder name, so we do not expose it
             val rawResults = allureResultsDir.get().asFile
-            // See https://github.com/allure-framework/allure2/issues/1236
-            // We exclude categories.json since report task would copy categories right to the folder
-            // of the current task
-            outputs.files(project.fileTree(rawResults).matching { exclude("categories.json") })
+            // Declare the whole results directory as an output to make it cacheable by Gradle.
+            // Using a FileTree here makes the task output non-cacheable. See issue #107.
+            outputs.dir(rawResults)
 
             // Pass the path to the task
             if (this is JavaForkOptions) {

@@ -53,7 +53,7 @@ open class AllureDownloadPlugin : Plugin<Project> {
         }
 
         tasks.register<DownloadAllure>(ALLURE_DOWNLOAD_TASK_NAME) {
-            this.allureCommandLine.set(allureCommandLine)
+            this.allureCommandLine.from(allureCommandLine)
         }
     }
 

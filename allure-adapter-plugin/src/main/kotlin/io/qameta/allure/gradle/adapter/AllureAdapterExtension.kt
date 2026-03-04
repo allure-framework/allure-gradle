@@ -151,11 +151,20 @@ open class AllureAdapterExtension @Inject constructor(
                 )
             }
 
-            doFirst {
-                rawResults.mkdirs()
-                // TODO: remove dependence on project at the execution time for compatibility with configuration cache
-                generateExecutorInfo(rawResults, project, task.name)
-            }
+            val buildName = project.name
+            val projectPath = project.path
+            val projectVersion = project.version.toString()
+            val currentTaskName = name
+
+            doFirst(
+                GenerateExecutorInfoAction(
+                    resultsDir = rawResults,
+                    taskName = currentTaskName,
+                    buildName = buildName,
+                    projectPath = projectPath,
+                    projectVersion = projectVersion
+                )
+            )
         }
     }
 
@@ -167,22 +176,6 @@ open class AllureAdapterExtension @Inject constructor(
             builtBy(taskOrTasks)
         }
     }
-    private fun generateExecutorInfo(resultsDir: File, project: Project, taskName: String) {
-        val executorInfo = mapOf(
-            "name" to "Gradle",
-            "type" to "gradle",
-            "taskName" to taskName,
-            "buildName" to project.name,
-            "projectPath" to project.path,
-            // toString is to avoid unexpected interaction of custom objects and Json serializer
-            "projectVersion" to project.version.toString()
-        )
-        val resultsPath = Paths.get(resultsDir.absoluteFile.path)
-        Files.createDirectories(resultsPath)
-        val executorPath = resultsPath.resolve(EXECUTOR_FILE_NAME)
-        Files.write(executorPath, JsonOutput.toJson(executorInfo).toByteArray(StandardCharsets.UTF_8))
-    }
-
     private fun defaultCategoriesFile(project: Project): Provider<RegularFile> {
         val categoriesInResources = categoriesInResources(project)
 
@@ -209,5 +202,29 @@ open class AllureAdapterExtension @Inject constructor(
         return project.provider {
             tree.firstOrNull()
         }
+    }
+}
+
+private class GenerateExecutorInfoAction(
+    private val resultsDir: File,
+    private val taskName: String,
+    private val buildName: String,
+    private val projectPath: String,
+    private val projectVersion: String
+) : Action<Task> {
+    override fun execute(task: Task) {
+        resultsDir.mkdirs()
+        val executorInfo = mapOf(
+            "name" to "Gradle",
+            "type" to "gradle",
+            "taskName" to taskName,
+            "buildName" to buildName,
+            "projectPath" to projectPath,
+            "projectVersion" to projectVersion
+        )
+        val resultsPath = Paths.get(resultsDir.absoluteFile.path)
+        Files.createDirectories(resultsPath)
+        val executorPath = resultsPath.resolve(AllureAdapterExtension.EXECUTOR_FILE_NAME)
+        Files.write(executorPath, JsonOutput.toJson(executorInfo).toByteArray(StandardCharsets.UTF_8))
     }
 }

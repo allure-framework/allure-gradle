@@ -106,7 +106,7 @@ internal fun Project.registerReportTasks(
         dependsOn(allureGenerateCategories)
         allureHome.set(download.flatMap { it.destinationDir })
         // allureAggregate uses defaultDependencies, and Gradle seems to miss task dependencies there
-        resultsDirs.set(allureAggregate)
+        resultsDirs.from(allureAggregate)
     }
     tasks.register<AllureServe>(serveTaskName) {
         description = "Builds Allure report from $aggConfigurationName dependencies and launches Allure server"
@@ -118,6 +118,6 @@ internal fun Project.registerReportTasks(
         dependsOn(allureGenerateCategories)
         allureHome.set(download.flatMap { it.destinationDir })
         // allureAggregate uses defaultDependencies, and Gradle seems to miss task dependencies there
-        resultsDirs.set(allureAggregate)
+        resultsDirs.from(allureAggregate)
     }
 }

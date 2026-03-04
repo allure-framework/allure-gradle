@@ -38,7 +38,7 @@ abstract class AllureServe : AllureExecTask() {
     init {
         executable(allureExecutable.map { it.absolutePath }.lazyToString())
         argumentProviders += ConditionalArgumentProvider(
-            project.provider {
+            providers.provider {
                 val args = mutableListOf<String>()
                 if (verbose.get()) {
                     args += "--verbose"

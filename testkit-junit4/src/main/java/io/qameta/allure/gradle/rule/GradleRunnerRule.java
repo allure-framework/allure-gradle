@@ -95,6 +95,7 @@ public class GradleRunnerRule extends ExternalResource {
         }
 
         Optional<JavaGradle> gradleRequirement = Stream.of(
+                new JavaGradle(JavaVersion.VERSION_24, "8.14"),
                 new JavaGradle(JavaVersion.VERSION_21, "8.5"),
                 new JavaGradle(JavaVersion.VERSION_17, "7.3"),
                 new JavaGradle(JavaVersion.VERSION_16, "7.0"),

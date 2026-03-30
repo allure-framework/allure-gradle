@@ -1,8 +1,8 @@
 package io.qameta.allure.gradle.download.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RelativePath
@@ -37,7 +37,7 @@ abstract class DownloadAllure : DefaultTask() {
 
     @InputFiles
     @PathSensitive(PathSensitivity.NONE)
-    val allureCommandLine = objects.property<Configuration>()
+    val allureCommandLine: ConfigurableFileCollection = objects.fileCollection()
 
     @OutputDirectory
     val destinationDir = layout.buildDirectory.dir("allure/commandline")
@@ -47,7 +47,7 @@ abstract class DownloadAllure : DefaultTask() {
         logger.info("Unpacking Allure Commandline to ${destinationDir.get()}")
         val result = fs.sync {
             into(destinationDir)
-            from(archiveOps.zipTree(allureCommandLine.get().singleFile)) {
+            from(archiveOps.zipTree(allureCommandLine.singleFile)) {
                 eachFile {
                     // Replace "allure-.../abc/..." with "abc/..." for predictable folder locations
                     relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())

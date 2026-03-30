@@ -2,7 +2,7 @@ package io.qameta.allure.gradle.base.tasks
 
 import io.qameta.allure.gradle.base.AllureExtension
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
@@ -50,28 +50,13 @@ abstract class AllureExecTask() : Exec() {
     }
 
     @get:Internal
-    protected val allureExecutable = objects.property<File>().convention(
-        providers.provider {
-            val homeDir = allureHome.get().asFile
-            val binDir = homeDir.resolve("bin")
-
-            val allureExecutable = if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-                binDir.resolve("allure")
-            } else {
-                binDir.resolve("allure.cmd").takeIf { it.exists() } ?: binDir.resolve("allure.bat")
-            }
-            if (!allureExecutable.exists()) {
-                throw IllegalArgumentException("Cannot find allure commandline in $homeDir")
-            }
-
-            allureExecutable.setExecutable(true)
-            allureExecutable
-        }
-    )
+    protected val allureExecutable: Provider<File> = allureHome.map {
+        defaultAllureExecutable(it.asFile)
+    }
 
     // InputDirectories does not exist yet: https://github.com/gradle/gradle/issues/7485#issuecomment-585289792
     @Internal
-    val resultsDirs = objects.property<Configuration>()
+    val resultsDirs: ConfigurableFileCollection = objects.fileCollection()
 
     @Option(option = "depends-on-tests", description = "Execute the relevant test tasks before launching Allure")
     fun dependsOnTests() {
@@ -86,14 +71,17 @@ abstract class AllureExecTask() : Exec() {
     val dependsOnTests = objects.property<Boolean>().convention(false)
 
     @get:Internal
-    protected val rawResults: Provider<FileCollection> =
-        resultsDirs.map { it.filter { it.exists() && it.isDirectory } }
+    protected val rawResults: Provider<FileCollection> = providers.provider {
+        project.files(resultsDirs.filter { it.exists() && it.isDirectory })
+    }
 
     @InputFiles
     @SkipWhenEmpty
     @IgnoreEmptyDirectories
     @PathSensitive(PathSensitivity.RELATIVE)
-    protected val inputFiles = project.files(resultsDirs.map { dirs -> dirs.map { project.fileTree(it) } })
+    protected val inputFiles = project.files(
+        providers.provider { resultsDirs.files.map { project.fileTree(it) } }
+    )
 
     @get:Internal
     protected abstract val defaultEnvironment: MapProperty<String, Any>
@@ -105,10 +93,13 @@ abstract class AllureExecTask() : Exec() {
         // should wait for test execution
         // See https://github.com/allure-framework/allure-gradle/issues/90
         // See https://github.com/gradle/gradle/issues/21962
-        mustRunAfter(resultsDirs.map { it.elements })
+        mustRunAfter(resultsDirs)
     }
 
     override fun exec() {
+        val allureExecutable = validateAllureExecutable()
+        executable = allureExecutable.absolutePath
+
         val environment = environment
         for ((key, value) in defaultEnvironment.get()) {
             if (key !in environment) {
@@ -117,5 +108,29 @@ abstract class AllureExecTask() : Exec() {
             }
         }
         super.exec()
+    }
+
+    private fun defaultAllureExecutable(homeDir: File): File {
+        val binDir = homeDir.resolve("bin")
+        return if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            binDir.resolve("allure")
+        } else {
+            binDir.resolve("allure.bat")
+        }
+    }
+
+    private fun validateAllureExecutable(): File {
+        val homeDir = allureHome.get().asFile
+        val defaultExecutable = defaultAllureExecutable(homeDir)
+        val allureExecutable = if (Os.isFamily(Os.FAMILY_WINDOWS) && !defaultExecutable.exists()) {
+            homeDir.resolve("bin").resolve("allure.cmd")
+        } else {
+            defaultExecutable
+        }
+        if (!allureExecutable.exists()) {
+            throw IllegalArgumentException("Cannot find allure commandline in $homeDir")
+        }
+        allureExecutable.setExecutable(true)
+        return allureExecutable
     }
 }

@@ -330,7 +330,7 @@ allure {
 
 ### Customizing allure-commandline download
 
-Allure download is handled with `io.qameta.allure-download` plugin which adds `allureDownload` task.
+Allure download is handled with `io.qameta.allure-download` plugin which adds `downloadAllure` task.
 Typically, applying `io.qameta.allure-report` is enough, however, you could use `io.qameta.allure-download`
 if you do not need reporting and you need just a fresh `allure-commandline` binary.
 
@@ -438,7 +438,7 @@ Configurations:
   A configuration to resolve `allure-commandline` zip
 
 Tasks:
-* `allureDownload: io.qameta.allure.gradle.download.tasks.DownloadAllure`
+* `downloadAllure: io.qameta.allure.gradle.download.tasks.DownloadAllure`
 
   Retrieves and unpacks `allure-commandline`
 

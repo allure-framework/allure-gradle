@@ -3,7 +3,7 @@
 
 # Allure plugin for Gradle [![Build](https://github.com/allure-framework/allure-gradle/actions/workflows/build.yml/badge.svg)](https://github.com/allure-framework/allure-gradle/actions/workflows/build.yml) [![release-badge][]][release]
 
-Gradle projects plugins for building [Allure](https://docs.qameta.io/allure/latest/) reports for TestNG, JUnit4, JUnit5, Cucumber JVM, and Spock tests.
+Gradle project plugins for building [Allure](https://docs.qameta.io/allure/latest/) reports for JBehave 4/5, JUnit 4/5/Platform, Karate, ScalaTest, TestNG, Cucumber JVM 4-7, and Spock tests.
 
 ## Basic usage
 

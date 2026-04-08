@@ -56,7 +56,9 @@ open class AllureAdapterPlugin : Plugin<Project> {
 
         afterEvaluate {
             // We don't know if the user updates autoconfigure value, so we delay the decision till afterEvaluate
-            adapterExtension.takeIf { it.frameworks.configuredAdapters.isEmpty() }?.run {
+            adapterExtension.takeIf {
+                it.autoconfigure.get() && it.frameworks.configuredAdapters.isEmpty()
+            }?.run {
                 for (adapter in AllureJavaAdapter.values()) {
                     frameworks.register(adapter.name)
                 }

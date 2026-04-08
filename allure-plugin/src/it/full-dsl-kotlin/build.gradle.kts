@@ -14,6 +14,15 @@ allure {
                 adapterVersion.set("42.0")
                 enabled.set(true)
             }
+            junitPlatform {
+                autoconfigureListeners.set(false)
+            }
+            jbehave
+            jbehave5
+            karate {
+                autoconfigureListeners.set(false)
+            }
+            scalatest
             spock
             testng.adapterVersion.set("43")
             testng.enabled.set(false)

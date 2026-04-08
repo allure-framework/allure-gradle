@@ -35,13 +35,14 @@ open class AllureAdapterExtension @Inject constructor(
     companion object {
         const val NAME = "adapter"
         const val EXECUTOR_FILE_NAME = "executor.json"
+        const val DEFAULT_ALLURE_JAVA_VERSION = "2.33.0"
     }
 
     /**
      * `allure-java` version (adapters for test engines)
      */
     val allureJavaVersion: Property<String> =
-        objects.property<String>().convention("2.29.1")
+        objects.property<String>().convention(DEFAULT_ALLURE_JAVA_VERSION)
     val aspectjVersion: Property<String> = objects.property<String>().convention("1.9.24")
 
 

@@ -16,12 +16,13 @@ abstract class AllureExtension(
 ) {
     companion object {
         const val NAME = "allure"
+        const val DEFAULT_VERSION = "2.38.1"
     }
 
     /**
      * `allure-commandline` version
      */
-    val version: Property<String> = objects.property<String>().convention("2.34.1")
+    val version: Property<String> = objects.property<String>().convention(DEFAULT_VERSION)
 
     /**
      * Default environment variables for launching `allure-commandline`.

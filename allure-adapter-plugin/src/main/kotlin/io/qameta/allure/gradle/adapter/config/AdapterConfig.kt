@@ -1,6 +1,5 @@
 package io.qameta.allure.gradle.adapter.config
 
-import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.adapter.AllureAdapterExtension
 import io.qameta.allure.gradle.adapter.autoconfigure.AutoconfigureRule
 import io.qameta.allure.gradle.adapter.autoconfigure.AutoconfigureRuleBuilder
@@ -18,7 +17,7 @@ open class AdapterConfig @Inject constructor(
 ) {
     /**
      * Configures `allure-java` version for the current adapter.
-     * The value defaults to [AllureExtension.allureJavaVersion]
+     * The value defaults to [AllureAdapterExtension.allureJavaVersion]
      */
     val adapterVersion = objects.property<String>()
         .convention(allureAdapterExtension.allureJavaVersion)

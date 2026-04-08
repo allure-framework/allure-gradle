@@ -23,10 +23,49 @@ internal enum class AllureJavaAdapter(
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
         }
     }),
+    junitPlatform("junit-platform", {
+        supportsAutoconfigureListeners.set(true)
+        activateOn("org.junit.platform:junit-platform-launcher") {
+            compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
+        }
+    }),
     testng("testng", {
         supportsAutoconfigureListeners.set(true)
         activateOn("org.testng:testng") {
+            matching {
+                versionAtLeast(it.version, 6, 14, 3)
+            }
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
+        }
+    }),
+    jbehave("jbehave", {
+        activateOn("org.jbehave:jbehave-core") {
+            matching {
+                it.version.startsWith("4.")
+            }
+            compileAndRuntime(adapterDependency)
+        }
+    }),
+    jbehave5("jbehave5", {
+        activateOn("org.jbehave:jbehave-core") {
+            matching {
+                it.version.startsWith("5.")
+            }
+            compileAndRuntime(adapterDependency)
+        }
+    }),
+    karate("karate", {
+        supportsAutoconfigureListeners.set(true)
+        activateOn("com.intuit.karate:karate-core") {
+            compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
+        }
+    }),
+    scalatest("scalatest", {
+        activateOn("org.scalatest:scalatest_2.12") {
+            compileAndRuntime(adapterVersion.map { "io.qameta.allure:allure-scalatest_2.12:$it" })
+        }
+        activateOn("org.scalatest:scalatest_2.13") {
+            compileAndRuntime(adapterVersion.map { "io.qameta.allure:allure-scalatest_2.13:$it" })
         }
     }),
     // Spock 2 runs on JUnit Platform, Allure provides allure-spock2 for it
@@ -81,6 +120,21 @@ internal enum class AllureJavaAdapter(
                     BaseTrimMetaInfServices.NO_SPI_JAR
                 )
             }
+        }
+
+        private fun versionAtLeast(version: String, vararg minimum: Int): Boolean {
+            val actual = version.substringBefore('-')
+                .split('.')
+                .map { it.toIntOrNull() ?: 0 }
+
+            for (index in 0 until maxOf(actual.size, minimum.size)) {
+                val actualPart = actual.getOrElse(index) { 0 }
+                val minimumPart = minimum.getOrElse(index) { 0 }
+                if (actualPart != minimumPart) {
+                    return actualPart > minimumPart
+                }
+            }
+            return true
         }
     }
 }

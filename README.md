@@ -55,7 +55,7 @@ Groovy DSL:
 
 ```groovy
 allure {
-    version = "2.34.1"
+    version = "2.38.1"
 }
 ```
 
@@ -63,7 +63,7 @@ Kotlin DSL:
 
 ```kotlin
 allure {
-    version = "2.34.1"
+    version = "2.38.1"
 }
 ```
 
@@ -94,16 +94,16 @@ provide Allure results.
 Data collecting is implemented via `io.qameta.allure-adapter` Gradle plugin.
 
 The values in the sample below are the defaults.
-The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.19.0"`, however, that is the only difference.
+The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.33.0"`, however, that is the only difference.
 
 ```kotlin
 allure {
-    version.set("2.34.1")
+    version.set("2.38.1")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
-        // It defaults to allure.version
-        allureJavaVersion.set("2.29.1")
-        aspectjVersion.set("1.9.22.1")
+        // It defaults to the latest supported allure-java release
+        allureJavaVersion.set("2.33.0")
+        aspectjVersion.set("1.9.24")
 
         // Customize environment variables for launching Allure
         environment.put("JAVA_HOME", "/path/to/java_home")
@@ -116,27 +116,36 @@ allure {
         // However, it would be better to put the file in a well-known location and configure it explicitly
         categoriesFile.set(layout.projectDirectory.file("config/allure/categories.json"))
         frameworks {
+            junit4 {
+                adapterVersion.set("...")
+                enabled.set(true)
+            }
             junit5 {
                 // Defaults to allureJavaVersion
                 adapterVersion.set("...")
                 enabled.set(true)
-                // Enables allure-junit4 default test listeners via META-INF/services/...
+                // Enables allure-junit5 default test listeners via META-INF/services/...
                 autoconfigureListeners.set(true)
             }
-            junit4 {
-                // same as junit5
+            junitPlatform {
+                autoconfigureListeners.set(true)
             }
             testng {
-                // same as junit5
+                adapterVersion.set("...")
+                enabled.set(true)
+                autoconfigureListeners.set(true)
             }
+            jbehave
+            jbehave5
+            karate {
+                autoconfigureListeners.set(true)
+            }
+            scalatest
             spock
-            cucumberJvm
-            // Alternative syntax: cucumberJvm(2) {...}
-            cucumber2Jvm
-            cucumber3Jvm
             cucumber4Jvm
             cucumber5Jvm
             cucumber6Jvm
+            cucumber7Jvm
         }
     }
 }
@@ -171,7 +180,7 @@ allureRawResultElements.outgoing.artifact(file("...")) {
 
 ### Using custom JUnit5 listeners instead of the default ones
 
-`allure-java` comes with a set of default listeners for JUnit4, JUnit5, and TestNG.
+`allure-java` comes with a set of default listeners for JUnit5, JUnit Platform, Karate, and TestNG.
 However, you might want to disable them and use your own ones.
 
 Here's how you disable default listeners:
@@ -343,7 +352,7 @@ If you have a customized version, you could configure it as follows:
 ```kotlin
 allure {
     // This configures the common Allure version, so it is used for commandline as well
-    version.set("2.34.1")
+    version.set("2.38.1")
 
     commandline {
         // The following patterns are supported: `[group]`, `[module]`, `[version]`, `[extension]`

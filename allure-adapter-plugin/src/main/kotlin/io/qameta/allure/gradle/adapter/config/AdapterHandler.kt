@@ -12,6 +12,11 @@ open class AdapterHandler @Inject constructor(
 
     val junit4 by lazyCreating
     val junit5 by lazyCreating
+    val junitPlatform by lazyCreating
+    val jbehave by lazyCreating
+    val jbehave5 by lazyCreating
+    val karate by lazyCreating
+    val scalatest by lazyCreating
     val testng by lazyCreating
     val spock by lazyCreating
     val cucumber4Jvm by lazyCreating

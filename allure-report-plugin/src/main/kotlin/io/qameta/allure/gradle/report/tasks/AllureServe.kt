@@ -136,5 +136,20 @@ abstract class AllureServe : AllureExecTask() {
 }
 
 internal fun buildWindowsCommand(allureExecutable: String, allureArgs: List<Any>): List<String> =
-    // `call` lets cmd.exe invoke a quoted batch path without truncating it at spaces.
-    listOf("cmd", "/c", "call", allureExecutable) + allureArgs.map { it.toString() }
+    listOf("cmd.exe", "/E:ON", "/F:OFF", "/V:OFF", "/d", "/s", "/c", buildWindowsCommandLine(allureExecutable, allureArgs))
+
+internal fun buildWindowsCommandLine(allureExecutable: String, allureArgs: List<Any>): String =
+    (listOf(allureExecutable) + allureArgs.map { it.toString() })
+        .joinToString(separator = " ", prefix = "\"", postfix = "\"") {
+            escapeWindowsCmdArg(it)
+        }
+
+internal fun escapeWindowsCmdArg(arg: String): String {
+    require('\r' !in arg && '\n' !in arg) { "Invalid character in argument" }
+    val escaped = Regex("""\\+(?="|$)""").replace(arg) { matchResult ->
+        matchResult.value + matchResult.value
+    }
+        .replace("\"", "\"\"")
+        .replace("%", "%%cd:~,%")
+    return "\"$escaped\""
+}

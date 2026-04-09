@@ -2,15 +2,18 @@ package io.qameta.allure.gradle.report.tasks
 
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
 import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
-import org.apache.commons.exec.CommandLine
-import org.apache.commons.exec.DefaultExecutor
-import org.apache.commons.exec.PumpStreamHandler
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
 import org.gradle.work.DisableCachingByDefault
-import java.io.File
+import java.io.InputStream
+import java.io.PrintStream
+import java.lang.management.ManagementFactory
+import java.util.concurrent.TimeUnit
+
+private const val WINDOWS_EXECUTABLE_ENV = "ALLURE_CMDLINE_EXECUTABLE"
+private const val WINDOWS_ARG_ENV_PREFIX = "ALLURE_CMDLINE_ARG_"
 
 @DisableCachingByDefault(because = "Not worth caching")
 abstract class AllureServe : AllureExecTask() {
@@ -61,29 +64,102 @@ abstract class AllureServe : AllureExecTask() {
     }
 
     override fun exec() {
-        val resolvedExecutable = resolveAllureExecutable()
-        val resolvedArgs = (args?.toMutableList() ?: mutableListOf<String>()) +
-            argumentProviders.flatMap { it.asArguments() }
-        val commandLine = buildAllureCommandLine(
-            allureExecutable = resolvedExecutable.absolutePath,
-            allureArgs = resolvedArgs,
-            handleQuoting = Os.isFamily(Os.FAMILY_WINDOWS)
+        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
+            super.exec()
+            return
+        }
+        startWithProcessBuilder(
+            allureExecutable = resolveAllureExecutable().absolutePath,
+            allureArgs = (args?.toMutableList() ?: mutableListOf<String>()) +
+                argumentProviders.flatMap { it.asArguments() },
+            environment = resolveEnvironment()
         )
+    }
 
-        val executor = DefaultExecutor.builder().get().apply {
-            setExitValue(0)
-            streamHandler = PumpStreamHandler(System.out, System.err)
+    private fun startWithProcessBuilder(
+        allureExecutable: String,
+        allureArgs: List<Any>,
+        environment: Map<String, String>
+    ) {
+        val cmd = buildWindowsCommand(allureExecutable, allureArgs)
+        val windowsEnvironment = buildWindowsCommandEnvironment(allureExecutable, allureArgs)
+        logger.info("Starting $cmd")
+        ProcessBuilder(cmd)
+            .apply {
+                for ((key, value) in environment) {
+                    environment()[key] = value
+                }
+                for ((key, value) in windowsEnvironment) {
+                    environment()[key] = value
+                }
+            }
+            .start().apply {
+                if (isAlive) {
+                    val allurePid = processOrParentPid
+                    project.gradle.buildFinished {
+                        logger.info("Terminating process $allurePid to stop allure serve")
+                        ProcessBuilder("taskkill", "/PID", allurePid.toString(), "/T", "/F").start().apply {
+                            forwardStreams("terminate allure serve")
+                            waitFor(15, TimeUnit.SECONDS)
+                        }
+                    }
+                }
+                outputStream.close()
+                forwardStreams("allure serve")
+                waitFor()
+            }
+    }
+
+    private val Process.processOrParentPid: Long
+        get() = try {
+            Process::class.java.getMethod("pid").invoke(this) as Long
+        } catch (t: Throwable) {
+            ManagementFactory.getRuntimeMXBean().name.substringBefore('@').toLong().also {
+                logger.info("Will terminate process $it (Gradle Daemon?) when ctrl+c is pressed. Consider upgrading to Java 11+")
+            }
         }
 
-        logger.info("Starting {}", commandLine)
-        executor.execute(commandLine, resolveEnvironment())
+    private fun Process.forwardStreams(name: String) = apply {
+        forwardStream("$name stdout", inputStream, System.out)
+        forwardStream("$name stderr", errorStream, System.err)
+    }
+
+    private fun forwardStream(streamName: String, inputStream: InputStream?, out: PrintStream) {
+        Thread {
+            inputStream?.buffered()?.copyTo(out)
+        }.apply {
+            isDaemon = true
+            name = "Allure serve $streamName forwarder"
+            start()
+        }
     }
 }
 
-internal fun buildAllureCommandLine(
-    allureExecutable: String,
-    allureArgs: List<Any>,
-    handleQuoting: Boolean
-): CommandLine = CommandLine(File(allureExecutable)).apply {
-    allureArgs.forEach { addArgument(it.toString(), handleQuoting) }
-}
+internal fun buildWindowsCommand(allureExecutable: String, allureArgs: List<Any>): List<String> =
+    listOf("cmd.exe", "/E:ON", "/F:OFF", "/V:OFF", "/d", "/s", "/c", buildWindowsCommandLine(allureExecutable, allureArgs))
+
+internal fun buildWindowsCommandLine(allureExecutable: String, allureArgs: List<Any>): String =
+    buildString {
+        append("call \"%")
+        append(WINDOWS_EXECUTABLE_ENV)
+        append("%\"")
+        allureArgs.indices.forEach {
+            append(" \"%")
+            append(WINDOWS_ARG_ENV_PREFIX)
+            append(it)
+            append("%\"")
+        }
+    }
+
+internal fun buildWindowsCommandEnvironment(allureExecutable: String, allureArgs: List<Any>): Map<String, String> =
+    buildMap {
+        put(WINDOWS_EXECUTABLE_ENV, validateWindowsCommandValue(allureExecutable))
+        allureArgs.forEachIndexed { index, arg ->
+            put("$WINDOWS_ARG_ENV_PREFIX$index", validateWindowsCommandValue(arg.toString()))
+        }
+    }
+
+internal fun validateWindowsCommandValue(value: String): String =
+    value.also {
+        require('\r' !in it && '\n' !in it) { "Invalid character in argument" }
+    }

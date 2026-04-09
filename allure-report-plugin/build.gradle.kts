@@ -6,7 +6,6 @@ group = "io.qameta.allure.gradle.report"
 
 dependencies {
     api(project(":allure-base-plugin"))
-    implementation(libs.commonsExec)
 
     testImplementation(project(":testkit-junit4"))
     testImplementation(libs.assertjCore)

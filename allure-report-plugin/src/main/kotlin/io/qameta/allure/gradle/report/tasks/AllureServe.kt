@@ -80,7 +80,7 @@ abstract class AllureServe : AllureExecTask() {
         allureArgs: List<Any>,
         environment: Map<String, Any>
     ) {
-        val cmd = listOf("cmd", "/c", allureExecutable) + allureArgs.map { it.toString() }
+        val cmd = buildWindowsCommand(allureExecutable, allureArgs)
         logger.info("Starting $cmd")
         ProcessBuilder(cmd)
             .apply {
@@ -134,3 +134,7 @@ abstract class AllureServe : AllureExecTask() {
         }
     }
 }
+
+internal fun buildWindowsCommand(allureExecutable: String, allureArgs: List<Any>): List<String> =
+    // `call` lets cmd.exe invoke a quoted batch path without truncating it at spaces.
+    listOf("cmd", "/c", "call", allureExecutable) + allureArgs.map { it.toString() }

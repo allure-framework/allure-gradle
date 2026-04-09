@@ -72,7 +72,6 @@ abstract class AllureServe : AllureExecTask() {
 
         val executor = DefaultExecutor.builder().get().apply {
             setExitValue(0)
-            workingDir?.let { setWorkingDirectory(it) }
             streamHandler = PumpStreamHandler(System.out, System.err)
         }
 

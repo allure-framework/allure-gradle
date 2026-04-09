@@ -2,15 +2,15 @@ package io.qameta.allure.gradle.report.tasks
 
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
 import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
+import org.apache.commons.exec.CommandLine
+import org.apache.commons.exec.DefaultExecutor
+import org.apache.commons.exec.PumpStreamHandler
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
 import org.gradle.work.DisableCachingByDefault
-import java.io.InputStream
-import java.io.PrintStream
-import java.lang.management.ManagementFactory
-import java.util.concurrent.TimeUnit
+import java.io.File
 
 @DisableCachingByDefault(because = "Not worth caching")
 abstract class AllureServe : AllureExecTask() {
@@ -61,95 +61,30 @@ abstract class AllureServe : AllureExecTask() {
     }
 
     override fun exec() {
-        if (!Os.isFamily(Os.FAMILY_WINDOWS)) {
-            super.exec()
-            return
-        }
-        // Workaround https://github.com/gradle/gradle/issues/7603
-        // The issues is that "terminate process" in Windows does not terminate its children
-        startWithProcessBuilder(
-            allureExecutable = executable!!,
-            allureArgs = (args?.toMutableList() ?: mutableListOf<String>()) +
-                    argumentProviders.flatMap { it.asArguments() },
-            environment = environment
+        val resolvedExecutable = resolveAllureExecutable()
+        val resolvedArgs = (args?.toMutableList() ?: mutableListOf<String>()) +
+            argumentProviders.flatMap { it.asArguments() }
+        val commandLine = buildAllureCommandLine(
+            allureExecutable = resolvedExecutable.absolutePath,
+            allureArgs = resolvedArgs,
+            handleQuoting = Os.isFamily(Os.FAMILY_WINDOWS)
         )
-    }
 
-    private fun startWithProcessBuilder(
-        allureExecutable: String,
-        allureArgs: List<Any>,
-        environment: Map<String, Any>
-    ) {
-        val cmd = buildWindowsCommand(allureExecutable, allureArgs)
-        logger.info("Starting $cmd")
-        ProcessBuilder(cmd)
-            .apply {
-                for ((key, value) in environment) {
-                    environment()[key] = value.toString()
-                }
-            }
-            .start().apply {
-                if (isAlive) {
-                    val allurePid = processOrParentPid
-                    project.gradle.buildFinished {
-                        logger.info("Terminating process $allurePid to stop allure serve")
-                        // /T kills all the children, so it does terminate 'allure serve' command
-                        ProcessBuilder("taskkill", "/PID", allurePid.toString(), "/T", "/F").start().apply {
-                            forwardStreams("terminate allure serve")
-                            waitFor(15, TimeUnit.SECONDS)
-                        }
-                    }
-                }
-                outputStream.close()
-                forwardStreams("allure serve")
-                waitFor()
-            }
-    }
-
-    private val Process.processOrParentPid: Long
-        get() = try {
-            // Java 9+
-            Process::class.java.getMethod("pid").invoke(this) as Long
-        } catch (t: Throwable) {
-            // Almost all the implementations return name as pid@...
-            // https://stackoverflow.com/a/35885/1261287
-            ManagementFactory.getRuntimeMXBean().name.substringBefore('@').toLong().also {
-                logger.info("Will terminate process $it (Gradle Daemon?) when ctrl+c is pressed. Consider upgrading to Java 11+")
-            }
+        val executor = DefaultExecutor.builder().get().apply {
+            setExitValue(0)
+            workingDir?.let { setWorkingDirectory(it) }
+            streamHandler = PumpStreamHandler(System.out, System.err)
         }
 
-    private fun Process.forwardStreams(name: String) = apply {
-        // ProcessBuilder.inheritIO does not work, see https://github.com/gradle/gradle/issues/16719
-        forwardStream("$name stdout", inputStream, System.out)
-        forwardStream("$name stderr", errorStream, System.err)
-    }
-
-    private fun forwardStream(streamName: String, inputStream: InputStream?, out: PrintStream) {
-        Thread {
-            inputStream?.buffered()?.copyTo(out)
-        }.apply {
-            isDaemon = true
-            name = "Allure serve $streamName forwarder"
-            start()
-        }
+        logger.info("Starting {}", commandLine)
+        executor.execute(commandLine, resolveEnvironment())
     }
 }
 
-internal fun buildWindowsCommand(allureExecutable: String, allureArgs: List<Any>): List<String> =
-    listOf("cmd.exe", "/E:ON", "/F:OFF", "/V:OFF", "/d", "/s", "/c", buildWindowsCommandLine(allureExecutable, allureArgs))
-
-internal fun buildWindowsCommandLine(allureExecutable: String, allureArgs: List<Any>): String =
-    (listOf(allureExecutable) + allureArgs.map { it.toString() })
-        .joinToString(separator = " ", prefix = "\"", postfix = "\"") {
-            escapeWindowsCmdArg(it)
-        }
-
-internal fun escapeWindowsCmdArg(arg: String): String {
-    require('\r' !in arg && '\n' !in arg) { "Invalid character in argument" }
-    val escaped = Regex("""\\+(?="|$)""").replace(arg) { matchResult ->
-        matchResult.value + matchResult.value
-    }
-        .replace("\"", "\"\"")
-        .replace("%", "%%cd:~,%")
-    return "\"$escaped\""
+internal fun buildAllureCommandLine(
+    allureExecutable: String,
+    allureArgs: List<Any>,
+    handleQuoting: Boolean
+): CommandLine = CommandLine(File(allureExecutable)).apply {
+    allureArgs.forEach { addArgument(it.toString(), handleQuoting) }
 }

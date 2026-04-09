@@ -97,17 +97,29 @@ abstract class AllureExecTask() : Exec() {
     }
 
     override fun exec() {
-        val allureExecutable = validateAllureExecutable()
+        val allureExecutable = resolveAllureExecutable()
         executable = allureExecutable.absolutePath
 
-        val environment = environment
+        val resolvedEnvironment = resolveEnvironment()
+        environment.clear()
+        environment.putAll(resolvedEnvironment)
+        super.exec()
+    }
+
+    protected fun resolveAllureExecutable(): File = validateAllureExecutable()
+
+    protected fun resolveEnvironment(): Map<String, String> {
+        val resolvedEnvironment = linkedMapOf<String, String>()
+        for ((key, value) in environment) {
+            resolvedEnvironment[key] = unwrapProvider(value)
+        }
         for ((key, value) in defaultEnvironment.get()) {
-            if (key !in environment) {
+            if (key !in resolvedEnvironment) {
                 logger.info("Adding $key to environment properties (value omitted for security reasons)")
-                environment[key] = unwrapProvider(value)
+                resolvedEnvironment[key] = unwrapProvider(value)
             }
         }
-        super.exec()
+        return resolvedEnvironment
     }
 
     private fun defaultAllureExecutable(homeDir: File): File {

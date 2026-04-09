@@ -5,62 +5,40 @@ import org.junit.Test
 
 class AllureServeTest {
     @Test
-    fun `windows command quotes batch path and args for cmd`() {
-        val command = buildWindowsCommand(
+    fun `command line keeps a spaced Windows results path as a single argument`() {
+        val commandLine = buildAllureCommandLine(
             allureExecutable = """C:\Users\User with Space\allure\bin\allure.bat""",
             allureArgs = listOf(
                 "serve",
                 "--host",
                 "127.0.0.1",
                 """C:\Users\User with Space\project\build\allure-results"""
-            )
+            ),
+            handleQuoting = true
         )
 
-        assertThat(command).containsExactly(
-            "cmd.exe",
-            "/E:ON",
-            "/F:OFF",
-            "/V:OFF",
-            "/d",
-            "/s",
-            "/c",
-            buildWindowsCommandLine(
-                allureExecutable = """C:\Users\User with Space\allure\bin\allure.bat""",
-                allureArgs = listOf(
-                    "serve",
-                    "--host",
-                    "127.0.0.1",
-                    """C:\Users\User with Space\project\build\allure-results"""
-                )
-            )
-        )
-        assertThat(command.last()).isEqualTo(
-            "\"\"C:\\Users\\User with Space\\allure\\bin\\allure.bat\" \"serve\" \"--host\" \"127.0.0.1\" \"C:\\Users\\User with Space\\project\\build\\allure-results\"\""
+        assertThat(commandLine.arguments).containsExactly(
+            "serve",
+            "--host",
+            "127.0.0.1",
+            "\"C:\\Users\\User with Space\\project\\build\\allure-results\""
         )
     }
 
     @Test
-    fun `windows command escapes percent signs and embedded quotes`() {
-        assertThat(
-            buildWindowsCommandLine(
-                allureExecutable = """C:\tools\allure.bat""",
-                allureArgs = listOf(
-                    """100% ready""",
-                    "has \"quotes\""
-                )
-            )
-        ).isEqualTo(
-            "\"\"C:\\tools\\allure.bat\" \"100%%cd:~,% ready\" \"has \"\"quotes\"\"\"\""
+    fun `command line leaves Unix paths raw when quoting is disabled`() {
+        val commandLine = buildAllureCommandLine(
+            allureExecutable = "/tmp/allure/bin/allure",
+            allureArgs = listOf(
+                "serve",
+                "/tmp/report project/build/allure-results"
+            ),
+            handleQuoting = false
         )
-    }
 
-    @Test
-    fun `windows command rejects multiline args`() {
-        assertThat(
-            kotlin.runCatching {
-                escapeWindowsCmdArg("bad\narg")
-            }.exceptionOrNull()
-        ).isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessage("Invalid character in argument")
+        assertThat(commandLine.arguments).containsExactly(
+            "serve",
+            "/tmp/report project/build/allure-results"
+        )
     }
 }

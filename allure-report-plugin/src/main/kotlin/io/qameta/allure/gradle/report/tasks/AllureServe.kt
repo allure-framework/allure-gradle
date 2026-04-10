@@ -12,9 +12,6 @@ import java.io.PrintStream
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
-private const val WINDOWS_EXECUTABLE_ENV = "ALLURE_CMDLINE_EXECUTABLE"
-private const val WINDOWS_ARG_ENV_PREFIX = "ALLURE_CMDLINE_ARG_"
-
 @DisableCachingByDefault(because = "Not worth caching")
 abstract class AllureServe : AllureExecTask() {
     companion object {
@@ -82,14 +79,10 @@ abstract class AllureServe : AllureExecTask() {
         environment: Map<String, String>
     ) {
         val cmd = buildWindowsCommand(allureExecutable, allureArgs)
-        val windowsEnvironment = buildWindowsCommandEnvironment(allureExecutable, allureArgs)
         logger.info("Starting $cmd")
         ProcessBuilder(cmd)
             .apply {
                 for ((key, value) in environment) {
-                    environment()[key] = value
-                }
-                for ((key, value) in windowsEnvironment) {
                     environment()[key] = value
                 }
             }
@@ -136,30 +129,5 @@ abstract class AllureServe : AllureExecTask() {
 }
 
 internal fun buildWindowsCommand(allureExecutable: String, allureArgs: List<Any>): List<String> =
-    listOf("cmd.exe", "/E:ON", "/F:OFF", "/V:OFF", "/d", "/s", "/c", buildWindowsCommandLine(allureExecutable, allureArgs))
-
-internal fun buildWindowsCommandLine(allureExecutable: String, allureArgs: List<Any>): String =
-    buildString {
-        append("call \"%")
-        append(WINDOWS_EXECUTABLE_ENV)
-        append("%\"")
-        allureArgs.indices.forEach {
-            append(" \"%")
-            append(WINDOWS_ARG_ENV_PREFIX)
-            append(it)
-            append("%\"")
-        }
-    }
-
-internal fun buildWindowsCommandEnvironment(allureExecutable: String, allureArgs: List<Any>): Map<String, String> =
-    buildMap {
-        put(WINDOWS_EXECUTABLE_ENV, validateWindowsCommandValue(allureExecutable))
-        allureArgs.forEachIndexed { index, arg ->
-            put("$WINDOWS_ARG_ENV_PREFIX$index", validateWindowsCommandValue(arg.toString()))
-        }
-    }
-
-internal fun validateWindowsCommandValue(value: String): String =
-    value.also {
-        require('\r' !in it && '\n' !in it) { "Invalid character in argument" }
-    }
+    // `call` keeps cmd.exe from treating a quoted batch path as the whole command.
+    listOf("cmd.exe", "/d", "/c", "call", allureExecutable) + allureArgs.map { it.toString() }

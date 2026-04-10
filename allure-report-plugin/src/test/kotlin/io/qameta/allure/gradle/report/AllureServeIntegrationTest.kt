@@ -83,13 +83,7 @@ class AllureServeIntegrationTest {
             zip.write(
                 """
                 @echo off
-                break > "%~dp0invocation.txt"
-                :loop
-                if "%~1"=="" goto end
-                >>"%~dp0invocation.txt" echo %~1
-                shift
-                goto loop
-                :end
+                >"%~dp0invocation.txt" echo %*
                 exit /b 0
                 """.trimIndent().replace("\n", "\r\n").toByteArray()
             )

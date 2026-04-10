@@ -9,6 +9,7 @@ allure {
     version.set("42.0")
     environment.put("TZ", "UTC")
     adapter {
+        resultsDir.set(layout.buildDirectory.dir("custom-allure-results"))
         frameworks {
             junit5 {
                 adapterVersion.set("42.0")

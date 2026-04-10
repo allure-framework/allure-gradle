@@ -1,10 +1,10 @@
 {
-  "uuid": "e8f6fd85-b5aa-4adc-afc7-d101e47537c6",
-  "historyId": "1d9b83988bf21cd8c54ca5f4cf3cedec",
-  "fullName": "FirstTest.testOutput",
+  "uuid": "5710e0bc-d228-4ab2-b4dd-69156e611adf",
+  "historyId": "6657c6e38283413f7d0d188a2518f1be",
+  "fullName": "ManualTest.testOutput",
   "labels": [],
   "links": [],
-  "name": "testOutput",
+  "name": "manualResult",
   "status": "passed",
   "statusDetails": {
     "known": false,

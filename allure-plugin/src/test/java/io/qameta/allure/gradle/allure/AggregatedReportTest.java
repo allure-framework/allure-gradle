@@ -51,13 +51,23 @@ public class AggregatedReportTest {
                 .containsExactly(SUCCESS);
 
         File projectDir = gradleRunner.getProjectDir();
+        File customResultsDir = new File(projectDir, "module1/build/custom-allure-results");
+        assertThat(customResultsDir).as("Custom adapter Allure results directory")
+                .isNotEmptyDirectory();
+        File defaultResultsDir = new File(projectDir, "module2/build/allure-results");
+        assertThat(defaultResultsDir).as("Default adapter Allure results directory")
+                .isNotEmptyDirectory();
+        File manualResultsDir = new File(projectDir, "module3/build/manual-allure-results");
+        assertThat(manualResultsDir).as("Manually published Allure results directory")
+                .isNotEmptyDirectory();
+
         File reportDir = new File(projectDir, "build/reports/allure-report/allureAggregateReport");
         assertThat(reportDir).as("Allure report directory")
                 .exists();
 
         File testCasesDir = new File(reportDir, "data/test-cases");
         assertThat(testCasesDir.listFiles()).as("Allure test cases directory")
-                .isNotEmpty();
+                .hasSize(3);
 
     }
 }

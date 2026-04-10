@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    allureReport(files("$buildDir/allure-results"))
+    allureReport(files("$buildDir/manual-allure-results"))
 }
 
 allure {

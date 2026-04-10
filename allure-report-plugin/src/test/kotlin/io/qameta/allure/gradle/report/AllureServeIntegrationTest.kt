@@ -60,7 +60,7 @@ class AllureServeIntegrationTest {
         assertThat(invocationFile.readText())
             .`as`("Arguments passed to fake allure")
             .contains("serve")
-            .contains(projectDir.resolve("build/allure-results").absolutePath)
+            .contains(projectDir.resolve("build/allure-results").canonicalPath)
     }
 
     private fun createFakeAllureZip(target: File): File {

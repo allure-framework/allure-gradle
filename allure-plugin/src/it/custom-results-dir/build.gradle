@@ -18,6 +18,7 @@ dependencies {
 }
 
 allure {
+    version = "2.38.1"
     adapter {
         resultsDir = layout.buildDirectory.dir("custom-allure-results")
         // Newer allure-java fails to adapt data from JUnit5 in this fixture.

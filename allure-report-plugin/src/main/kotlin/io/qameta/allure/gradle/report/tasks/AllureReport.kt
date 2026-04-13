@@ -4,6 +4,7 @@ import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
 import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.options.Option
@@ -38,6 +39,11 @@ abstract class AllureReport : AllureExecTask() {
         project.the<AllureExtension>().report.singleFile
     )
 
+    @get:Internal
+    val allure3ConfigFile = layout.file(
+        providers.provider { temporaryDir.resolve("allurerc.json") }
+    )
+
     companion object {
         const val NAME = "allureReport"
         const val GENERATE_COMMAND = "generate"
@@ -55,16 +61,35 @@ abstract class AllureReport : AllureExecTask() {
                 val rawResults = rawResults.get().map { it.absolutePath }
                 logger.info("Input directories for $name: $rawResults")
                 args.addAll(rawResults)
-                args += "-o"
-                args += reportDir.get().asFile.absolutePath
-                if (clean.get()) {
-                    args += "--clean"
-                }
-                if (singleFile.get()) {
-                    args += "--single-file"
+                if (usesAllure3Runtime()) {
+                    args += "--config"
+                    args += allure3ConfigFile.get().asFile.absolutePath
+                } else {
+                    args += "-o"
+                    args += reportDir.get().asFile.absolutePath
+                    if (clean.get()) {
+                        args += "--clean"
+                    }
+                    if (singleFile.get()) {
+                        args += "--single-file"
+                    }
                 }
                 args
             }
         )
+    }
+
+    override fun exec() {
+        if (usesAllure3Runtime()) {
+            if (clean.get()) {
+                project.delete(reportDir.get().asFile)
+            }
+            writeAllure3Config(
+                file = allure3ConfigFile.get().asFile,
+                outputDir = reportDir.get().asFile,
+                singleFile = singleFile.get()
+            )
+        }
+        super.exec()
     }
 }

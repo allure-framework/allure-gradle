@@ -22,9 +22,11 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.property
+import org.gradle.work.DisableCachingByDefault
 import java.io.File
 import javax.inject.Inject
 
+@DisableCachingByDefault(because = "Installs Allure 3 packages via npm without a lockfile")
 abstract class InstallAllure3 : DefaultTask() {
     @get:Inject
     abstract val objects: ObjectFactory

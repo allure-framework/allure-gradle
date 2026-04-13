@@ -1,7 +1,3 @@
 plugins {
     id 'io.qameta.allure-adapter'
 }
-
-dependencies {
-    allureRawResultElements(files("$buildDir/allure-results"))
-}

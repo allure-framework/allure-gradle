@@ -8,6 +8,8 @@ import io.qameta.allure.gradle.base.tasks.JavaAgentArgumentProvider
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.Directory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
@@ -15,9 +17,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
+import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.process.JavaForkOptions
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -68,7 +72,12 @@ open class AllureAdapterExtension @Inject constructor(
      */
     val categoriesFile: RegularFileProperty = objects.fileProperty().convention(defaultCategoriesFile(project))
 
-    private val allureResultsDir = project.layout.buildDirectory.dir("allure-results")
+    /**
+     * Directory where instrumented tasks write Allure raw results.
+     */
+    val resultsDir: DirectoryProperty = objects.directoryProperty().convention(
+        project.layout.buildDirectory.dir("allure-results")
+    )
 
     val frameworks = AdapterHandler(project.container {
         objects.newInstance<AdapterConfig>(it, objects, this).also { adapter ->
@@ -124,16 +133,13 @@ open class AllureAdapterExtension @Inject constructor(
     // TODO: move to [AllureAdapterBasePlugin] like `allure { gatherResults { fromTask(..) } }
     private fun internalGatherResultsFrom(task: Task) {
         task.run {
-            // Each task should store results in its own folder
-            // End user should not depend on the folder name, so we do not expose it
-            val rawResults = allureResultsDir.get().asFile
             // Declare the whole results directory as an output to make it cacheable by Gradle.
             // Using a FileTree here makes the task output non-cacheable. See issue #107.
-            outputs.dir(rawResults)
+            outputs.dir(resultsDir)
 
             // Pass the path to the task
             if (this is JavaForkOptions) {
-                systemProperty(AllureAdapterPlugin.ALLURE_DIR_PROPERTY, rawResults.absolutePath)
+                jvmArgumentProviders += AllureResultsDirectoryArgumentProvider(resultsDir)
                 // We don't know if the task will execute JUnit5 engine or not,
                 // so we add extensions.autodetection.enabled to all the tasks if
                 // junit5.autoconfigureListeners is enabled
@@ -159,7 +165,7 @@ open class AllureAdapterExtension @Inject constructor(
 
             doFirst(
                 GenerateExecutorInfoAction(
-                    resultsDir = rawResults,
+                    resultsDir = resultsDir,
                     taskName = currentTaskName,
                     buildName = buildName,
                     projectPath = projectPath,
@@ -173,7 +179,7 @@ open class AllureAdapterExtension @Inject constructor(
         // Expose the gathered raw results
         val allureResults =
             project.configurations[AllureAdapterBasePlugin.ALLURE_RAW_RESULT_ELEMENTS_CONFIGURATION_NAME]
-        allureResults.outgoing.artifact(allureResultsDir) {
+        allureResults.outgoing.artifact(resultsDir) {
             builtBy(taskOrTasks)
         }
     }
@@ -206,14 +212,23 @@ open class AllureAdapterExtension @Inject constructor(
     }
 }
 
+private class AllureResultsDirectoryArgumentProvider(
+    @get:Internal
+    val resultsDir: Provider<Directory>
+) : CommandLineArgumentProvider {
+    override fun asArguments(): Iterable<String> =
+        listOf("-D${AllureAdapterPlugin.ALLURE_DIR_PROPERTY}=${resultsDir.get().asFile.absolutePath}")
+}
+
 private class GenerateExecutorInfoAction(
-    private val resultsDir: File,
+    private val resultsDir: Provider<Directory>,
     private val taskName: String,
     private val buildName: String,
     private val projectPath: String,
     private val projectVersion: String
 ) : Action<Task> {
     override fun execute(task: Task) {
+        val resultsDir = resultsDir.get().asFile
         resultsDir.mkdirs()
         val executorInfo = mapOf(
             "name" to "Gradle",

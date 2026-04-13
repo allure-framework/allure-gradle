@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.base.AllureBasePlugin
 import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.base.dsl.extensions
 import io.qameta.allure.gradle.base.metadata.AllureResultType
@@ -24,6 +25,8 @@ open class AllureAdapterBasePlugin : Plugin<Project> {
     }
 
     override fun apply(target: Project): Unit = target.run {
+        apply<AllureBasePlugin>()
+
         val allureExtension = the<AllureExtension>()
         allureExtension.extensions.create<AllureAdapterExtension>(
             AllureAdapterExtension.NAME,

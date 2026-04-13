@@ -42,6 +42,9 @@ public class ReportOnlyTest {
         BuildResult buildResult = gradleRunner.getBuildResult();
 
         File projectDir = gradleRunner.getProjectDir();
+        File rawResultsDir = new File(projectDir, "build/manual-allure-results");
+        assertThat(rawResultsDir).as("Manually registered Allure results")
+                .isNotEmptyDirectory();
 
         assertThat(buildResult.getTasks())
                 .as("allureReport task should work in projects without sourceSets")

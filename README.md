@@ -115,6 +115,9 @@ allure {
         // By default, categories.json is detected in src/test/resources/../categories.json,
         // However, it would be better to put the file in a well-known location and configure it explicitly
         categoriesFile.set(layout.projectDirectory.file("config/allure/categories.json"))
+
+        // Customize where adapter-managed test tasks write raw Allure results
+        resultsDir.set(layout.buildDirectory.dir("custom-allure-results"))
         frameworks {
             junit4 {
                 adapterVersion.set("...")
@@ -158,7 +161,28 @@ If you need only one or two, specify the required ones via `frameworks {...}` bl
 
 ### Adding custom results for reporting
 
-You could add a folder with custom results via `allureRawResultElements` Gradle configuration.
+If you need to change where adapter-managed test tasks write raw results, configure
+`allure.adapter.resultsDir`:
+
+```kotlin
+allure {
+    adapter {
+        resultsDir.set(layout.buildDirectory.dir("custom-allure-results"))
+    }
+}
+```
+
+You can also add externally produced or additional result folders via `allureRawResultElements`
+Gradle configuration.
+
+For report-only projects that do not apply `io.qameta.allure-adapter`, configure the report input
+instead:
+
+```kotlin
+dependencies {
+    allureReport(files(layout.buildDirectory.dir("custom-allure-results")))
+}
+```
 
 ```kotlin
 plugins {
@@ -397,6 +421,13 @@ dependencies {
 ```
 
 ## Technical details
+
+Most builds should use one of the end-user plugins:
+* `io.qameta.allure-adapter` for optional raw-result collection and adapter autoconfiguration
+* `io.qameta.allure-report` for report generation from configured raw results
+* `io.qameta.allure-aggregate-report` for multi-project report generation
+
+The base and download plugins are implementation building blocks for those public workflows.
 
 ### io.qameta.allure-base plugin
 

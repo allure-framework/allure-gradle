@@ -54,13 +54,14 @@ class AllureServeIntegrationTest {
             .isEqualTo(TaskOutcome.SUCCESS)
 
         val invocationFile = projectDir.resolve("build/allure/commandline/bin/invocation.txt")
+        val rawResultsDir = projectDir.resolve("build/manual-allure-results")
         assertThat(invocationFile)
             .`as`("Fake allure invocation marker")
             .exists()
         assertThat(invocationFile.readText())
             .`as`("Arguments passed to fake allure")
             .contains("serve")
-            .contains(projectDir.resolve("build/allure-results").canonicalPath)
+            .contains(rawResultsDir.canonicalPath)
     }
 
     private fun createFakeAllureZip(target: File): File {

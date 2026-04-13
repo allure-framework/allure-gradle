@@ -1,0 +1,19 @@
+{
+  "uuid": "c0417b5d-4905-46d1-8882-560c9936af71",
+  "historyId": "1d9b83988bf21cd8c54ca5f4cf3cedec",
+  "fullName": "TestNgTest.testWithAttachment",
+  "labels": [],
+  "links": [],
+  "name": "testWithAttachment",
+  "status": "passed",
+  "statusDetails": {
+    "known": false,
+    "muted": false,
+    "flaky": false
+  },
+  "stage": "finished",
+  "start": 1497976811266,
+  "stop": 1497976811304,
+  "steps": [],
+  "parameters": []
+}

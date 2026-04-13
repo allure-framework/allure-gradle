@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure-adapter'
+    id 'io.qameta.allure-report'
+}
+
+repositories {
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.0'
+}
+
+allure {
+    adapter {
+        resultsDir = layout.buildDirectory.dir("custom-allure-results")
+        // Newer allure-java fails to adapt data from JUnit5 in this fixture.
+        allureJavaVersion = "2.13.5"
+    }
+}

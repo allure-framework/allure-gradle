@@ -4,7 +4,7 @@ plugins {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 8
+    options.release = 17
 }
 
 tasks.validatePlugins {

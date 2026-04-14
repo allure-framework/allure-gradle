@@ -39,6 +39,13 @@ abstract class AllureReport : AllureExecTask() {
         project.the<AllureExtension>().report.singleFile
     )
 
+    @Option(option = "single-file", description = "Generate a single-file Allure report")
+    fun setSingleFile(enabled: String) {
+        val parsed = enabled.toBooleanStrictOrNull()
+            ?: throw IllegalArgumentException("single-file expects true or false, got '$enabled'")
+        singleFile.set(parsed)
+    }
+
     @get:Internal
     val allure3ConfigFile = layout.file(
         providers.provider { temporaryDir.resolve("allurerc.json") }

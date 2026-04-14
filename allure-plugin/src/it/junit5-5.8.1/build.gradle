@@ -17,5 +17,6 @@ dependencies {
 }
 
 allure {
+    version = "2.38.1"
     adapter.allureJavaVersion = "2.14.0"
 }

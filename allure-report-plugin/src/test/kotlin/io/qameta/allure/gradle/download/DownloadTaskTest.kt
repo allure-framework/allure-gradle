@@ -10,7 +10,17 @@ import org.junit.Test
 
 class DownloadTaskTest {
     @Test
-    fun `basic download`() {
+    fun `default version should target Allure 3`() {
+        ProjectBuilder.builder().build().run {
+            apply(plugin = "io.qameta.allure-report")
+            assertThat(the<AllureExtension>().version.get())
+                .`as`("default Allure runtime version")
+                .isEqualTo(AllureExtension.DEFAULT_VERSION)
+        }
+    }
+
+    @Test
+    fun `basic Allure 2 download`() {
         ProjectBuilder.builder().build().run {
             apply(plugin = "io.qameta.allure-download")
             val allureCommandline by configurations
@@ -18,6 +28,10 @@ class DownloadTaskTest {
             // Repository is required to download allure-commandline
             repositories {
                 mavenCentral()
+            }
+
+            configure<AllureExtension> {
+                version.set(AllureExtension.LAST_ALLURE_2_VERSION)
             }
 
             assertThat(allureCommandline.singleFile).`as`("allure-commandline binary")
@@ -34,7 +48,7 @@ class DownloadTaskTest {
             val customUrl = "https://download-test-[group].test/[module]-custom-[version].zip"
 
             configure<AllureExtension> {
-                version.set("42.0")
+                version.set("2.42.0")
                 // sam-with-receiver does not work in IDEA :(
                 commandline.apply {
                     // .test is reserved, see https://tools.ietf.org/html/rfc2606#section-2
@@ -45,7 +59,7 @@ class DownloadTaskTest {
             assertThatThrownBy {
                 allureCommandline.singleFile
             }.`as`("Custom URL configured as %s", customUrl)
-                .hasStackTraceContaining("https://download-test-custom.io.qameta.allure.test/allure-commandline-custom-42.0.zip")
+                .hasStackTraceContaining("https://download-test-custom.io.qameta.allure.test/allure-commandline-custom-2.42.0.zip")
         }
     }
 
@@ -59,7 +73,7 @@ class DownloadTaskTest {
             val customUrl = "https://localhost/[illegal-for-test].zip"
 
             configure<AllureExtension> {
-                version.set("42.0")
+                version.set("2.42.0")
                 // sam-with-receiver does not work in IDEA :(
                 commandline.apply {
                     downloadUrlPattern.set("https://localhost/[illegal-for-test].zip")
@@ -75,7 +89,7 @@ class DownloadTaskTest {
                             "[organization] = custom.io.qameta.allure, " +
                             "[group] = custom.io.qameta.allure, " +
                             "[module] = allure-commandline, " +
-                            "[version] = 42.0"
+                            "[version] = 2.42.0"
                 )
         }
     }

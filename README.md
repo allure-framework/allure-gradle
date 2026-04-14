@@ -28,7 +28,8 @@ plugins {
 }
 
 repositories {
-    // Repository is needed for downloading allure-commandline for building the report
+    // Repository is needed for allure-java adapter dependencies.
+    // The default Allure 3 report runtime is provisioned automatically.
     mavenCentral()
 }
 ```
@@ -41,7 +42,8 @@ plugins {
 }
 
 repositories {
-    // Repository is needed for downloading allure-commandline for building the report
+    // Repository is needed for allure-java adapter dependencies.
+    // The default Allure 3 report runtime is provisioned automatically.
     mavenCentral()
 }
 ```
@@ -55,7 +57,7 @@ Groovy DSL:
 
 ```groovy
 allure {
-    version = "2.38.1"
+    version = "3.4.1"
 }
 ```
 
@@ -63,9 +65,13 @@ Kotlin DSL:
 
 ```kotlin
 allure {
-    version = "2.38.1"
+    version = "3.4.1"
 }
 ```
+
+`allure.version` selects the report runtime family:
+* `3.x` uses the default Allure 3 runtime provisioned by `downloadAllure`
+* `2.x` switches to the Allure 2 `allure-commandline` zip runtime
 
 ### Building Allure report
 
@@ -98,7 +104,7 @@ The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.
 
 ```kotlin
 allure {
-    version.set("2.38.1")
+    version.set("3.4.1")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
         // It defaults to the latest supported allure-java release
@@ -268,7 +274,7 @@ plugin {
     id("io.qameta.allure-aggregate-report")
 }
 
-// allure-aggregate-report requires allure-commandline, so we need a repository here
+// Add repositories for adapter/test dependencies if the aggregated projects need them.
 repositories {
     mavenCentral()
 }
@@ -333,7 +339,7 @@ allure {
         // Each task creates its own subfolder there
         reportDir.set(project.reporting.baseDirectory.dir("allure-report"))
 
-        // Enable single file generation to open without serving.
+        // Enable single-file report generation.
         singleFile = true
     }
 }
@@ -361,13 +367,16 @@ allure {
 }
 ```
 
-### Customizing allure-commandline download
+### Customizing Allure 2 allure-commandline download
 
 Allure download is handled with `io.qameta.allure-download` plugin which adds `downloadAllure` task.
 Typically, applying `io.qameta.allure-report` is enough, however, you could use `io.qameta.allure-download`
 if you do not need reporting and you need just a fresh `allure-commandline` binary.
 
-By default `allure-commandline` is downloaded from Sonatype OSSRH (also known as Maven Central).
+By default `allure-gradle` provisions Allure 3.
+The Allure 2 `allure-commandline` flow is available only when `allure.version` is set to a `2.x` release.
+
+For `2.x`, `allure-commandline` is downloaded from Sonatype OSSRH (also known as Maven Central).
 
 The plugin receives `allure-commandline` via `io.qameta.allure:allure-commandline:$version@zip` dependency.
 
@@ -375,7 +384,7 @@ If you have a customized version, you could configure it as follows:
 
 ```kotlin
 allure {
-    // This configures the common Allure version, so it is used for commandline as well
+    // Legacy runtime selection.
     version.set("2.38.1")
 
     commandline {
@@ -465,22 +474,30 @@ Configurations:
 
 ### io.qameta.allure-download plugin
 
-Downloads and unpacks `allure-commandline`
+Provisions the selected report runtime into `build/allure/commandline`.
 
 Extensions:
 * `io.qameta.allure.gradle.download.AllureCommandlineExtension`
 
-  `commandline` extension for `allure`
+  `commandline` extension for Allure 2 runtime customization
 
 Configurations:
 * `allureCommandline`
 
-  A configuration to resolve `allure-commandline` zip
+  A configuration to resolve the Allure 2 `allure-commandline` zip
+
+* `allureNodeDistribution`
+
+  Internal configuration used for the provisioned Node.js runtime when `allure.version` is `3.x`
+
+* `allure3Package`
+
+  Optional override for supplying a local Allure 3 package archive in tests or custom setups
 
 Tasks:
 * `downloadAllure: io.qameta.allure.gradle.download.tasks.DownloadAllure`
 
-  Retrieves and unpacks `allure-commandline`
+  Retrieves and assembles the selected report runtime
 
 ### io.qameta.allure-report-base plugin
 

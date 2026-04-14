@@ -8,7 +8,7 @@ import org.gradle.kotlin.dsl.apply
 
 /**
  * This is a shortcut for [AllureAdapterPlugin.PLUGIN_NAME] and [AllureReportPlugin.PLUGIN_NAME] plugins.
- * If you need an aggregate report, then use [AllureAggregateReportPlugin.PLUGIN_NAME] plugin.
+ * If you need an aggregate report, then use the `io.qameta.allure-aggregate-report` plugin.
  */
 open class AllurePlugin : Plugin<Project> {
     companion object {

@@ -1,6 +1,8 @@
 package io.qameta.allure.gradle.base.tasks
 
 import io.qameta.allure.gradle.base.AllureExtension
+import io.qameta.allure.gradle.base.AllureRuntimeFamily
+import io.qameta.allure.gradle.base.allureRuntimeFamily
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
@@ -53,6 +55,9 @@ abstract class AllureExecTask() : Exec() {
     protected val allureExecutable: Provider<File> = allureHome.map {
         defaultAllureExecutable(it.asFile)
     }
+
+    @get:Internal
+    protected val allureVersion = project.the<AllureExtension>().version
 
     // InputDirectories does not exist yet: https://github.com/gradle/gradle/issues/7485#issuecomment-585289792
     @Internal
@@ -107,6 +112,9 @@ abstract class AllureExecTask() : Exec() {
     }
 
     protected fun resolveAllureExecutable(): File = validateAllureExecutable()
+
+    protected fun usesAllure3Runtime(): Boolean =
+        allureVersion.get().allureRuntimeFamily() == AllureRuntimeFamily.ALLURE_3
 
     protected fun resolveEnvironment(): Map<String, String> {
         val resolvedEnvironment = linkedMapOf<String, String>()

@@ -1,7 +1,10 @@
 package io.qameta.allure.gradle.download
 import io.qameta.allure.gradle.base.AllureBasePlugin
 import io.qameta.allure.gradle.base.AllureExtension
+import io.qameta.allure.gradle.base.AllureRuntimeFamily
 import io.qameta.allure.gradle.download.tasks.DownloadAllure
+import io.qameta.allure.gradle.download.tasks.DownloadNode
+import io.qameta.allure.gradle.download.tasks.InstallAllure3
 import io.qameta.allure.gradle.report.AllureReportBasePlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -19,6 +22,10 @@ open class AllureDownloadPlugin : Plugin<Project> {
         const val PLUGIN_NAME = "io.qameta.allure-download"
         const val ALLURE_DOWNLOAD_TASK_NAME = "downloadAllure"
         const val ALLURE_COMMANDLINE_CONFIGURATION = "allureCommandline"
+        const val ALLURE_NODE_CONFIGURATION = "allureNodeDistribution"
+        const val ALLURE_3_PACKAGE_CONFIGURATION = "allure3Package"
+        const val DOWNLOAD_NODE_TASK_NAME = "downloadNode"
+        const val INSTALL_ALLURE_3_TASK_NAME = "installAllure3"
     }
 
     override fun apply(target: Project): Unit = target.run {
@@ -39,6 +46,9 @@ open class AllureDownloadPlugin : Plugin<Project> {
             isCanBeResolved = true
             isCanBeConsumed = false
             defaultDependencies {
+                if (allureRuntimeFamily(allureExtension.version.get()) != AllureRuntimeFamily.ALLURE_2) {
+                    return@defaultDependencies
+                }
                 val fileExtension = reportExtension.extension.map { "@$it" }.orNull ?: ""
                 val group = reportExtension.group.get()
                 val module = reportExtension.module.get()
@@ -52,8 +62,66 @@ open class AllureDownloadPlugin : Plugin<Project> {
             }
         }
 
+        val nodeDistribution = configurations.register(ALLURE_NODE_CONFIGURATION) {
+            isCanBeResolved = true
+            isCanBeConsumed = false
+            defaultDependencies {
+                if (allureRuntimeFamily(allureExtension.version.get()) != AllureRuntimeFamily.ALLURE_3) {
+                    return@defaultDependencies
+                }
+                val nodeDistribution = detectNodeDistribution()
+                val module = "node-${nodeDistribution.classifier}"
+                val nodeVersion = DEFAULT_NODE_VERSION
+                add(
+                    project.dependencies.create(
+                        mapOf(
+                            "group" to "org.nodejs",
+                            "name" to module,
+                            "version" to nodeVersion,
+                            "ext" to nodeDistribution.extension,
+                        )
+                    )
+                )
+                declareCustomAllureCommandlineRepository(
+                    group = "org.nodejs",
+                    module = module,
+                    link = nodeDistributionLink(nodeVersion, nodeDistribution)
+                )
+            }
+        }
+
+        val allure3Package = configurations.register(ALLURE_3_PACKAGE_CONFIGURATION) {
+            isCanBeResolved = true
+            isCanBeConsumed = false
+        }
+
+        val downloadNode = tasks.register<DownloadNode>(DOWNLOAD_NODE_TASK_NAME) {
+            nodeVersion.set(DEFAULT_NODE_VERSION)
+            this.nodeDistribution.from(nodeDistribution)
+        }
+
+        val installAllure3 = tasks.register<InstallAllure3>(INSTALL_ALLURE_3_TASK_NAME) {
+            dependsOn(downloadNode)
+            allureVersion.set(allureExtension.version)
+            nodeHome.set(downloadNode.flatMap { it.destinationDir })
+            allurePackageOverride.from(allure3Package)
+            installEnvironment.putAll(allureExtension.environment)
+        }
+
         tasks.register<DownloadAllure>(ALLURE_DOWNLOAD_TASK_NAME) {
+            allureVersion.set(allureExtension.version)
             this.allureCommandLine.from(allureCommandLine)
+            nodeHome.set(downloadNode.flatMap { it.destinationDir })
+            allure3Home.set(installAllure3.flatMap { it.destinationDir })
+            dependsOn(
+                allureExtension.version.map {
+                    if (allureRuntimeFamily(it) == AllureRuntimeFamily.ALLURE_3) {
+                        listOf(installAllure3)
+                    } else {
+                        emptyList<Any>()
+                    }
+                }
+            )
         }
     }
 
@@ -94,6 +162,9 @@ open class AllureDownloadPlugin : Plugin<Project> {
             }
         }
     }
+
+    private fun nodeDistributionLink(nodeVersion: String, distribution: NodeDistribution): String =
+        "https://nodejs.org/dist/v$nodeVersion/node-v$nodeVersion-${distribution.classifier}.${distribution.extension}"
 
     fun RepositoryHandler.exclusiveRepo(
         group: String,

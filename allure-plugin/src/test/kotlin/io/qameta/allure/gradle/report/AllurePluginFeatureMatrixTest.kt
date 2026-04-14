@@ -46,6 +46,37 @@ class AllurePluginFeatureMatrixTest {
     }
 
     @Test
+    fun `allureReport can run twice with categories for both runtimes`() {
+        val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/categories")
+        AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
+
+        val firstRun = AllureRuntimeMatrixSupport.runner(projectDir)
+            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport"))
+            .build()
+
+        AllureRuntimeMatrixSupport.assertRuntimeTasks(firstRun, runtime)
+        assertThat(firstRun.task(":allureReport")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(projectDir.resolve("build/allure-results").listFiles().orEmpty().map { it.name })
+            .filteredOn { it.endsWith("categories.json") }
+            .hasSize(1)
+        assertThat(projectDir.resolve("build/reports/allure-report/allureReport"))
+            .isNotEmptyDirectory()
+
+        val secondRun = AllureRuntimeMatrixSupport.runner(projectDir)
+            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport"))
+            .build()
+
+        assertThat(secondRun.task(":allureReport")?.outcome)
+            .isIn(TaskOutcome.SUCCESS, TaskOutcome.UP_TO_DATE)
+        assertThat(projectDir.resolve("build/allure-results").listFiles().orEmpty().map { it.name })
+            .filteredOn { it.endsWith("categories.json") }
+            .hasSize(1)
+        assertThat(projectDir.resolve("build/reports/allure-report/allureReport"))
+            .isNotEmptyDirectory()
+    }
+
+    @Test
     fun `custom results dir is reused by report task for both runtimes`() {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/custom-results-dir")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)

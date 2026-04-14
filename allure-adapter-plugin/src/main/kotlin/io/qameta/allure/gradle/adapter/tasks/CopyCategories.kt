@@ -38,7 +38,7 @@ abstract class CopyCategories : DefaultTask() {
         set.map { it.resolve("categories.json") }
     }
 
-    @OutputFile
+    @OutputDirectory
     val markerFile = objects.directoryProperty()
         .convention(layout.buildDirectory.dir("copy-categories/$name"))
 

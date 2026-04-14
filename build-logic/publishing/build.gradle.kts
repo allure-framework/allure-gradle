@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("allure-gradle.kotlin-dsl-gradle-plugin")
 }
@@ -15,4 +18,10 @@ dependencies {
     implementation(libs.gradlePublishPlugin)
     implementation(libs.nexusPublishPlugin)
     implementation(libs.researchgateReleasePlugin)
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }

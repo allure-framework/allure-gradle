@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     `kotlin-dsl`
 }
@@ -5,7 +8,13 @@ plugins {
 group = "allure-gradle"
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release = 8
+    options.release = 17
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 val kotlinDslVersion = PluginDependenciesSpec { id ->

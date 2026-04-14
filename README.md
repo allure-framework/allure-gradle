@@ -345,6 +345,8 @@ allure {
 }
 ```
 
+To enable it for a single invocation without changing the DSL, run `./gradlew allureReport --single-file=true`.
+
 ### Running tests before building the report
 
 By default, `allureReport` task will NOT execute tests.

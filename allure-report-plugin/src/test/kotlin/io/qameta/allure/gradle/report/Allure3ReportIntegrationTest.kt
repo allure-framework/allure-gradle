@@ -55,6 +55,26 @@ class Allure3ReportIntegrationTest {
     }
 
     @Test
+    fun `allureReport should accept single-file as a task option`() {
+        assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
+
+        val projectDir = createAllure3Project(singleFile = false)
+
+        val buildResult = runner(projectDir)
+            .withArguments(commonArgs("allureReport", "--single-file=true"))
+            .build()
+
+        assertThat(buildResult.task(":allureReport")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+
+        val configFile = projectDir.resolve("build/tmp/allureReport/allurerc.json")
+        assertThat(configFile)
+            .exists()
+        assertThat(configFile.readText())
+            .contains("\"singleFile\": true")
+    }
+
+    @Test
     fun `allureServe should run open for Allure 3`() {
         assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
 

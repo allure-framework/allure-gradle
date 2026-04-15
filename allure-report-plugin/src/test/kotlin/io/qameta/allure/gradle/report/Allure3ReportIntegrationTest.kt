@@ -1,27 +1,25 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.assertj.core.api.Assertions.assertThat
-import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.gradle.testkit.runner.UnexpectedBuildFailure
-import org.junit.Assume.assumeFalse
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class Allure3ReportIntegrationTest {
-    @Rule
-    @JvmField
-    val tempDir = TemporaryFolder()
+    @TempDir
+    lateinit var tempDir: File
 
     @Test
     fun `allureReport should use Allure 3 by default`() {
-        assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 
         val projectDir = createAllure3Project(singleFile = true)
 
@@ -56,7 +54,7 @@ class Allure3ReportIntegrationTest {
 
     @Test
     fun `allureReport should accept single-file as a task option`() {
-        assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 
         val projectDir = createAllure3Project(singleFile = false)
 
@@ -76,7 +74,7 @@ class Allure3ReportIntegrationTest {
 
     @Test
     fun `allureServe should run open for Allure 3`() {
-        assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 
         val projectDir = createAllure3Project(singleFile = false)
 
@@ -96,7 +94,7 @@ class Allure3ReportIntegrationTest {
 
     @Test
     fun `allureServe should reject host for Allure 3`() {
-        assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 
         val projectDir = createAllure3Project(singleFile = false)
 
@@ -105,15 +103,13 @@ class Allure3ReportIntegrationTest {
         }.exceptionOrNull() as? UnexpectedBuildFailure
 
         val buildFailure = requireNotNull(failure)
-        assertThat(buildFailure)
-            .isNotNull
         assertThat(buildFailure.message)
             .contains("--host is not supported for Allure 3")
     }
 
     @Test
     fun `Allure 2 commandline customization should fail for Allure 3`() {
-        assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 
         val projectDir = createAllure3Project(
             singleFile = false,
@@ -129,14 +125,12 @@ class Allure3ReportIntegrationTest {
         }.exceptionOrNull() as? UnexpectedBuildFailure
 
         val buildFailure = requireNotNull(failure)
-        assertThat(buildFailure)
-            .isNotNull
         assertThat(buildFailure.message)
             .contains("Allure 3 does not support Allure 2 allure.commandline")
     }
 
     private fun createAllure3Project(singleFile: Boolean, extraAllureBlock: String = ""): File {
-        val projectDir = tempDir.newFolder("allure3-project-${System.nanoTime()}")
+        val projectDir = File(tempDir, "allure3-project-${System.nanoTime()}").apply { mkdirs() }
         projectDir.resolve("settings.gradle").createNewFile()
 
         createManualResults(projectDir)
@@ -252,10 +246,10 @@ class Allure3ReportIntegrationTest {
         .withProjectDir(projectDir)
         .withGradleVersion("9.0.0")
         .withPluginClasspath()
-        .withTestKitDir(projectDir.resolve(".gradle-testkit"))
+        .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
         .forwardOutput()
 
-    private fun commonArgs(vararg tasks: String) = listOf(
+    private fun commonArgs(vararg tasks: String): List<String> = listOf(
         "--stacktrace",
         "--info",
         "-Porg.gradle.daemon=false",

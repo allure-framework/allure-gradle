@@ -6,9 +6,8 @@ import org.gradle.api.JavaVersion;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.gradle.util.GradleVersion;
-import org.junit.Assert;
-import org.junit.Assume;
-import org.junit.rules.ExternalResource;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,26 +15,30 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.RandomStringUtils.insecure;
 
-
 /**
- * JUnit4 rule for executing Gradle tests in a temporary folder.
+ * Historical helper retained for Gradle TestKit setup while the suite uses JUnit Jupiter.
  */
-public class GradleRunnerRule extends ExternalResource {
+public class GradleRunnerRule {
 
-    private Supplier<String> projectSupplier;
+    private static final File DEFAULT_ROOT_DIR = new File("build/gradle-testkit");
 
-    private Supplier<String[]> tasksSupplier;
+    private String project;
 
-    private Supplier<String> versionSupplier;
+    private String[] tasks = new String[0];
+
+    private String gradleVersion = "9.0.0";
+
+    private File rootDir = DEFAULT_ROOT_DIR;
 
     private BuildResult buildResult;
 
     private File projectDir;
+
+    private File testKitDir;
 
     public BuildResult getBuildResult() {
         return this.buildResult;
@@ -45,31 +48,80 @@ public class GradleRunnerRule extends ExternalResource {
         return this.projectDir;
     }
 
+    public File getTestKitDir() {
+        return this.testKitDir;
+    }
+
     public GradleRunnerRule version(String version) {
-        return version(() -> version);
-    }
-
-    public GradleRunnerRule version(Supplier<String> version) {
-        this.versionSupplier = version;
-        return this;
-    }
-
-    public GradleRunnerRule project(Supplier<String> supplier) {
-        this.projectSupplier = supplier;
+        this.gradleVersion = version;
         return this;
     }
 
     public GradleRunnerRule project(String project) {
-        return project(() -> project);
+        this.project = project;
+        return this;
     }
 
-    public GradleRunnerRule tasks(Supplier<String[]> supplier) {
-        this.tasksSupplier = supplier;
+    public GradleRunnerRule rootDir(File rootDir) {
+        this.rootDir = rootDir;
         return this;
     }
 
     public GradleRunnerRule tasks(String... tasks) {
-        return tasks(() -> tasks);
+        this.tasks = tasks;
+        return this;
+    }
+
+    public GradleRunnerRule prepare() {
+        if (projectDir != null) {
+            return this;
+        }
+        if (project == null || project.isEmpty()) {
+            throw new IllegalStateException("Gradle test project path must be configured");
+        }
+        rootDir.mkdirs();
+        projectDir = copyProject(rootDir, project);
+        ensureSettingsFile(projectDir);
+        testKitDir = testKitDirFor(projectDir);
+        checkGradleCompatibility();
+        return this;
+    }
+
+    public GradleRunnerRule build() {
+        prepare();
+        buildResult = newRunner(tasks).build();
+        return this;
+    }
+
+    public BuildResult run(String... tasks) {
+        prepare();
+        buildResult = newRunner(tasks).build();
+        return buildResult;
+    }
+
+    public GradleRunner newRunner(String... arguments) {
+        prepare();
+        List<String> args = new ArrayList<>();
+        args.add("--stacktrace");
+        args.add("--info");
+        // --no-daemon does not work with GradleRunner
+        args.add("-Porg.gradle.daemon=false");
+        GradleVersion testGradle = GradleVersion.version(gradleVersion);
+        if (testGradle.compareTo(GradleVersion.version("7.0")) >= 0) {
+            // Disable file watching since it prevents file removal on Windows
+            // See https://github.com/gradle/gradle/pull/16977
+            // FS watch is disabled to avoid test flakiness
+            args.add("--no-watch-fs");
+        }
+        args.addAll(Arrays.asList(arguments));
+
+        return GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withArguments(args)
+                .withGradleVersion(gradleVersion)
+                .withTestKitDir(testKitDir)
+                .withPluginClasspath()
+                .forwardOutput();
     }
 
     static class JavaGradle {
@@ -82,26 +134,22 @@ public class GradleRunnerRule extends ExternalResource {
         }
     }
 
-    protected void before() throws Throwable {
-        String projectPath = projectSupplier.get();
-        projectDir = copyProject(projectPath);
-        new File(projectDir, "settings.gradle").createNewFile();
-        String gradleVersion = versionSupplier.get();
+    private void checkGradleCompatibility() {
         GradleVersion testGradle = GradleVersion.version(gradleVersion);
 
         // Configuration avoidance tasks.register requires Gradle 4.9+
         if (testGradle.compareTo(GradleVersion.version("8.11")) < 0) {
-            Assert.fail("allure-gradle plugin requires Gradle 8.11+, the can't launch tests with Gradle " + testGradle);
+            Assertions.fail("allure-gradle plugin requires Gradle 8.11+, the can't launch tests with Gradle " + testGradle);
         }
 
         Optional<JavaGradle> gradleRequirement = Stream.of(
-                new JavaGradle(JavaVersion.VERSION_24, "8.14"),
-                new JavaGradle(JavaVersion.VERSION_21, "8.5"),
-                new JavaGradle(JavaVersion.VERSION_17, "7.3"),
-                new JavaGradle(JavaVersion.VERSION_16, "7.0"),
-                new JavaGradle(JavaVersion.VERSION_15, "6.7"),
-                new JavaGradle(JavaVersion.VERSION_14, "6.3")
-           )
+                        new JavaGradle(JavaVersion.VERSION_24, "8.14"),
+                        new JavaGradle(JavaVersion.VERSION_21, "8.5"),
+                        new JavaGradle(JavaVersion.VERSION_17, "7.3"),
+                        new JavaGradle(JavaVersion.VERSION_16, "7.0"),
+                        new JavaGradle(JavaVersion.VERSION_15, "6.7"),
+                        new JavaGradle(JavaVersion.VERSION_14, "6.3")
+                )
                 .filter(v -> v.javaVersion.compareTo(JavaVersion.current()) <= 0)
                 .findFirst();
         if (!gradleRequirement.isPresent()) {
@@ -109,37 +157,6 @@ public class GradleRunnerRule extends ExternalResource {
         }
 
         checkGradleCompatibility(gradleRequirement.get(), testGradle);
-
-        List<String> args = new ArrayList<>();
-        args.add("--stacktrace");
-        args.add("--info");
-        // --no-daemon does not work with GradleRunner
-        args.add("-Porg.gradle.daemon=false");
-        if (testGradle.compareTo(GradleVersion.version("7.0")) >= 0) {
-            // Disable file watching since it prevents file removal on Windows
-            // See https://github.com/gradle/gradle/pull/16977
-            // FS watch is disabled to avoid test flakiness
-            args.add("--no-watch-fs");
-        }
-        args.addAll(Arrays.asList(tasksSupplier.get()));
-
-        buildResult = GradleRunner.create()
-                .withProjectDir(projectDir)
-                .withArguments(args)
-                .withGradleVersion(gradleVersion)
-                .withTestKitDir(new File(projectDir.getParentFile().getAbsolutePath(), ".gradle"))
-                .withPluginClasspath()
-                .forwardOutput()
-                .build();
-    }
-
-    @Override
-    protected void after() {
-        try {
-            FileUtils.forceDelete(projectDir);
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to remove temporary project directory " + projectDir, e);
-        }
     }
 
     private void checkGradleCompatibility(JavaGradle javaGradle, GradleVersion testGradle) {
@@ -147,10 +164,7 @@ public class GradleRunnerRule extends ExternalResource {
         GradleVersion minimalGradle = javaGradle.gradleVersion;
         JavaVersion currentJava = JavaVersion.current();
         boolean configurationSupported =
-                // E.g. if the current Java is 12, then "Java 16 is supported in 7.0" does not help us, and we assume true
                 currentJava.compareTo(javaVersion) < 0
-                        // If the current Java is 12, and we know that "Java 11 was supported since Gradle 5.0",
-                        // then we require current Gradle to be 5.0+
                         || testGradle.compareTo(minimalGradle) >= 0;
         if (configurationSupported) {
             return;
@@ -158,15 +172,42 @@ public class GradleRunnerRule extends ExternalResource {
         String skipMessage = "Java " + javaVersion.getMajorVersion() + " requires Gradle " + minimalGradle + "+, current Java is " + currentJava +
                 ", test Gradle version is " + testGradle + ", so will skip the test";
         System.out.println(skipMessage);
-        Assume.assumeTrue(skipMessage, configurationSupported);
+        Assumptions.assumeTrue(configurationSupported, skipMessage);
     }
 
-    private static File copyProject(String project) {
+    private static void ensureSettingsFile(File projectDir) {
+        File settingsGradle = new File(projectDir, "settings.gradle");
+        File settingsGradleKts = new File(projectDir, "settings.gradle.kts");
+        if (settingsGradle.exists() || settingsGradleKts.exists()) {
+            return;
+        }
+        try {
+            File buildFileKts = new File(projectDir, "build.gradle.kts");
+            File settingsFile = buildFileKts.exists() ? settingsGradleKts : settingsGradle;
+            settingsFile.createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to create settings file in " + projectDir, e);
+        }
+    }
+
+    public static File testKitDirFor(File projectDir) {
+        File absoluteProjectDir = projectDir.getAbsoluteFile();
+        File parentDir = Optional.ofNullable(absoluteProjectDir.getParentFile())
+                .map(File::getParentFile)
+                .orElse(null);
+        if (parentDir == null) {
+            parentDir = new File(System.getProperty("java.io.tmpdir"));
+        }
+        String suffix = Integer.toUnsignedString(absoluteProjectDir.getAbsolutePath().hashCode());
+        return new File(parentDir, ".gradle-test-kit-" + absoluteProjectDir.getName() + "-" + suffix);
+    }
+
+    private static File copyProject(File rootDir, String project) {
         String projectName = StringUtils.substringAfterLast(project.replace('\\', '/'), '/');
         if (!projectName.isEmpty()) {
             projectName += "-";
         }
-        File to = new File("build/gradle-testkit", projectName + insecure().nextAlphabetic(8));
+        File to = new File(rootDir, projectName + insecure().nextAlphabetic(8));
         File from = new File(project);
         try {
             if (!from.isDirectory() || !from.exists()) {
@@ -180,5 +221,4 @@ public class GradleRunnerRule extends ExternalResource {
                     " (full path is " + from.getAbsolutePath() + ") to " + to, e);
         }
     }
-
 }

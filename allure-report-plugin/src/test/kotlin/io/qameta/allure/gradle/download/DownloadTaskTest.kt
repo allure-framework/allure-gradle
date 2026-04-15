@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.gradle.kotlin.dsl.*
 import org.gradle.testfixtures.ProjectBuilder
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DownloadTaskTest {
     @Test
@@ -25,7 +25,6 @@ class DownloadTaskTest {
             apply(plugin = "io.qameta.allure-download")
             val allureCommandline by configurations
 
-            // Repository is required to download allure-commandline
             repositories {
                 mavenCentral()
             }
@@ -49,9 +48,7 @@ class DownloadTaskTest {
 
             configure<AllureExtension> {
                 version.set("2.42.0")
-                // sam-with-receiver does not work in IDEA :(
                 commandline.apply {
-                    // .test is reserved, see https://tools.ietf.org/html/rfc2606#section-2
                     downloadUrlPattern.set(customUrl)
                 }
             }
@@ -65,7 +62,6 @@ class DownloadTaskTest {
 
     @Test
     fun `illegal pattern in url`() {
-
         ProjectBuilder.builder().build().run {
             apply(plugin = "io.qameta.allure-report")
             val allureCommandline by configurations
@@ -74,7 +70,6 @@ class DownloadTaskTest {
 
             configure<AllureExtension> {
                 version.set("2.42.0")
-                // sam-with-receiver does not work in IDEA :(
                 commandline.apply {
                     downloadUrlPattern.set("https://localhost/[illegal-for-test].zip")
                 }

@@ -7,10 +7,10 @@ plugins {
 group = "io.qameta.allure.gradle.testkit"
 
 dependencies {
-    api(libs.junit4)
+    api(libs.junitJupiter)
 
     implementation(gradleTestKit())
     implementation(libs.commons.io)
     implementation(libs.commons.text)
+    runtimeOnly(libs.junitPlatformLauncher)
 }
-

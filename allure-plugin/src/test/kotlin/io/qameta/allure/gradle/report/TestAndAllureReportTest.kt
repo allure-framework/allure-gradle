@@ -3,54 +3,45 @@ package io.qameta.allure.gradle.report
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
+import org.junit.jupiter.params.provider.Arguments.arguments
 
-@RunWith(Parameterized::class)
 class TestAndAllureReportTest {
-    @Rule
-    @JvmField
-    val gradleRunner = GradleRunnerRule()
-        .version { version }
-        .project { project }
-        .tasks {
-            if (dependsOnTests) {
-                arrayOf("allureReport", "--depends-on-tests")
-            } else {
-                arrayOf("allureReport")
-            }
-        }
-
-    @Parameterized.Parameter(0)
-    lateinit var version: String
-
-    @Parameterized.Parameter(1)
-    lateinit var project: String
-
-    @JvmField
-    @Parameterized.Parameter(2)
-    var dependsOnTests: Boolean = false
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{1},  [{0}]")
-        fun getFrameworks(): Array<Any> {
-            val res = mutableListOf<Array<Any>>()
+        fun getFrameworks() = buildList {
             for (gradleVersion in listOf("9.0.0", "8.14.3", "8.11.1")) {
                 for (project in listOf("src/it/junit5-5.8.1")) {
-                    for (dependOnTests in listOf(true, false)) {
-                        res.add(arrayOf(gradleVersion, project, dependOnTests))
+                    for (dependsOnTests in listOf(true, false)) {
+                        add(arguments(gradleVersion, project, dependsOnTests))
                     }
                 }
             }
-            return res.toTypedArray()
         }
     }
 
-    @Test
-    fun `check allureReport outcome`() {
+    @ParameterizedTest(name = "{1},  [{0}]")
+    @MethodSource("getFrameworks")
+    fun `check allureReport outcome`(version: String, project: String, dependsOnTests: Boolean) {
+        val gradleRunner = GradleRunnerRule()
+            .rootDir(tempDir)
+            .version(version)
+            .project(project)
+            .tasks(
+                *if (dependsOnTests) {
+                    arrayOf("allureReport", "--depends-on-tests")
+                } else {
+                    arrayOf("allureReport")
+                }
+            )
+            .build()
+
         if (dependsOnTests) {
             Assertions.assertThat(gradleRunner.buildResult.tasks)
                 .`as`("allureReport --depends-on-tests should trigger test execution")

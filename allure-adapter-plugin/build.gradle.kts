@@ -8,8 +8,6 @@ dependencies {
     api(project(":allure-base-plugin"))
     testImplementation(project(":testkit-junit4"))
     testImplementation(libs.assertjCore)
-    testRuntimeOnly(libs.junitPlatformLauncher)
-    testRuntimeOnly(libs.junitVintageEngine)
 }
 
 tasks.test {

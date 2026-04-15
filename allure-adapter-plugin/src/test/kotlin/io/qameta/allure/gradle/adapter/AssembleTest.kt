@@ -3,53 +3,35 @@ package io.qameta.allure.gradle.adapter
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
+import org.junit.jupiter.params.provider.Arguments.arguments
 
-@RunWith(Parameterized::class)
 class AssembleTest {
-    @Rule
-    @JvmField
-    val gradleRunner = GradleRunnerRule()
-        .version { version }
-        .project { project }
-        .tasks { tasks }
-
-    @Parameterized.Parameter(0)
-    lateinit var version: String
-
-    @Parameterized.Parameter(1)
-    lateinit var project: String
-
-    @Parameterized.Parameter(2)
-    lateinit var tasks: Array<String>
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{1} [{0}]")
         fun getFrameworks() = listOf(
-            arrayOf(
-                "9.0.0",
-                "src/it/adapter-assemble",
-                arrayOf("assemble")
-            ),
-            arrayOf(
-                "8.14.3",
-                "src/it/adapter-assemble",
-                arrayOf("assemble")
-            ),
-            arrayOf(
-                "8.11.1",
-                "src/it/adapter-assemble",
-                arrayOf("assemble")
-            )
+            arguments("9.0.0", "src/it/adapter-assemble", arrayOf("assemble")),
+            arguments("8.14.3", "src/it/adapter-assemble", arrayOf("assemble")),
+            arguments("8.11.1", "src/it/adapter-assemble", arrayOf("assemble")),
         )
     }
 
-    @Test
-    fun `assemble should not execute tests`() {
+    @ParameterizedTest(name = "{1} [{0}]")
+    @MethodSource("getFrameworks")
+    fun `assemble should not execute tests`(version: String, project: String, tasks: Array<String>) {
+        val gradleRunner = GradleRunnerRule()
+            .rootDir(tempDir)
+            .version(version)
+            .project(project)
+            .tasks(*tasks)
+            .build()
+
         Assertions.assertThat(gradleRunner.buildResult.tasks)
             .`as`("assemble should succeed, and test must not be executed")
             .filteredOn { task -> task.path == ":assemble" }

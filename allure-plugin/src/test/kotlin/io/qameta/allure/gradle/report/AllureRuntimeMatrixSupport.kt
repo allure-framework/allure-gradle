@@ -1,13 +1,14 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Assume.assumeFalse
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import java.io.File
+import java.nio.file.Files
 
 enum class TestAllureRuntime(val version: String) {
     ALLURE_2("2.38.1"),
@@ -15,11 +16,11 @@ enum class TestAllureRuntime(val version: String) {
 }
 
 internal object AllureRuntimeMatrixSupport {
-    fun copyFixture(tempDir: TemporaryFolder, fixturePath: String): File {
+    fun copyFixture(tempDir: File, fixturePath: String): File {
         val fixtureDir = File(fixturePath)
         require(fixtureDir.isDirectory) { "Fixture $fixturePath does not exist" }
 
-        val projectDir = tempDir.newFolder("${fixtureDir.name}-${System.nanoTime()}")
+        val projectDir = Files.createTempDirectory(tempDir.toPath(), "${fixtureDir.name}-").toFile()
         fixtureDir.copyRecursively(projectDir, overwrite = true)
 
         if (!projectDir.resolve("settings.gradle").exists() && !projectDir.resolve("settings.gradle.kts").exists()) {
@@ -55,7 +56,7 @@ internal object AllureRuntimeMatrixSupport {
         .withProjectDir(projectDir)
         .withGradleVersion(gradleVersion)
         .withPluginClasspath()
-        .withTestKitDir(projectDir.resolve(".gradle-testkit"))
+        .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
         .forwardOutput()
 
     fun commonArgs(vararg tasks: String): List<String> = listOf(
@@ -119,10 +120,7 @@ internal object AllureRuntimeMatrixSupport {
     }
 
     private fun requireAllure3ReportRuntimeSupport() {
-        assumeFalse(
-            "Fake Allure 3 runtime tests currently support Unix-like systems only",
-            Os.isFamily(Os.FAMILY_WINDOWS)
-        )
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
     }
 
     private fun createFakeAllure3Runtime(projectDir: File): FakeAllure3Runtime {
@@ -223,9 +221,9 @@ internal object AllureRuntimeMatrixSupport {
             }
             """.trimIndent()
         }
-
-    private data class FakeAllure3Runtime(
-        val nodeArchive: File,
-        val packageFile: File,
-    )
 }
+
+internal data class FakeAllure3Runtime(
+    val nodeArchive: File,
+    val packageFile: File,
+)

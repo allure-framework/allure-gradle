@@ -7,8 +7,6 @@ group = "io.qameta.allure.gradle.base"
 dependencies {
     testImplementation(project(":testkit-junit4"))
     testImplementation(libs.assertjCore)
-    testRuntimeOnly(libs.junitPlatformLauncher)
-    testRuntimeOnly(libs.junitVintageEngine)
 }
 
 tasks.test {

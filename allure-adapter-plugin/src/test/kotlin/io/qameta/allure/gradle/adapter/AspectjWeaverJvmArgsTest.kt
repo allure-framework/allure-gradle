@@ -3,45 +3,38 @@ package io.qameta.allure.gradle.adapter
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
+import org.junit.jupiter.params.provider.Arguments.arguments
 
-@RunWith(Parameterized::class)
 class AspectjWeaverJvmArgsTest {
-    @Rule
-    @JvmField
-    val gradleRunner = GradleRunnerRule()
-        .version { version }
-        .project { project }
-        .tasks("test")
-
-    @Parameterized.Parameter(0)
-    lateinit var version: String
-
-    @Parameterized.Parameter(1)
-    lateinit var project: String
-
-    @Parameterized.Parameter(2)
-    @JvmField
-    var expectedJavaAgent: Boolean = false
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{1} [{0}]")
-        fun data() = listOf<Array<Any>>(
-            arrayOf("9.0.0", "src/it/adapter-aspectj-weaver-disabled-kts", false),
-            arrayOf("8.14.3", "src/it/adapter-aspectj-weaver-disabled-kts", false),
-            arrayOf("8.11.1", "src/it/adapter-aspectj-weaver-disabled-kts", false),
-            arrayOf("9.0.0", "src/it/adapter-aspectj-weaver-enabled-kts", true),
-            arrayOf("8.14.3", "src/it/adapter-aspectj-weaver-enabled-kts", true),
-            arrayOf("8.11.1", "src/it/adapter-aspectj-weaver-enabled-kts", true)
+        fun data() = listOf(
+            arguments("9.0.0", "src/it/adapter-aspectj-weaver-disabled-kts", false),
+            arguments("8.14.3", "src/it/adapter-aspectj-weaver-disabled-kts", false),
+            arguments("8.11.1", "src/it/adapter-aspectj-weaver-disabled-kts", false),
+            arguments("9.0.0", "src/it/adapter-aspectj-weaver-enabled-kts", true),
+            arguments("8.14.3", "src/it/adapter-aspectj-weaver-enabled-kts", true),
+            arguments("8.11.1", "src/it/adapter-aspectj-weaver-enabled-kts", true),
         )
     }
 
-    @Test
-    fun `aspectj weaver flag controls javaagent wiring`() {
+    @ParameterizedTest(name = "{1} [{0}]")
+    @MethodSource("data")
+    fun `aspectj weaver flag controls javaagent wiring`(version: String, project: String, expectedJavaAgent: Boolean) {
+        val gradleRunner = GradleRunnerRule()
+            .rootDir(tempDir)
+            .version(version)
+            .project(project)
+            .tasks("test")
+            .build()
+
         assertThat(gradleRunner.buildResult.task(":test")?.outcome)
             .`as`("test task outcome")
             .isEqualTo(TaskOutcome.SUCCESS)

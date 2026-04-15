@@ -3,31 +3,30 @@ package io.qameta.allure.gradle.adapter
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
 
-@RunWith(Parameterized::class)
 class CustomResultsDirTest {
-    @Rule
-    @JvmField
-    val gradleRunner = GradleRunnerRule()
-        .version { version }
-        .project("src/it/adapter-custom-results-dir")
-        .tasks("test")
-
-    @Parameterized.Parameter
-    lateinit var version: String
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
         fun versions() = listOf("9.0.0", "8.14.3", "8.11.1")
     }
 
-    @Test
-    fun `adapter plugin writes raw results to custom directory`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("versions")
+    fun `adapter plugin writes raw results to custom directory`(version: String) {
+        val gradleRunner = GradleRunnerRule()
+            .rootDir(tempDir)
+            .version(version)
+            .project("src/it/adapter-custom-results-dir")
+            .tasks("test")
+            .build()
+
         assertThat(gradleRunner.buildResult.task(":test")?.outcome)
             .`as`("test task outcome")
             .isEqualTo(TaskOutcome.SUCCESS)

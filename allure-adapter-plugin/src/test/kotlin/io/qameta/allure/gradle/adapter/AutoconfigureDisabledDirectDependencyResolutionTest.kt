@@ -2,35 +2,30 @@ package io.qameta.allure.gradle.adapter
 
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
 
-@RunWith(Parameterized::class)
 class AutoconfigureDisabledDirectDependencyResolutionTest {
-    @Rule
-    @JvmField
-    val gradleRunner = GradleRunnerRule()
-        .version { version }
-        .project("src/it/adapter-resolution-direct-allure-testng-autoconfigure-off")
-        .tasks("writeResolvedArtifacts")
-
-    @Parameterized.Parameter
-    lateinit var version: String
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun data() = listOf(
-            arrayOf("9.0.0"),
-            arrayOf("8.14.3"),
-            arrayOf("8.11.1"),
-        )
+        fun data() = listOf("9.0.0", "8.14.3", "8.11.1")
     }
 
-    @Test
-    fun `autoconfigure false should not substitute direct allure adapter dependencies with spi-off`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("data")
+    fun `autoconfigure false should not substitute direct allure adapter dependencies with spi-off`(version: String) {
+        val gradleRunner = GradleRunnerRule()
+            .rootDir(tempDir)
+            .version(version)
+            .project("src/it/adapter-resolution-direct-allure-testng-autoconfigure-off")
+            .tasks("writeResolvedArtifacts")
+            .build()
+
         val resolved = gradleRunner.projectDir.resolve("build/resolvedArtifacts.txt").readText()
 
         assertThat(resolved)

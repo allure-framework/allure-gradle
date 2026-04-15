@@ -1,0 +1,134 @@
+name: Bug report
+description: Report a reproducible problem in the allure-gradle plugins
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a problem in `allure-gradle`.
+
+        Please use this form for issues in the Gradle plugins (`io.qameta.allure*`).
+        If you can share a small reproducer repository or sample project, it makes the issue much easier to diagnose.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and docs for a similar problem.
+          required: true
+        - label: This issue is about `allure-gradle`, not another Allure integration.
+          required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: What is happening now?
+      placeholder: Tell us what is broken, confusing, or unexpected.
+    validations:
+      required: true
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Provide the smallest reproducible set of steps you can.
+      placeholder: |
+        1. Apply `io.qameta.allure` to a sample project
+        2. Run `./gradlew allureReport`
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What did you expect to happen instead?
+    validations:
+      required: true
+  - type: input
+    id: reproducer
+    attributes:
+      label: Reproducer
+      description: Link to a minimal sample repository, gist, or archive if available.
+      placeholder: https://github.com/your-org/your-reproducer
+  - type: textarea
+    id: build-config
+    attributes:
+      label: Relevant Gradle configuration
+      description: Share the relevant `build.gradle`, `build.gradle.kts`, or task configuration snippet.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: plugin-version
+    attributes:
+      label: allure-gradle version
+      placeholder: 3.0.0
+    validations:
+      required: true
+  - type: input
+    id: gradle-version
+    attributes:
+      label: Gradle version
+      placeholder: 8.14.3
+    validations:
+      required: true
+  - type: input
+    id: java-version
+    attributes:
+      label: Java version
+      placeholder: 17 or 21
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: dsl
+    attributes:
+      label: Gradle DSL
+      options:
+        - Kotlin DSL
+        - Groovy DSL
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: plugin-ids
+    attributes:
+      label: Plugin ID(s) in use
+      description: For example `io.qameta.allure`, `io.qameta.allure-report`, or `io.qameta.allure-aggregate-report`.
+      placeholder: io.qameta.allure
+  - type: input
+    id: test-frameworks
+    attributes:
+      label: Test framework(s)
+      description: For example JUnit 5, TestNG, Spock 2, Cucumber JVM 7.
+      placeholder: JUnit 5
+  - type: input
+    id: allure-runtime
+    attributes:
+      label: Allure runtime version
+      description: If relevant, share the configured `allure.version` or `allureJavaVersion`.
+      placeholder: 3.4.1
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log output or stack trace
+      description: Paste the relevant error output, build scan link, or stack trace.
+      render: shell
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add anything else that could help us understand the problem.

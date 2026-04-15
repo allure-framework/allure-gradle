@@ -1,0 +1,65 @@
+name: Feature request
+description: Suggest an improvement to the allure-gradle plugins
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting an improvement to `allure-gradle`.
+
+        The most helpful requests explain the problem first, then describe the workflow or API shape that would make it better.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched the existing issues and docs for a similar request.
+          required: true
+        - label: This request is about `allure-gradle`, not another Allure integration.
+          required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What workflow, limitation, or pain point should this feature address?
+      placeholder: I want to ...
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior, DSL, or task changes you would like to see.
+      placeholder: A new option, task behavior, or plugin capability that would solve the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What workarounds or other approaches have you tried?
+  - type: textarea
+    id: examples
+    attributes:
+      label: Example configuration or API
+      description: Share a sample `build.gradle(.kts)` snippet, command line, or expected DSL if you have one in mind.
+      render: text
+  - type: input
+    id: plugin-ids
+    attributes:
+      label: Relevant plugin ID(s)
+      description: For example `io.qameta.allure`, `io.qameta.allure-adapter`, or `io.qameta.allure-report`.
+      placeholder: io.qameta.allure
+  - type: input
+    id: test-frameworks
+    attributes:
+      label: Relevant test framework(s)
+      description: For example JUnit 5, TestNG, Spock 2, or Cucumber JVM 7.
+      placeholder: JUnit 5
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Add links, screenshots, prior art, or related issues if they help explain the request.

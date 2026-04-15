@@ -1,23 +1,25 @@
-[//]: # (
-. Thank you so much for sending us a pull request! 
-.
-. Make sure you have a clear name for your pull request. 
-. The name should start with a capital letter and no dot is required in the end of the sentence.
-. To link the request with isses use the following notation: (fixes #123, fixes #321\)
-.
-. An example of good pull request names:
-. - Add Russian translation (fixes #123\)
-. - Add an ability to disable default plugins
-. - Support emoji in test descriptions
-)
+## Summary
+<!--
+Describe the change and why it is needed.
+Link related issues with `Fixes #123` when applicable.
+-->
 
-### Context
-[//]: # (
-Describe the problem or feature in addition to a link to the issues
-)
+## Testing
+<!--
+List the checks you ran locally, for example:
+- ./gradlew build
+- ./gradlew :allure-report-plugin:test
 
-#### Checklist
+If you did not run tests, explain why.
+-->
+
+## Checklist
 - [ ] [Sign Allure CLA][cla]
 - [ ] Provide unit tests
+
+## Notes
+<!--
+Call out compatibility concerns, follow-up work, or review context that will help maintainers.
+-->
 
 [cla]: https://cla-assistant.io/accept/allure-framework/allure2

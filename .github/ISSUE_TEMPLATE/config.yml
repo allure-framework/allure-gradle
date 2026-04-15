@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Usage and setup guide
+    url: https://github.com/allure-framework/allure-gradle/blob/main/README.md
+    about: Check the README for plugin setup, report tasks, runtime selection, and common configuration patterns.
+  - name: Complete reference
+    url: https://github.com/allure-framework/allure-gradle/blob/main/REFERENCE.md
+    about: Check the full reference for plugin IDs, DSL options, task behavior, and compatibility details.

@@ -101,9 +101,9 @@ open class AllureAdapterExtension @Inject constructor(
     }
 
     fun addAspectjTo(task: Task): Unit = task.run {
-        if (aspectjWeaver.get() && this is JavaForkOptions) {
+        if (this is JavaForkOptions) {
             val aspectJAgent = project.configurations[AllureAdapterPlugin.ASPECTJ_WEAVER_CONFIGURATION]
-            jvmArgumentProviders.add(JavaAgentArgumentProvider(aspectJAgent))
+            jvmArgumentProviders.add(JavaAgentArgumentProvider(aspectjWeaver, aspectJAgent))
         }
     }
 

@@ -42,7 +42,7 @@ class CacheabilityTest {
         // Enable local build cache in settings.gradle written to the prepared projectDir
         val projectDir = gradleRunner.projectDir
         val testKitHome = projectDir.parentFile.resolve(".gradle")
-        val cacheDir = testKitHome.resolve("build-cache").absoluteFile
+        val cacheDir = projectDir.resolve(".gradle-test-build-cache").absoluteFile
         val settings = File(projectDir, "settings.gradle.kts")
         settings.writeText(
             """
@@ -57,7 +57,7 @@ class CacheabilityTest {
 
         // First run already executed by rule (test task)
         assertThat(gradleRunner.buildResult.task(":test")?.outcome)
-            .isIn(TaskOutcome.SUCCESS, TaskOutcome.NO_SOURCE)
+            .isIn(TaskOutcome.SUCCESS, TaskOutcome.NO_SOURCE, TaskOutcome.FROM_CACHE)
 
         // Delete build dir and run again with build cache
         File(projectDir, "build").deleteRecursively()

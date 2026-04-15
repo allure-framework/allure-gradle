@@ -10,9 +10,12 @@ dependencies {
 
     testImplementation(project(":testkit-junit4"))
     testImplementation(libs.assertjCore)
+    testRuntimeOnly(libs.junitPlatformLauncher)
+    testRuntimeOnly(libs.junitVintageEngine)
 }
 
 tasks.test {
+    useJUnitPlatform()
     // Treat test task out-of-date if src/it changes
     inputs.dir(layout.projectDirectory.dir("src/it")).optional()
 }

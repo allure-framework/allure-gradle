@@ -8,7 +8,7 @@ dependencies {
     api(project(":allure-adapter-plugin"))
     api(project(":allure-report-plugin"))
 
-    testImplementation(project(":testkit-junit4"))
+    testImplementation(project(":testkit-jupiter"))
     testImplementation(libs.assertjCore)
 }
 

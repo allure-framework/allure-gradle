@@ -1,0 +1,2 @@
+name: Allure Gradle
+output: ./build/allure-report

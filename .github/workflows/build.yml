@@ -2,6 +2,8 @@ name: Build
 
 permissions:
   contents: read
+  checks: write
+  pull-requests: write
 
 on:
   workflow_dispatch:
@@ -44,9 +46,13 @@ jobs:
           gradle-version: 'wrapper'
 
       - name: Build
-        run: ./gradlew --no-parallel build
+        run: npx -y allure run -- node .github/scripts/run-build-with-sandbox-allure.mjs
+        env:
+          ALLURE_SERVICE_TOKEN: ${{ secrets.ALLURE_SERVICE_TOKEN }}
 
-      - name: Build Sandbox
-        run: |
-          cd sandbox
-          ./gradlew --no-parallel build
+      - name: Post Allure summary
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false && matrix.os == 'ubuntu' && matrix.java-version == '21.0.x'
+        uses: allure-framework/allure-action@v0
+        with:
+          report-directory: ./build/allure-report
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -43,20 +43,23 @@ class Allure3AggregateReportTest {
             """.trimIndent()
         )
 
-        val buildResult = GradleRunner.create()
-            .withProjectDir(projectDir)
-            .withGradleVersion("9.0.0")
-            .withPluginClasspath()
-            .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
-            .withArguments(
-                "--stacktrace",
-                "--info",
-                "-Porg.gradle.daemon=false",
-                "--no-watch-fs",
-                "allureAggregateReport"
-            )
-            .forwardOutput()
-            .build()
+        val arguments = listOf(
+            "--stacktrace",
+            "--info",
+            "-Porg.gradle.daemon=false",
+            "--no-watch-fs",
+            "allureAggregateReport"
+        )
+        val buildResult = GradleRunnerRule.runBuild(projectDir, "9.0.0", arguments) {
+            GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withGradleVersion("9.0.0")
+                .withPluginClasspath()
+                .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
+                .withArguments(arguments)
+                .forwardOutput()
+                .build()
+        }
 
         assertThat(buildResult.task(":downloadNode")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)

@@ -2,6 +2,7 @@
 allureJava = "2.33.0"
 
 [libraries]
+allureJavaCommons = { module = "io.qameta.allure:allure-java-commons", version.ref = "allureJava" }
 allureJunit5 = { module = "io.qameta.allure:allure-junit5", version.ref = "allureJava" }
 assertjCore = "org.assertj:assertj-core:3.27.7"
 commons-io = "commons-io:commons-io:2.21.0"

@@ -25,7 +25,7 @@ class KotlinDslReportTest {
         File("src/it/junit4-kotlin").copyRecursively(projectDir, overwrite = true)
         projectDir.resolve("settings.gradle.kts").createNewFile()
 
-        val testResult = runner(projectDir, version).withArguments(commonArgs("test")).build()
+        val testResult = runBuild(projectDir, version, "test")
         assertThat(testResult.task(":test")?.outcome)
             .`as`("test task outcome")
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -33,7 +33,7 @@ class KotlinDslReportTest {
             .`as`("Allure results directory after test run")
             .isNotEmptyDirectory()
 
-        val reportResult = runner(projectDir, version).withArguments(commonArgs("allureReport")).build()
+        val reportResult = runBuild(projectDir, version, "allureReport")
         assertThat(reportResult.task(":allureReport")?.outcome)
             .`as`("allureReport should not become NO-SOURCE for Kotlin DSL projects")
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -56,4 +56,9 @@ class KotlinDslReportTest {
         "--no-watch-fs",
         *tasks
     )
+
+    private fun runBuild(projectDir: File, version: String, vararg tasks: String) =
+        GradleRunnerRule.runBuild(projectDir, version, commonArgs(*tasks)) {
+            runner(projectDir, version).withArguments(commonArgs(*tasks)).build()
+        }
 }

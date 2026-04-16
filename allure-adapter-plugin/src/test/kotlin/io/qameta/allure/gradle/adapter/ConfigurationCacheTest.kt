@@ -32,7 +32,13 @@ class ConfigurationCacheTest {
         assertThat(firstRun.output)
             .contains("Configuration cache entry stored.")
 
-        val secondRun = gradleRunner.newRunner("test", "--configuration-cache").build()
+        val secondRun = GradleRunnerRule.runBuild(
+            gradleRunner.projectDir,
+            version,
+            listOf("test", "--configuration-cache")
+        ) {
+            gradleRunner.newRunner("test", "--configuration-cache").build()
+        }
 
         assertThat(secondRun.output)
             .containsPattern("(Reusing configuration cache\\.|Configuration cache entry reused\\.)")

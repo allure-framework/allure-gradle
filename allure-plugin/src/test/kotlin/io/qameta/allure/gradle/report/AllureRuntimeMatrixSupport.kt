@@ -59,6 +59,15 @@ internal object AllureRuntimeMatrixSupport {
         .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
         .forwardOutput()
 
+    fun build(projectDir: File, vararg tasks: String): BuildResult {
+        val arguments = commonArgs(*tasks)
+        return GradleRunnerRule.runBuild(projectDir, "9.0.0", arguments) {
+            runner(projectDir)
+                .withArguments(arguments)
+                .build()
+        }
+    }
+
     fun commonArgs(vararg tasks: String): List<String> = listOf(
         "--stacktrace",
         "--info",

@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.rule;
 
+import io.qameta.allure.Allure;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.JavaVersion;
@@ -11,10 +12,15 @@ import org.junit.jupiter.api.Assumptions;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.RandomStringUtils.insecure;
@@ -89,13 +95,13 @@ public class GradleRunnerRule {
 
     public GradleRunnerRule build() {
         prepare();
-        buildResult = newRunner(tasks).build();
+        buildResult = runBuild(projectDir, gradleVersion, Arrays.asList(tasks), () -> newRunner(tasks).build());
         return this;
     }
 
     public BuildResult run(String... tasks) {
         prepare();
-        buildResult = newRunner(tasks).build();
+        buildResult = runBuild(projectDir, gradleVersion, Arrays.asList(tasks), () -> newRunner(tasks).build());
         return buildResult;
     }
 
@@ -122,6 +128,29 @@ public class GradleRunnerRule {
                 .withTestKitDir(testKitDir)
                 .withPluginClasspath()
                 .forwardOutput();
+    }
+
+    public static BuildResult runBuild(File projectDir,
+                                       String gradleVersion,
+                                       List<String> arguments,
+                                       Supplier<BuildResult> action) {
+        return Allure.step("Run Gradle build", () -> {
+            Allure.parameter("gradleVersion", gradleVersion);
+            Allure.parameter("projectDir", projectDir.getAbsolutePath());
+            attachText("gradle-arguments", String.join(System.lineSeparator(), arguments));
+            attachFileIfExists(projectDir, "build.gradle");
+            attachFileIfExists(projectDir, "build.gradle.kts");
+            attachFileIfExists(projectDir, "settings.gradle");
+            attachFileIfExists(projectDir, "settings.gradle.kts");
+            try {
+                BuildResult result = action.get();
+                attachBuildResult(result);
+                return result;
+            } catch (RuntimeException | Error e) {
+                attachText("gradle-exception", stackTrace(e));
+                throw e;
+            }
+        });
     }
 
     static class JavaGradle {
@@ -220,5 +249,38 @@ public class GradleRunnerRule {
             throw new RuntimeException("Unable to copy " + project +
                     " (full path is " + from.getAbsolutePath() + ") to " + to, e);
         }
+    }
+
+    private static void attachBuildResult(BuildResult result) {
+        attachText("gradle-output", result.getOutput());
+        String taskSummary = result.getTasks().stream()
+                .map(task -> task.getPath() + " -> " + task.getOutcome())
+                .collect(Collectors.joining(System.lineSeparator()));
+        attachText("gradle-task-outcomes", taskSummary.isEmpty() ? "(no reported tasks)" : taskSummary);
+    }
+
+    private static void attachFileIfExists(File projectDir, String fileName) {
+        File file = new File(projectDir, fileName);
+        if (!file.isFile()) {
+            return;
+        }
+        try {
+            attachText(fileName, FileUtils.readFileToString(file, StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            attachText(fileName + "-read-error", stackTrace(e));
+        }
+    }
+
+    private static void attachText(String name, String content) {
+        if (content == null || content.isEmpty()) {
+            return;
+        }
+        Allure.addAttachment(name, "text/plain", content, ".txt");
+    }
+
+    private static String stackTrace(Throwable throwable) {
+        StringWriter writer = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(writer));
+        return writer.toString();
     }
 }

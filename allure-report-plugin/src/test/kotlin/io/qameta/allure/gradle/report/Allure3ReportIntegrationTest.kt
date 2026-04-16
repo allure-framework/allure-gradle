@@ -23,9 +23,7 @@ class Allure3ReportIntegrationTest {
 
         val projectDir = createAllure3Project(singleFile = true)
 
-        val buildResult = runner(projectDir)
-            .withArguments(commonArgs("allureReport"))
-            .build()
+        val buildResult = runBuild(projectDir, "allureReport")
 
         assertThat(buildResult.task(":downloadNode")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -58,9 +56,7 @@ class Allure3ReportIntegrationTest {
 
         val projectDir = createAllure3Project(singleFile = false)
 
-        val buildResult = runner(projectDir)
-            .withArguments(commonArgs("allureReport", "--single-file=true"))
-            .build()
+        val buildResult = runBuild(projectDir, "allureReport", "--single-file=true")
 
         assertThat(buildResult.task(":allureReport")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -78,9 +74,7 @@ class Allure3ReportIntegrationTest {
 
         val projectDir = createAllure3Project(singleFile = false)
 
-        val buildResult = runner(projectDir)
-            .withArguments(commonArgs("allureServe", "--port", "4567"))
-            .build()
+        val buildResult = runBuild(projectDir, "allureServe", "--port", "4567")
 
         assertThat(buildResult.task(":allureServe")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -99,7 +93,7 @@ class Allure3ReportIntegrationTest {
         val projectDir = createAllure3Project(singleFile = false)
 
         val failure = runCatching {
-            runner(projectDir).withArguments(commonArgs("allureServe", "--host", "127.0.0.1")).build()
+            runBuild(projectDir, "allureServe", "--host", "127.0.0.1")
         }.exceptionOrNull() as? UnexpectedBuildFailure
 
         val buildFailure = requireNotNull(failure)
@@ -121,7 +115,7 @@ class Allure3ReportIntegrationTest {
         )
 
         val failure = runCatching {
-            runner(projectDir).withArguments(commonArgs("downloadAllure")).build()
+            runBuild(projectDir, "downloadAllure")
         }.exceptionOrNull() as? UnexpectedBuildFailure
 
         val buildFailure = requireNotNull(failure)
@@ -256,4 +250,9 @@ class Allure3ReportIntegrationTest {
         "--no-watch-fs",
         *tasks
     )
+
+    private fun runBuild(projectDir: File, vararg tasks: String) =
+        GradleRunnerRule.runBuild(projectDir, "9.0.0", commonArgs(*tasks)) {
+            runner(projectDir).withArguments(commonArgs(*tasks)).build()
+        }
 }

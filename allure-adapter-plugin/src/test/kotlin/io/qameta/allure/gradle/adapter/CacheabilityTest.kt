@@ -50,7 +50,13 @@ class CacheabilityTest {
 
         File(projectDir, "build").deleteRecursively()
 
-        val second: BuildResult = gradleRunner.newRunner("test", "--build-cache").build()
+        val second: BuildResult = GradleRunnerRule.runBuild(
+            projectDir,
+            version,
+            listOf("test", "--build-cache")
+        ) {
+            gradleRunner.newRunner("test", "--build-cache").build()
+        }
 
         assertThat(second.task(":test")?.outcome)
             .`as`("second run should be FROM_CACHE")

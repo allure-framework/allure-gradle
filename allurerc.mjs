@@ -10,5 +10,10 @@ const allureService =
 export default {
     name: "Allure Gradle",
     output: "./build/allure-report",
+    plugins: {
+        awesome: {
+            publish: true
+        }
+    }
     ...(allureService ? { allureService } : {}),
 };

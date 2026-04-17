@@ -34,6 +34,7 @@ jobs:
       MATRIX_JAVA_VERSION: ${{ matrix.java-version }}
       ALLURE_MATRIX_ENV: ${{ matrix.os }}-jdk-${{ matrix.java-version }}
       ALLURE_DUMP_NAME: allure-results-build-${{ matrix.os }}-jdk-${{ matrix.java-version }}
+      GRADLEW_CMD: ${{ matrix.os == 'windows' && '.\\gradlew.bat' || './gradlew' }}
     steps:
       - uses: actions/checkout@v6
 
@@ -53,10 +54,10 @@ jobs:
           gradle-version: 'wrapper'
 
       - name: Build without tests
-        run: ./gradlew build -x test
+        run: ${{ env.GRADLEW_CMD }} build -x test
 
       - name: Test with Allure
-        run: npx -y allure@3 run --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- ./gradlew test
+        run: npx -y allure@3 run --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- ${{ env.GRADLEW_CMD }} test
 
       - name: Upload test results
         if: always()

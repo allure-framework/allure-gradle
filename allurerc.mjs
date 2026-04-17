@@ -14,6 +14,6 @@ export default {
         awesome: {
             publish: true
         }
-    }
+    },
     ...(allureService ? { allureService } : {}),
 };

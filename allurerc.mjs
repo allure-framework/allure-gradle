@@ -12,7 +12,9 @@ export default {
     output: "./build/allure-report",
     plugins: {
         awesome: {
-            publish: true
+            options: {
+                publish: true
+            }
         }
     },
     ...(allureService ? { allureService } : {}),

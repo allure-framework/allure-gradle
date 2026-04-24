@@ -1,75 +1,62 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
-import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.StandardCopyOption
+import org.junit.jupiter.params.provider.Arguments.arguments
 
-@RunWith(Parameterized::class)
 class CacheabilityTest {
-
-    @JvmField
-    @org.junit.Rule
-    val gradleRunner = io.qameta.allure.gradle.rule.GradleRunnerRule()
-        .version { version }
-        .project { project }
-        .tasks { arrayOf("test", "--build-cache") }
-
-    @Parameterized.Parameter(0)
-    lateinit var version: String
-
-    @Parameterized.Parameter(1)
-    lateinit var project: String
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "cacheable on {0}")
         fun data() = listOf(
-            arrayOf("9.0.0", "src/it/adapter-cache-junit5-kts"),
-            arrayOf("8.14.3", "src/it/adapter-cache-junit5-kts")
+            arguments("9.4.1", "src/it/adapter-cache-junit5-kts"),
+            arguments("8.14.3", "src/it/adapter-cache-junit5-kts"),
         )
     }
 
-    @Test
-    fun `test task is cacheable when allure adapter is applied`() {
-        // Enable local build cache in settings.gradle written to the prepared projectDir
+    @ParameterizedTest(name = "cacheable on {0}")
+    @MethodSource("data")
+    fun `test task is cacheable when allure adapter is applied`(version: String, project: String) {
+        val gradleRunner = GradleRunnerRule()
+            .rootDir(tempDir)
+            .version(version)
+            .project(project)
+            .prepare()
+
         val projectDir = gradleRunner.projectDir
-        val testKitHome = projectDir.parentFile.resolve(".gradle")
         val cacheDir = projectDir.resolve(".gradle-test-build-cache").absoluteFile
         val settings = File(projectDir, "settings.gradle.kts")
         settings.writeText(
             """
             buildCache {
                 local {
-                    directory = file("${'$'}{file("${cacheDir.absolutePath.replace('\\','/')}")}")
-                    removeUnusedEntriesAfterDays = 1
+                    directory = file("${cacheDir.absolutePath.replace('\\', '/')}")
                 }
             }
             """.trimIndent()
         )
 
-        // First run already executed by rule (test task)
-        assertThat(gradleRunner.buildResult.task(":test")?.outcome)
+        val firstRun = gradleRunner.run("test", "--build-cache")
+        assertThat(firstRun.task(":test")?.outcome)
             .isIn(TaskOutcome.SUCCESS, TaskOutcome.NO_SOURCE, TaskOutcome.FROM_CACHE)
 
-        // Delete build dir and run again with build cache
         File(projectDir, "build").deleteRecursively()
 
-        val second: BuildResult = GradleRunner.create()
-            .withProjectDir(projectDir)
-            .withArguments("--stacktrace", "--info", "--build-cache", "-Porg.gradle.daemon=false", "--no-watch-fs", "test")
-            .withGradleVersion(version)
-            .withTestKitDir(testKitHome)
-            .withPluginClasspath()
-            .forwardOutput()
-            .build()
+        val second: BuildResult = GradleRunnerRule.runBuild(
+            projectDir,
+            version,
+            listOf("test", "--build-cache")
+        ) {
+            gradleRunner.newRunner("test", "--build-cache").build()
+        }
 
         assertThat(second.task(":test")?.outcome)
             .`as`("second run should be FROM_CACHE")

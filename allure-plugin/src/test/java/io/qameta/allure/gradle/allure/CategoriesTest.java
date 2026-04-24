@@ -1,58 +1,44 @@
 package io.qameta.allure.gradle.allure;
 
 import io.qameta.allure.gradle.rule.GradleRunnerRule;
-import org.gradle.testkit.runner.BuildResult;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-/**
- * eroshenkoam
- * 11.09.17
- */
-@RunWith(Parameterized.class)
 public class CategoriesTest {
 
-    @Parameterized.Parameter(0)
-    public String version;
+    @TempDir
+    File tempDir;
 
-    @Parameterized.Parameter(1)
-    public String project;
-
-    @Parameterized.Parameter(2)
-    public String[] tasks;
-
-    @Rule
-    public GradleRunnerRule gradleRunner = new GradleRunnerRule()
-            .version(() -> version)
-            .project(() -> project)
-            .tasks(() -> tasks);
-
-    @Parameterized.Parameters(name = "{1} [{0}]")
-    public static Collection<Object[]> getFrameworks() {
-        return Arrays.asList(
-                new Object[]{"9.0.0", "src/it/categories", new String[]{"allureReport"}},
-                new Object[]{"8.14.3", "src/it/categories", new String[]{"allureReport"}},
-                new Object[]{"8.11.1", "src/it/categories", new String[]{"allureReport"}}
+    static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
+        return List.of(
+                arguments("9.4.1", "src/it/categories", new String[]{"allureReport"}),
+                arguments("8.14.3", "src/it/categories", new String[]{"allureReport"}),
+                arguments("8.11.1", "src/it/categories", new String[]{"allureReport"})
         );
     }
 
-    @Test
-    public void shouldCopyCategoriesInfo() {
-        BuildResult buildResult = gradleRunner.getBuildResult();
+    @ParameterizedTest(name = "{1} [{0}]")
+    @MethodSource("getFrameworks")
+    void shouldCopyCategoriesInfo(String version, String project, String[] tasks) {
+        GradleRunnerRule gradleRunner = new GradleRunnerRule()
+                .rootDir(tempDir)
+                .version(version)
+                .project(project)
+                .tasks(tasks)
+                .build();
+
         File resultsDir = new File(gradleRunner.getProjectDir(), "build/allure-results");
 
         assertThat(resultsDir.listFiles()).as("Allure executor info")
                 .filteredOn(file -> file.getName().endsWith("categories.json"))
                 .hasSize(1);
-
     }
-
 }

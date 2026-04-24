@@ -1,23 +1,22 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class AllureServeIntegrationTest {
-    @Rule
-    @JvmField
-    val tempDir = TemporaryFolder()
+    @TempDir
+    lateinit var tempDir: File
 
     @Test
     fun `allureServe works when project path contains spaces`() {
-        val projectDir = tempDir.newFolder("report project with spaces")
+        val projectDir = File(tempDir, "report project with spaces").apply { mkdirs() }
         File("src/it/report-only").copyRecursively(projectDir, overwrite = true)
         projectDir.resolve("settings.gradle").createNewFile()
 
@@ -31,20 +30,23 @@ class AllureServeIntegrationTest {
             """.trimIndent()
         )
 
-        val buildResult = GradleRunner.create()
-            .withProjectDir(projectDir)
-            .withGradleVersion("9.0.0")
-            .withPluginClasspath()
-            .withTestKitDir(projectDir.resolve(".gradle-testkit"))
-            .withArguments(
-                "--stacktrace",
-                "--info",
-                "-Porg.gradle.daemon=false",
-                "--no-watch-fs",
-                "allureServe"
-            )
-            .forwardOutput()
-            .build()
+        val arguments = listOf(
+            "--stacktrace",
+            "--info",
+            "-Porg.gradle.daemon=false",
+            "--no-watch-fs",
+            "allureServe"
+        )
+        val buildResult = GradleRunnerRule.runBuild(projectDir, "9.4.1", arguments) {
+            GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withGradleVersion("9.4.1")
+                .withPluginClasspath()
+                .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
+                .withArguments(arguments)
+                .forwardOutput()
+                .build()
+        }
 
         assertThat(buildResult.task(":downloadAllure")?.outcome)
             .`as`("downloadAllure task outcome")

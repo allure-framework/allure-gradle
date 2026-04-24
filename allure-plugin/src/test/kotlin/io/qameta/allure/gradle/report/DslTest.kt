@@ -3,42 +3,38 @@ package io.qameta.allure.gradle.report
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
+import org.junit.jupiter.params.provider.Arguments.arguments
 
-@RunWith(Parameterized::class)
 class DslTest {
-    @Rule
-    @JvmField
-    val gradleRunner = GradleRunnerRule()
-        .version { version }
-        .project { project }
-        .tasks("testDsl")
-
-
-    @Parameterized.Parameter(0)
-    lateinit var version: String
-
-    @Parameterized.Parameter(1)
-    lateinit var project: String
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{1} [{0}]")
         fun getFrameworks() = listOf(
-            arrayOf("9.0.0", "src/it/full-dsl-kotlin"),
-            arrayOf("8.14.3", "src/it/full-dsl-kotlin"),
-            arrayOf("8.11.1", "src/it/full-dsl-kotlin"),
-            arrayOf("9.0.0", "src/it/full-dsl-groovy"),
-            arrayOf("8.14.3", "src/it/full-dsl-groovy"),
-            arrayOf("8.11.1", "src/it/full-dsl-groovy"),
+            arguments("9.4.1", "src/it/full-dsl-kotlin"),
+            arguments("8.14.3", "src/it/full-dsl-kotlin"),
+            arguments("8.11.1", "src/it/full-dsl-kotlin"),
+            arguments("9.4.1", "src/it/full-dsl-groovy"),
+            arguments("8.14.3", "src/it/full-dsl-groovy"),
+            arguments("8.11.1", "src/it/full-dsl-groovy"),
         )
     }
 
-    @Test
-    fun `build script should compile`() {
+    @ParameterizedTest(name = "{1} [{0}]")
+    @MethodSource("getFrameworks")
+    fun `build script should compile`(version: String, project: String) {
+        val gradleRunner = GradleRunnerRule()
+            .rootDir(tempDir)
+            .version(version)
+            .project(project)
+            .tasks("testDsl")
+            .build()
+
         assertThat(gradleRunner.buildResult.tasks).`as`("testDsl task status")
             .filteredOn { task -> task.path == ":testDsl" }
             .extracting("outcome")

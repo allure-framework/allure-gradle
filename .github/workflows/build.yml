@@ -22,15 +22,25 @@ concurrency:
 
 jobs:
   build:
-    name: 'Tests (JDK ${{ matrix.java-version }}, ${{ matrix.os }})'
+    name: 'Build (JDK ${{ matrix.java-version }}, ${{ matrix.os }})'
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
         os: [ 'ubuntu', 'windows' ]
-        java-version: [ '17.0.x', '21.0.x' ]
+        java-version: [ '17', '21' ]
+    env:
+      MATRIX_OS: ${{ matrix.os }}
+      MATRIX_JAVA_VERSION: ${{ matrix.java-version }}
+      ALLURE_MATRIX_ENV: ${{ matrix.os }}-jdk-${{ matrix.java-version }}
+      ALLURE_DUMP_NAME: allure-results-build-${{ matrix.os }}-jdk-${{ matrix.java-version }}
+      GRADLEW_CMD: ${{ matrix.os == 'windows' && '.\\gradlew.bat' || './gradlew' }}
     steps:
       - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
 
       - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v5
@@ -43,10 +53,94 @@ jobs:
         with:
           gradle-version: 'wrapper'
 
-      - name: Build
-        run: ./gradlew --no-parallel build
+      - name: Build without tests
+        run: ${{ env.GRADLEW_CMD }} build -x test
 
-      - name: Build Sandbox
-        run: |
-          cd sandbox
-          ./gradlew --no-parallel build
+      - name: Test with Allure
+        run: npx -y allure@3 run --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- ${{ env.GRADLEW_CMD }} test
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ env.ALLURE_DUMP_NAME }}
+          path: ./${{ env.ALLURE_DUMP_NAME }}.zip
+          if-no-files-found: ignore
+
+  sandbox:
+    name: 'Sandbox (JDK ${{ matrix.java-version }}, ${{ matrix.os }})'
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu', 'windows' ]
+        java-version: [ '17', '21' ]
+    env:
+      MATRIX_OS: ${{ matrix.os }}
+      MATRIX_JAVA_VERSION: ${{ matrix.java-version }}
+      ALLURE_MATRIX_ENV: ${{ matrix.os }}-jdk-${{ matrix.java-version }}
+      ALLURE_DUMP_NAME: allure-results-sandbox-${{ matrix.os }}-jdk-${{ matrix.java-version }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+
+      - name: Set up JDK ${{ matrix.java-version }}
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: ${{ matrix.java-version }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: 'wrapper'
+
+      - name: Report sandbox build with Allure
+        run: npx -y allure@3 run --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- node .github/scripts/run-sandbox-build-status.mjs ./sandbox/build/allure-results
+
+      - name: Upload sandbox results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: ${{ env.ALLURE_DUMP_NAME }}
+          path: ./${{ env.ALLURE_DUMP_NAME }}.zip
+          if-no-files-found: ignore
+
+  report:
+    needs: [build, sandbox]
+    name: Build report
+    runs-on: ubuntu-latest
+    if: always()
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    env:
+      ALLURE_SERVICE_TOKEN: ${{ secrets.ALLURE_SERVICE_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20.x'
+
+      - name: Download Allure dumps
+        uses: actions/download-artifact@v6
+        continue-on-error: true
+        with:
+          pattern: allure-results-*
+          path: ./
+          merge-multiple: true
+
+      - name: Generate Allure report
+        run: npx -y allure@3 generate --config ./allurerc.mjs --dump="allure-results-*.zip" --output=./build/allure-report
+
+      - name: Post Allure summary
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork == false
+        uses: allure-framework/allure-action@v0
+        with:
+          report-directory: ./build/allure-report
+          github-token: ${{ secrets.GITHUB_TOKEN }}

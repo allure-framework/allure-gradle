@@ -8,11 +8,13 @@ dependencies {
     api(project(":allure-adapter-plugin"))
     api(project(":allure-report-plugin"))
 
-    testImplementation(project(":testkit-junit4"))
+    testImplementation(project(":testkit-jupiter"))
+    testImplementation(libs.allureJunit5)
     testImplementation(libs.assertjCore)
 }
 
 tasks.test {
+    useJUnitPlatform()
     // Treat test task out-of-date if src/it changes
     inputs.dir(layout.projectDirectory.dir("src/it")).optional()
 }

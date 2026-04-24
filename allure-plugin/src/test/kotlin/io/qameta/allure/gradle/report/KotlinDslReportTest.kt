@@ -1,41 +1,31 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.File
 
-@RunWith(Parameterized::class)
 class KotlinDslReportTest {
-    @Rule
-    @JvmField
-    val tempDir = TemporaryFolder()
-
-    @Parameterized.Parameter
-    lateinit var version: String
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "[{0}]")
-        fun versions() = listOf(
-            arrayOf("9.0.0"),
-            arrayOf("8.14.3"),
-            arrayOf("8.11.1"),
-        )
+        fun versions() = listOf("9.4.1", "8.14.3", "8.11.1")
     }
 
-    @Test
-    fun `allureReport should reuse results from a previous Kotlin DSL test run`() {
-        val projectDir = tempDir.newFolder("junit4-kotlin")
+    @ParameterizedTest(name = "[{0}]")
+    @MethodSource("versions")
+    fun `allureReport should reuse results from a previous Kotlin DSL test run`(version: String) {
+        val projectDir = File(tempDir, "junit4-kotlin-$version").apply { mkdirs() }
         File("src/it/junit4-kotlin").copyRecursively(projectDir, overwrite = true)
         projectDir.resolve("settings.gradle.kts").createNewFile()
 
-        val testResult = runner(projectDir).withArguments(commonArgs("test")).build()
+        val testResult = runBuild(projectDir, version, "test")
         assertThat(testResult.task(":test")?.outcome)
             .`as`("test task outcome")
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -43,7 +33,7 @@ class KotlinDslReportTest {
             .`as`("Allure results directory after test run")
             .isNotEmptyDirectory()
 
-        val reportResult = runner(projectDir).withArguments(commonArgs("allureReport")).build()
+        val reportResult = runBuild(projectDir, version, "allureReport")
         assertThat(reportResult.task(":allureReport")?.outcome)
             .`as`("allureReport should not become NO-SOURCE for Kotlin DSL projects")
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -52,11 +42,11 @@ class KotlinDslReportTest {
             .isNotEmptyDirectory()
     }
 
-    private fun runner(projectDir: File) = GradleRunner.create()
+    private fun runner(projectDir: File, version: String) = GradleRunner.create()
         .withProjectDir(projectDir)
         .withGradleVersion(version)
         .withPluginClasspath()
-        .withTestKitDir(projectDir.resolve(".gradle-testkit"))
+        .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
         .forwardOutput()
 
     private fun commonArgs(vararg tasks: String) = listOf(
@@ -66,4 +56,9 @@ class KotlinDslReportTest {
         "--no-watch-fs",
         *tasks
     )
+
+    private fun runBuild(projectDir: File, version: String, vararg tasks: String) =
+        GradleRunnerRule.runBuild(projectDir, version, commonArgs(*tasks)) {
+            runner(projectDir, version).withArguments(commonArgs(*tasks)).build()
+        }
 }

@@ -1,25 +1,24 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Assume.assumeFalse
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 
 class Allure3AggregateReportTest {
-    @Rule
-    @JvmField
-    val tempDir = TemporaryFolder()
+    @TempDir
+    lateinit var tempDir: File
 
     @Test
     fun `allureAggregateReport should use Allure 3 by default`() {
-        assumeFalse("Fake Allure 3 runtime tests currently support Unix-like systems only", Os.isFamily(Os.FAMILY_WINDOWS))
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 
-        val projectDir = tempDir.newFolder("allure3-aggregate")
+        val projectDir = File(tempDir, "allure3-aggregate").apply { mkdirs() }
         File("src/it/report-multi").copyRecursively(projectDir, overwrite = true)
 
         val nodeArchive = createFakeNodeArchive(projectDir)
@@ -44,20 +43,23 @@ class Allure3AggregateReportTest {
             """.trimIndent()
         )
 
-        val buildResult = GradleRunner.create()
-            .withProjectDir(projectDir)
-            .withGradleVersion("9.0.0")
-            .withPluginClasspath()
-            .withTestKitDir(projectDir.resolve(".gradle-testkit"))
-            .withArguments(
-                "--stacktrace",
-                "--info",
-                "-Porg.gradle.daemon=false",
-                "--no-watch-fs",
-                "allureAggregateReport"
-            )
-            .forwardOutput()
-            .build()
+        val arguments = listOf(
+            "--stacktrace",
+            "--info",
+            "-Porg.gradle.daemon=false",
+            "--no-watch-fs",
+            "allureAggregateReport"
+        )
+        val buildResult = GradleRunnerRule.runBuild(projectDir, "9.4.1", arguments) {
+            GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withGradleVersion("9.4.1")
+                .withPluginClasspath()
+                .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
+                .withArguments(arguments)
+                .forwardOutput()
+                .build()
+        }
 
         assertThat(buildResult.task(":downloadNode")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -134,4 +136,3 @@ class Allure3AggregateReportTest {
         return archive
     }
 }
-

@@ -2,43 +2,41 @@ package io.qameta.allure.gradle.report;
 
 import io.qameta.allure.gradle.rule.GradleRunnerRule;
 import org.gradle.testkit.runner.BuildResult;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-@RunWith(Parameterized.class)
 public class ReportOnlyTest {
-    @Parameterized.Parameter(0)
-    public String project;
 
-    @Parameterized.Parameter(1)
-    public String version;
+    @TempDir
+    File tempDir;
 
-    @Rule
-    public GradleRunnerRule gradleRunner = new GradleRunnerRule()
-            .version(() -> version)
-            .project(() -> project)
-            .tasks("allureReport");
-
-    @Parameterized.Parameters(name = "{0} [{1}]")
-    public static Collection<Object[]> getFrameworks() {
-        return Arrays.asList(
-                new Object[]{"src/it/report-only", "9.0.0"},
-                new Object[]{"src/it/report-only", "8.14.3"},
-                new Object[]{"src/it/report-only", "8.11.1"}
+    static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
+        return List.of(
+                arguments("src/it/report-only", "9.4.1"),
+                arguments("src/it/report-only", "8.14.3"),
+                arguments("src/it/report-only", "8.11.1")
         );
     }
 
-    @Test
-    public void allureReportGenerated() {
+    @ParameterizedTest(name = "{0} [{1}]")
+    @MethodSource("getFrameworks")
+    void allureReportGenerated(String project, String version) {
+        GradleRunnerRule gradleRunner = new GradleRunnerRule()
+                .rootDir(tempDir)
+                .version(version)
+                .project(project)
+                .tasks("allureReport")
+                .build();
+
         BuildResult buildResult = gradleRunner.getBuildResult();
 
         File projectDir = gradleRunner.getProjectDir();

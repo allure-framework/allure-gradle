@@ -2,38 +2,30 @@ package io.qameta.allure.gradle.report
 
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.io.TempDir
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
+import java.io.File
 
-@RunWith(Parameterized::class)
 class AllurePluginFeatureMatrixTest {
-    @Rule
-    @JvmField
-    val tempDir = TemporaryFolder()
-
-    @Parameterized.Parameter
-    lateinit var runtime: TestAllureRuntime
+    @TempDir
+    lateinit var tempDir: File
 
     companion object {
         @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
         fun runtimes() = listOf(
-            arrayOf(TestAllureRuntime.ALLURE_2),
-            arrayOf(TestAllureRuntime.ALLURE_3),
+            TestAllureRuntime.ALLURE_2,
+            TestAllureRuntime.ALLURE_3,
         )
     }
 
-    @Test
-    fun `categories are copied for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `categories are copied for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/categories")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
-        val buildResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport"))
-            .build()
+        val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "allureReport")
 
         AllureRuntimeMatrixSupport.assertRuntimeTasks(buildResult, runtime)
         assertThat(buildResult.task(":allureReport")?.outcome)
@@ -45,14 +37,13 @@ class AllurePluginFeatureMatrixTest {
             .isNotEmptyDirectory()
     }
 
-    @Test
-    fun `allureReport can run twice with categories for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `allureReport can run twice with categories for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/categories")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
-        val firstRun = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport"))
-            .build()
+        val firstRun = AllureRuntimeMatrixSupport.build(projectDir, "allureReport")
 
         AllureRuntimeMatrixSupport.assertRuntimeTasks(firstRun, runtime)
         assertThat(firstRun.task(":allureReport")?.outcome)
@@ -63,9 +54,7 @@ class AllurePluginFeatureMatrixTest {
         assertThat(projectDir.resolve("build/reports/allure-report/allureReport"))
             .isNotEmptyDirectory()
 
-        val secondRun = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport"))
-            .build()
+        val secondRun = AllureRuntimeMatrixSupport.build(projectDir, "allureReport")
 
         assertThat(secondRun.task(":allureReport")?.outcome)
             .isIn(TaskOutcome.SUCCESS, TaskOutcome.UP_TO_DATE)
@@ -76,14 +65,13 @@ class AllurePluginFeatureMatrixTest {
             .isNotEmptyDirectory()
     }
 
-    @Test
-    fun `custom results dir is reused by report task for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `custom results dir is reused by report task for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/custom-results-dir")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
-        val buildResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("test", "allureReport"))
-            .build()
+        val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "test", "allureReport")
 
         AllureRuntimeMatrixSupport.assertRuntimeTasks(buildResult, runtime)
         assertThat(buildResult.task(":test")?.outcome)
@@ -98,14 +86,13 @@ class AllurePluginFeatureMatrixTest {
             .isNotEmptyDirectory()
     }
 
-    @Test
-    fun `allureReport respects depends-on-tests for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `allureReport respects depends-on-tests for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/junit5-5.8.1")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
-        val buildResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport", "--depends-on-tests"))
-            .build()
+        val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "allureReport", "--depends-on-tests")
 
         AllureRuntimeMatrixSupport.assertRuntimeTasks(buildResult, runtime)
         assertThat(buildResult.task(":test")?.outcome)
@@ -116,14 +103,13 @@ class AllurePluginFeatureMatrixTest {
             .isNotEmptyDirectory()
     }
 
-    @Test
-    fun `allureReport stays no-source without depends-on-tests for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `allureReport stays no-source without depends-on-tests for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/junit5-5.8.1")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
-        val buildResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport"))
-            .build()
+        val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "allureReport")
 
         AllureRuntimeMatrixSupport.assertRuntimeTasks(buildResult, runtime)
         assertThat(buildResult.task(":test"))
@@ -132,22 +118,19 @@ class AllurePluginFeatureMatrixTest {
             .isEqualTo(TaskOutcome.NO_SOURCE)
     }
 
-    @Test
-    fun `allureReport reuses results from previous Kotlin DSL test run for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `allureReport reuses results from previous Kotlin DSL test run for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/junit4-kotlin")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
-        val testResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("test"))
-            .build()
+        val testResult = AllureRuntimeMatrixSupport.build(projectDir, "test")
         assertThat(testResult.task(":test")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
         assertThat(projectDir.resolve("build/allure-results"))
             .isNotEmptyDirectory()
 
-        val reportResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("allureReport"))
-            .build()
+        val reportResult = AllureRuntimeMatrixSupport.build(projectDir, "allureReport")
 
         AllureRuntimeMatrixSupport.assertRuntimeTasks(reportResult, runtime)
         assertThat(reportResult.task(":allureReport")?.outcome)
@@ -156,8 +139,9 @@ class AllurePluginFeatureMatrixTest {
             .isNotEmptyDirectory()
     }
 
-    @Test
-    fun `full DSL scripts compile for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `full DSL scripts compile for both runtimes`(runtime: TestAllureRuntime) {
         listOf("src/it/full-dsl-kotlin", "src/it/full-dsl-groovy").forEach { fixture ->
             val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, fixture)
             AllureRuntimeMatrixSupport.configureRuntime(
@@ -166,23 +150,20 @@ class AllurePluginFeatureMatrixTest {
                 stripLegacyCommandlineDsl = runtime == TestAllureRuntime.ALLURE_3,
             )
 
-            val buildResult = AllureRuntimeMatrixSupport.runner(projectDir)
-                .withArguments(AllureRuntimeMatrixSupport.commonArgs("testDsl"))
-                .build()
+            val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "testDsl")
 
             assertThat(buildResult.task(":testDsl")?.outcome)
                 .isEqualTo(TaskOutcome.SUCCESS)
         }
     }
 
-    @Test
-    fun `testng spi-off keeps raw results empty for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `testng spi-off keeps raw results empty for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/testng-spi-off")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime)
 
-        val buildResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("test"))
-            .build()
+        val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "test")
 
         assertThat(buildResult.task(":test")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
@@ -191,14 +172,13 @@ class AllurePluginFeatureMatrixTest {
             .isEmpty()
     }
 
-    @Test
-    fun `adapter exposes artifacts for both runtimes`() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("runtimes")
+    fun `adapter exposes artifacts for both runtimes`(runtime: TestAllureRuntime) {
         val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/expose-artifacts")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime)
 
-        val buildResult = AllureRuntimeMatrixSupport.runner(projectDir)
-            .withArguments(AllureRuntimeMatrixSupport.commonArgs("testCodeCoverageReport", "--dry-run"))
-            .build()
+        val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "testCodeCoverageReport", "--dry-run")
 
         assertThat(buildResult.output)
             .contains("BUILD SUCCESSFUL")

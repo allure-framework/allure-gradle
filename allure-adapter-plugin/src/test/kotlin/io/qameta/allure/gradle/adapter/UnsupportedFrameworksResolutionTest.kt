@@ -14,7 +14,7 @@ class UnsupportedFrameworksResolutionTest {
     fun `unsupported testng versions should not resolve allure adapter`() {
         val gradleRunner = GradleRunnerRule()
             .rootDir(tempDir)
-            .version("9.0.0")
+            .version("9.4.1")
             .project("src/it/adapter-resolution-testng-unsupported")
             .tasks("writeResolvedArtifacts")
             .build()

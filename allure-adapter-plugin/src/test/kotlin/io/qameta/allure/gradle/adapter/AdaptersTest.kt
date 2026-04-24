@@ -16,7 +16,7 @@ class AdaptersTest {
         @JvmStatic
         fun getFrameworks() = listOf(
             arguments(
-                "9.0.0",
+                "9.4.1",
                 "src/it/adapter-junit5-spock-kts",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]",
@@ -34,7 +34,7 @@ class AdaptersTest {
                 "[AdapterConfig{junit5}, AdapterConfig{spock}]",
             ),
             arguments(
-                "9.0.0",
+                "9.4.1",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
                 "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",

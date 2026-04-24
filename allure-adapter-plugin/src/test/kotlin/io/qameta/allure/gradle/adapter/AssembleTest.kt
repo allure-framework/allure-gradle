@@ -16,7 +16,7 @@ class AssembleTest {
     companion object {
         @JvmStatic
         fun getFrameworks() = listOf(
-            arguments("9.0.0", "src/it/adapter-assemble", arrayOf("assemble")),
+            arguments("9.4.1", "src/it/adapter-assemble", arrayOf("assemble")),
             arguments("8.14.3", "src/it/adapter-assemble", arrayOf("assemble")),
             arguments("8.11.1", "src/it/adapter-assemble", arrayOf("assemble")),
         )

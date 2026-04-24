@@ -19,7 +19,7 @@ public class CategoriesTest {
 
     static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
         return List.of(
-                arguments("9.0.0", "src/it/categories", new String[]{"allureReport"}),
+                arguments("9.4.1", "src/it/categories", new String[]{"allureReport"}),
                 arguments("8.14.3", "src/it/categories", new String[]{"allureReport"}),
                 arguments("8.11.1", "src/it/categories", new String[]{"allureReport"})
         );

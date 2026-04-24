@@ -50,10 +50,10 @@ class Allure3AggregateReportTest {
             "--no-watch-fs",
             "allureAggregateReport"
         )
-        val buildResult = GradleRunnerRule.runBuild(projectDir, "9.0.0", arguments) {
+        val buildResult = GradleRunnerRule.runBuild(projectDir, "9.4.1", arguments) {
             GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withGradleVersion("9.0.0")
+                .withGradleVersion("9.4.1")
                 .withPluginClasspath()
                 .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
                 .withArguments(arguments)

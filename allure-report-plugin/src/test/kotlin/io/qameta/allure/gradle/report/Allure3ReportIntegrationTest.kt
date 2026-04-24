@@ -238,7 +238,7 @@ class Allure3ReportIntegrationTest {
 
     private fun runner(projectDir: File): GradleRunner = GradleRunner.create()
         .withProjectDir(projectDir)
-        .withGradleVersion("9.0.0")
+        .withGradleVersion("9.4.1")
         .withPluginClasspath()
         .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
         .forwardOutput()
@@ -252,7 +252,7 @@ class Allure3ReportIntegrationTest {
     )
 
     private fun runBuild(projectDir: File, vararg tasks: String) =
-        GradleRunnerRule.runBuild(projectDir, "9.0.0", commonArgs(*tasks)) {
+        GradleRunnerRule.runBuild(projectDir, "9.4.1", commonArgs(*tasks)) {
             runner(projectDir).withArguments(commonArgs(*tasks)).build()
         }
 }

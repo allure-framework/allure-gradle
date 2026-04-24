@@ -552,7 +552,7 @@ Tasks:
 
 The 3.x line targets modern Gradle and JVMs and aligns Spock with JUnit Platform:
 
-- Minimal supported Gradle version: 8.11 (tested with 8.11.1, 8.14.3, 9.0.0)
+- Minimal supported Gradle version: 8.11 (tested with 8.11.1, 8.14.3, 9.4.1)
 - Java 17 and 21 are supported
 - Spock 2 (Groovy 4) runs on JUnit Platform and should use the `allure-spock2` adapter
 

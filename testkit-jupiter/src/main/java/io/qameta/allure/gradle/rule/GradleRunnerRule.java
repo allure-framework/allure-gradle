@@ -36,7 +36,7 @@ public class GradleRunnerRule {
 
     private String[] tasks = new String[0];
 
-    private String gradleVersion = "9.0.0";
+    private String gradleVersion = "9.4.1";
 
     private File rootDir = DEFAULT_ROOT_DIR;
 

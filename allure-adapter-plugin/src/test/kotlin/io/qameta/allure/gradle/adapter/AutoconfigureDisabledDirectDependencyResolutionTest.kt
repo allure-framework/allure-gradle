@@ -13,7 +13,7 @@ class AutoconfigureDisabledDirectDependencyResolutionTest {
 
     companion object {
         @JvmStatic
-        fun data() = listOf("9.0.0", "8.14.3", "8.11.1")
+        fun data() = listOf("9.4.1", "8.14.3", "8.11.1")
     }
 
     @ParameterizedTest(name = "{0}")

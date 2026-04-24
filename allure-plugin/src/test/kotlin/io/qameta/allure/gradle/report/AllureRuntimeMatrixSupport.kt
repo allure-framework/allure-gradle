@@ -52,7 +52,7 @@ internal object AllureRuntimeMatrixSupport {
         }
     }
 
-    fun runner(projectDir: File, gradleVersion: String = "9.0.0"): GradleRunner = GradleRunner.create()
+    fun runner(projectDir: File, gradleVersion: String = "9.4.1"): GradleRunner = GradleRunner.create()
         .withProjectDir(projectDir)
         .withGradleVersion(gradleVersion)
         .withPluginClasspath()
@@ -61,7 +61,7 @@ internal object AllureRuntimeMatrixSupport {
 
     fun build(projectDir: File, vararg tasks: String): BuildResult {
         val arguments = commonArgs(*tasks)
-        return GradleRunnerRule.runBuild(projectDir, "9.0.0", arguments) {
+        return GradleRunnerRule.runBuild(projectDir, "9.4.1", arguments) {
             runner(projectDir)
                 .withArguments(arguments)
                 .build()

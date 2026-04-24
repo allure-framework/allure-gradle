@@ -21,7 +21,7 @@ public class ReportOnlyTest {
 
     static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
         return List.of(
-                arguments("src/it/report-only", "9.0.0"),
+                arguments("src/it/report-only", "9.4.1"),
                 arguments("src/it/report-only", "8.14.3"),
                 arguments("src/it/report-only", "8.11.1")
         );

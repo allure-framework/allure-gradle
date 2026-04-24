@@ -18,15 +18,15 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 public class DependenciesTest {
 
     private static final String[][] IT_MATRIX = {
-            { "src/it/cucumber7-jvm",        "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/junit4",               "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/junit4-autoconfigure", "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/junit4-kotlin",        "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/junit5",               "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/junit5-5.8.1",         "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/testng",               "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/testng-autoconfigure", "9.0.0", "8.14.3", "8.11.1" },
-            { "src/it/spock",                "9.0.0", "8.14.3", "8.11.1" },
+            { "src/it/cucumber7-jvm",        "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/junit4",               "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/junit4-autoconfigure", "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/junit4-kotlin",        "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/junit5",               "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/junit5-5.8.1",         "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/testng",               "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/testng-autoconfigure", "9.4.1", "8.14.3", "8.11.1" },
+            { "src/it/spock",                "9.4.1", "8.14.3", "8.11.1" },
     };
 
     @TempDir

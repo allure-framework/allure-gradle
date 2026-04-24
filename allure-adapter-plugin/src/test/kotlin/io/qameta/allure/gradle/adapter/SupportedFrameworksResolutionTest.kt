@@ -39,7 +39,7 @@ class SupportedFrameworksResolutionTest {
     fun `resolved runtime classpath should contain the expected adapter`(project: String, expectedDependency: String) {
         val gradleRunner = GradleRunnerRule()
             .rootDir(tempDir)
-            .version("9.0.0")
+            .version("9.4.1")
             .project(project)
             .tasks("writeResolvedArtifacts")
             .build()

@@ -16,7 +16,7 @@ class TestAndAllureReportTest {
     companion object {
         @JvmStatic
         fun getFrameworks() = buildList {
-            for (gradleVersion in listOf("9.0.0", "8.14.3", "8.11.1")) {
+            for (gradleVersion in listOf("9.4.1", "8.14.3", "8.11.1")) {
                 for (project in listOf("src/it/junit5-5.8.1")) {
                     for (dependsOnTests in listOf(true, false)) {
                         add(arguments(gradleVersion, project, dependsOnTests))

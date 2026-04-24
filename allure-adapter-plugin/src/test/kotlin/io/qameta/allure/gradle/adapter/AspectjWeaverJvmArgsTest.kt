@@ -16,10 +16,10 @@ class AspectjWeaverJvmArgsTest {
     companion object {
         @JvmStatic
         fun data() = listOf(
-            arguments("9.0.0", "src/it/adapter-aspectj-weaver-disabled-kts", false),
+            arguments("9.4.1", "src/it/adapter-aspectj-weaver-disabled-kts", false),
             arguments("8.14.3", "src/it/adapter-aspectj-weaver-disabled-kts", false),
             arguments("8.11.1", "src/it/adapter-aspectj-weaver-disabled-kts", false),
-            arguments("9.0.0", "src/it/adapter-aspectj-weaver-enabled-kts", true),
+            arguments("9.4.1", "src/it/adapter-aspectj-weaver-enabled-kts", true),
             arguments("8.14.3", "src/it/adapter-aspectj-weaver-enabled-kts", true),
             arguments("8.11.1", "src/it/adapter-aspectj-weaver-enabled-kts", true),
         )

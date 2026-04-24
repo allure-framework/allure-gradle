@@ -17,7 +17,7 @@ class CacheabilityTest {
     companion object {
         @JvmStatic
         fun data() = listOf(
-            arguments("9.0.0", "src/it/adapter-cache-junit5-kts"),
+            arguments("9.4.1", "src/it/adapter-cache-junit5-kts"),
             arguments("8.14.3", "src/it/adapter-cache-junit5-kts"),
         )
     }

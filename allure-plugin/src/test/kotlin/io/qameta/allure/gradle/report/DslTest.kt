@@ -16,10 +16,10 @@ class DslTest {
     companion object {
         @JvmStatic
         fun getFrameworks() = listOf(
-            arguments("9.0.0", "src/it/full-dsl-kotlin"),
+            arguments("9.4.1", "src/it/full-dsl-kotlin"),
             arguments("8.14.3", "src/it/full-dsl-kotlin"),
             arguments("8.11.1", "src/it/full-dsl-kotlin"),
-            arguments("9.0.0", "src/it/full-dsl-groovy"),
+            arguments("9.4.1", "src/it/full-dsl-groovy"),
             arguments("8.14.3", "src/it/full-dsl-groovy"),
             arguments("8.11.1", "src/it/full-dsl-groovy"),
         )

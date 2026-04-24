@@ -18,7 +18,7 @@ public class ExposeArtifactsTest {
     File tempDir;
 
     static Collection<String> getFrameworks() {
-        return List.of("9.0.0", "8.14.3", "8.11.1");
+        return List.of("9.4.1", "8.14.3", "8.11.1");
     }
 
     @ParameterizedTest(name = "{0}")

@@ -22,7 +22,7 @@ public class AggregatedReportTest {
 
     static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
         return List.of(
-                arguments("9.0.0", "src/it/report-multi", new String[]{"allureAggregateReport"}),
+                arguments("9.4.1", "src/it/report-multi", new String[]{"allureAggregateReport"}),
                 arguments("8.14.3", "src/it/report-multi", new String[]{"allureAggregateReport"}),
                 arguments("8.11.1", "src/it/report-multi", new String[]{"allureAggregateReport"})
         );

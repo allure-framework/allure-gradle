@@ -133,13 +133,17 @@ open class AllureAdapterExtension @Inject constructor(
     // TODO: move to [AllureAdapterBasePlugin] like `allure { gatherResults { fromTask(..) } }
     private fun internalGatherResultsFrom(task: Task) {
         task.run {
+            // Use a detached provider per task so Gradle does not attach the extension property
+            // itself as the output producer for every realized Test task.
+            val taskResultsDir = project.provider { resultsDir.get() }
+
             // Declare the whole results directory as an output to make it cacheable by Gradle.
             // Using a FileTree here makes the task output non-cacheable. See issue #107.
-            outputs.dir(resultsDir)
+            outputs.dir(taskResultsDir)
 
             // Pass the path to the task
             if (this is JavaForkOptions) {
-                jvmArgumentProviders += AllureResultsDirectoryArgumentProvider(resultsDir)
+                jvmArgumentProviders += AllureResultsDirectoryArgumentProvider(taskResultsDir)
                 // We don't know if the task will execute JUnit5 engine or not,
                 // so we add extensions.autodetection.enabled to all the tasks if
                 // junit5.autoconfigureListeners is enabled
@@ -165,7 +169,7 @@ open class AllureAdapterExtension @Inject constructor(
 
             doFirst(
                 GenerateExecutorInfoAction(
-                    resultsDir = resultsDir,
+                    resultsDir = taskResultsDir,
                     taskName = currentTaskName,
                     buildName = buildName,
                     projectPath = projectPath,

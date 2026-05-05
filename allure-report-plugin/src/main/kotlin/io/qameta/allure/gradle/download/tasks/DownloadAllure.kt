@@ -91,17 +91,13 @@ abstract class DownloadAllure : DefaultTask() {
 
         val destination = destinationDir.get().asFile
         logger.info("Assembling Allure 3 runtime to {}", destination)
-        val result = fs.sync {
-            into(destination)
-            from(nodeHome) {
-                into("node")
-            }
-            from(allure3Home) {
-                into("package")
-            }
+        fs.delete {
+            delete(destination)
         }
+        ArchiveFileOperations.copyDirectory(nodeHome.get().asFile, destination.resolve("node"))
+        ArchiveFileOperations.copyDirectory(allure3Home.get().asFile, destination.resolve("package"))
         writeLaunchers(destination)
-        didWork = result.didWork || true
+        didWork = true
     }
 
     private fun validateAllure3Configuration() {

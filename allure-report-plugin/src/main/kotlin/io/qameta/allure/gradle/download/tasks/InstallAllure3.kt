@@ -2,6 +2,7 @@ package io.qameta.allure.gradle.download.tasks
 
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
@@ -90,6 +91,13 @@ abstract class InstallAllure3 : DefaultTask() {
                 installTarget
             )
             environment(resolveEnvironment())
+        }
+        val cli = installDir.resolve("node_modules/allure/cli.js")
+        if (!cli.isFile) {
+            throw GradleException(
+                "npm install completed, but Allure CLI was not installed at ${cli.absolutePath}. " +
+                    "Verify that the Node.js distribution was extracted correctly and npm is functional."
+            )
         }
     }
 

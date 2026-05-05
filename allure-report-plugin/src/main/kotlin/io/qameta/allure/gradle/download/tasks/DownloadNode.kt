@@ -1,11 +1,9 @@
 package io.qameta.allure.gradle.download.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.file.RelativePath
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -29,9 +27,6 @@ abstract class DownloadNode : DefaultTask() {
     @get:Inject
     abstract val fs: FileSystemOperations
 
-    @get:Inject
-    abstract val archiveOps: ArchiveOperations
-
     @Input
     val nodeVersion = objects.property<String>()
 
@@ -46,25 +41,23 @@ abstract class DownloadNode : DefaultTask() {
     fun downloadNode() {
         val archive = nodeDistribution.singleFile
         logger.info("Unpacking Node.js {} to {}", nodeVersion.get(), destinationDir.get().asFile)
-        val result = fs.sync {
-            into(destinationDir)
-            from(archiveTree(archive)) {
-                eachFile {
-                    relativePath = RelativePath(true, *relativePath.segments.drop(1).toTypedArray())
-                }
-                includeEmptyDirs = false
-            }
+        if (!archive.isSupportedArchive()) {
+            throw IllegalArgumentException(
+                "Unsupported Node.js archive format: ${archive.name}. Supported formats: .zip, .tar.gz, .tgz"
+            )
         }
-        didWork = result.didWork
+        val destination = destinationDir.get().asFile
+        fs.delete {
+            delete(destination)
+        }
+        when {
+            archive.name.endsWith(".zip") -> ArchiveFileOperations.extractZip(archive, destination)
+            archive.isTarGzip() -> ArchiveFileOperations.extractTarGzip(archive, destination)
+        }
+        didWork = true
     }
 
-    private fun archiveTree(archive: File) = when {
-        archive.name.endsWith(".zip") -> archiveOps.zipTree(archive)
-        archive.name.endsWith(".tar.gz") || archive.name.endsWith(".tgz") ->
-            project.tarTree(project.resources.gzip(archive))
-        else -> throw IllegalArgumentException(
-            "Unsupported Node.js archive format: ${archive.name}. Supported formats: .zip, .tar.gz, .tgz"
-        )
-    }
+    private fun File.isSupportedArchive() = name.endsWith(".zip") || isTarGzip()
+
+    private fun File.isTarGzip() = name.endsWith(".tar.gz") || name.endsWith(".tgz")
 }
-

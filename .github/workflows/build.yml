@@ -109,6 +109,88 @@ jobs:
           path: ./${{ env.ALLURE_DUMP_NAME }}.zip
           if-no-files-found: ignore
 
+  allure3-report-smoke:
+    name: 'Allure 3 allureReport smoke (JDK 17, ${{ matrix.os }})'
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu', 'windows' ]
+    env:
+      GRADLEW_CMD: ${{ matrix.os == 'windows' && '.\\sandbox\\gradlew.bat' || './sandbox/gradlew' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: 'wrapper'
+
+      - name: Smoke Allure 3 allureReport task
+        run: ${{ env.GRADLEW_CMD }} -p sandbox :dsl-kotlin:test :dsl-kotlin:allureReport
+
+      - name: Verify Allure 3 allureReport output
+        shell: pwsh
+        run: |
+          $report = "sandbox/dsl-kotlin/build/reports/allure-report/allureReport/index.html"
+          if (-not (Test-Path -LiteralPath $report -PathType Leaf)) {
+            throw "Expected generated report index.html at $report"
+          }
+
+      - name: Upload Allure 3 allureReport output
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure3-allure-report-${{ matrix.os }}-jdk-17
+          path: sandbox/dsl-kotlin/build/reports/allure-report/allureReport
+          if-no-files-found: error
+
+  allure3-aggregate-report-smoke:
+    name: 'Allure 3 allureAggregateReport smoke (JDK 17, ${{ matrix.os }})'
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ 'ubuntu', 'windows' ]
+    env:
+      GRADLEW_CMD: ${{ matrix.os == 'windows' && '.\\sandbox\\gradlew.bat' || './sandbox/gradlew' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          gradle-version: 'wrapper'
+
+      - name: Smoke Allure 3 allureAggregateReport task
+        run: ${{ env.GRADLEW_CMD }} -p sandbox :dsl-kotlin:test :aggregate-report:allureAggregateReport
+
+      - name: Verify Allure 3 allureAggregateReport output
+        shell: pwsh
+        run: |
+          $report = "sandbox/aggregate-report/build/reports/allure-report/allureAggregateReport/index.html"
+          if (-not (Test-Path -LiteralPath $report -PathType Leaf)) {
+            throw "Expected generated report index.html at $report"
+          }
+
+      - name: Upload Allure 3 allureAggregateReport output
+        uses: actions/upload-artifact@v5
+        with:
+          name: allure3-allure-aggregate-report-${{ matrix.os }}-jdk-17
+          path: sandbox/aggregate-report/build/reports/allure-report/allureAggregateReport
+          if-no-files-found: error
+
   report:
     needs: [build, sandbox]
     name: Build report

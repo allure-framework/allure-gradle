@@ -1,5 +1,5 @@
 [versions]
-allureJava = "2.33.0"
+allureJava = "2.34.0"
 
 [libraries]
 allureJavaCommons = { module = "io.qameta.allure:allure-java-commons", version.ref = "allureJava" }

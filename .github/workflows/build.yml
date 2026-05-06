@@ -61,7 +61,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ALLURE_DUMP_NAME }}
           path: ./${{ env.ALLURE_DUMP_NAME }}.zip
@@ -103,7 +103,7 @@ jobs:
 
       - name: Upload sandbox results
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ALLURE_DUMP_NAME }}
           path: ./${{ env.ALLURE_DUMP_NAME }}.zip
@@ -144,7 +144,7 @@ jobs:
           }
 
       - name: Upload Allure 3 allureReport output
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: allure3-allure-report-${{ matrix.os }}-jdk-17
           path: sandbox/dsl-kotlin/build/reports/allure-report/allureReport
@@ -185,7 +185,7 @@ jobs:
           }
 
       - name: Upload Allure 3 allureAggregateReport output
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: allure3-allure-aggregate-report-${{ matrix.os }}-jdk-17
           path: sandbox/aggregate-report/build/reports/allure-report/allureAggregateReport

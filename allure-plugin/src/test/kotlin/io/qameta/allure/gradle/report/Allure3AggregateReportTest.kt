@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 class Allure3AggregateReportTest {
     @TempDir
@@ -67,6 +69,8 @@ class Allure3AggregateReportTest {
             .isEqualTo(TaskOutcome.SUCCESS)
         assertThat(buildResult.task(":allureAggregateReport")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
+        assertNpmSymlink(projectDir.resolve("build/allure/node/bin/npm"))
+        assertNpmSymlink(projectDir.resolve("build/allure/commandline/node/bin/npm"))
         assertThat(projectDir.resolve("build/reports/allure-report/allureAggregateReport/summary.json"))
             .exists()
     }
@@ -76,12 +80,13 @@ class Allure3AggregateReportTest {
         val nodeRoot = rootDir.resolve("node-v22.22.0-test")
         val binDir = nodeRoot.resolve("bin")
         binDir.mkdirs()
+        val npmCli = nodeRoot.resolve("lib/node_modules/npm/bin/npm-cli.js")
+        npmCli.parentFile.mkdirs()
 
         binDir.resolve("node").writeText(
             """
             #!/bin/sh
             SCRIPT_DIR=${'$'}(CDPATH= cd -- "${'$'}(dirname "${'$'}0")" && pwd)
-            CLI_FILE="${'$'}1"
             shift
             COMMAND="${'$'}1"
             shift
@@ -101,7 +106,7 @@ class Allure3AggregateReportTest {
             exit 0
             """.trimIndent() + "\n"
         )
-        binDir.resolve("npm").writeText(
+        npmCli.writeText(
             """
             #!/bin/sh
             PREFIX=""
@@ -120,8 +125,9 @@ class Allure3AggregateReportTest {
             printf 'console.log("fake allure");\n' > "${'$'}PREFIX/node_modules/allure/cli.js"
             """.trimIndent() + "\n"
         )
+        Files.createSymbolicLink(binDir.resolve("npm").toPath(), Path.of("../lib/node_modules/npm/bin/npm-cli.js"))
         binDir.resolve("node").setExecutable(true)
-        binDir.resolve("npm").setExecutable(true)
+        npmCli.setExecutable(true)
 
         val archive = projectDir.resolve("fake-node.tar.gz")
         val process = ProcessBuilder(
@@ -134,5 +140,14 @@ class Allure3AggregateReportTest {
         ).inheritIO().start()
         check(process.waitFor() == 0) { "Failed to create fake Node.js archive" }
         return archive
+    }
+
+    private fun assertNpmSymlink(npm: File) {
+        assertThat(Files.isSymbolicLink(npm.toPath()))
+            .`as`("${npm.absolutePath} should be a symbolic link")
+            .isTrue()
+        assertThat(Files.readSymbolicLink(npm.toPath()).toString())
+            .`as`("${npm.absolutePath} symbolic link target")
+            .isEqualTo("../lib/node_modules/npm/bin/npm-cli.js")
     }
 }

@@ -1,6 +1,9 @@
 package io.qameta.allure.gradle.report
 
 import io.qameta.allure.gradle.rule.GradleRunnerRule
+import org.apache.commons.compress.archivers.zip.UnixStat
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
@@ -10,8 +13,9 @@ import org.junit.jupiter.api.Assumptions.assumeFalse
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
+import java.nio.charset.StandardCharsets.UTF_8
+import java.nio.file.Files
+import java.nio.file.Path
 
 class Allure3ReportIntegrationTest {
     @TempDir
@@ -34,6 +38,9 @@ class Allure3ReportIntegrationTest {
         assertThat(buildResult.task(":allureReport")?.outcome)
             .isEqualTo(TaskOutcome.SUCCESS)
 
+        assertNpmSymlink(projectDir.resolve("build/allure/node/bin/npm"))
+        assertNpmSymlink(projectDir.resolve("build/allure/commandline/node/bin/npm"))
+
         val configFile = projectDir.resolve("build/tmp/allureReport/allurerc.json")
         assertThat(configFile)
             .exists()
@@ -48,6 +55,33 @@ class Allure3ReportIntegrationTest {
         assertThat(invocations)
             .contains("command=generate")
             .contains("cli=")
+    }
+
+    @Test
+    fun `downloadNode preserves symlinks from zip distributions`() {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Symlink assertions require Unix-like filesystem semantics")
+
+        val projectDir = File(tempDir, "allure3-zip-project-${System.nanoTime()}").apply { mkdirs() }
+        projectDir.resolve("settings.gradle").createNewFile()
+        val nodeArchive = createFakeNodeZipArchive(projectDir)
+
+        projectDir.resolve("build.gradle").writeText(
+            """
+            plugins {
+                id 'io.qameta.allure-report'
+            }
+
+            dependencies {
+                allureNodeDistribution(files('${nodeArchive.absolutePath.replace("\\", "/")}'))
+            }
+            """.trimIndent()
+        )
+
+        val buildResult = runBuild(projectDir, "downloadNode")
+
+        assertThat(buildResult.task(":downloadNode")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertNpmSymlink(projectDir.resolve("build/allure/node/bin/npm"))
     }
 
     @Test
@@ -167,6 +201,8 @@ class Allure3ReportIntegrationTest {
         val nodeRoot = rootDir.resolve("node-v22.22.0-test")
         val binDir = nodeRoot.resolve("bin")
         binDir.mkdirs()
+        val npmCli = nodeRoot.resolve("lib/node_modules/npm/bin/npm-cli.js")
+        npmCli.parentFile.mkdirs()
 
         binDir.resolve("node").writeText(
             """
@@ -198,7 +234,7 @@ class Allure3ReportIntegrationTest {
             exit 0
             """.trimIndent() + "\n"
         )
-        binDir.resolve("npm").writeText(
+        npmCli.writeText(
             """
             #!/bin/sh
             PREFIX=""
@@ -220,8 +256,9 @@ class Allure3ReportIntegrationTest {
             printf 'console.log("fake allure");\n' > "${'$'}PREFIX/node_modules/allure/cli.js"
             """.trimIndent() + "\n"
         )
+        Files.createSymbolicLink(binDir.resolve("npm").toPath(), Path.of("../lib/node_modules/npm/bin/npm-cli.js"))
         binDir.resolve("node").setExecutable(true)
-        binDir.resolve("npm").setExecutable(true)
+        npmCli.setExecutable(true)
 
         val archive = projectDir.resolve("fake-node.tar.gz")
         val process = ProcessBuilder(
@@ -234,6 +271,50 @@ class Allure3ReportIntegrationTest {
         ).inheritIO().start()
         check(process.waitFor() == 0) { "Failed to create fake Node.js archive" }
         return archive
+    }
+
+    private fun createFakeNodeZipArchive(projectDir: File): File {
+        val archive = projectDir.resolve("fake-node.zip")
+        ZipArchiveOutputStream(archive).use { zip ->
+            val nodeRoot = "node-v22.22.0-test"
+            zip.addDirectory("$nodeRoot/bin/")
+            zip.addDirectory("$nodeRoot/lib/node_modules/npm/bin/")
+            zip.addFile("$nodeRoot/lib/node_modules/npm/bin/npm-cli.js", "#!/bin/sh\n")
+            zip.addSymlink("$nodeRoot/bin/npm", "../lib/node_modules/npm/bin/npm-cli.js")
+        }
+        return archive
+    }
+
+    private fun ZipArchiveOutputStream.addDirectory(name: String) {
+        val entry = ZipArchiveEntry(name)
+        entry.unixMode = UnixStat.DIR_FLAG or UnixStat.DEFAULT_DIR_PERM
+        putArchiveEntry(entry)
+        closeArchiveEntry()
+    }
+
+    private fun ZipArchiveOutputStream.addFile(name: String, content: String) {
+        val entry = ZipArchiveEntry(name)
+        entry.unixMode = UnixStat.FILE_FLAG or UnixStat.DEFAULT_FILE_PERM
+        putArchiveEntry(entry)
+        write(content.toByteArray(UTF_8))
+        closeArchiveEntry()
+    }
+
+    private fun ZipArchiveOutputStream.addSymlink(name: String, target: String) {
+        val entry = ZipArchiveEntry(name)
+        entry.unixMode = UnixStat.LINK_FLAG or UnixStat.DEFAULT_LINK_PERM
+        putArchiveEntry(entry)
+        write(target.toByteArray(UTF_8))
+        closeArchiveEntry()
+    }
+
+    private fun assertNpmSymlink(npm: File) {
+        assertThat(Files.isSymbolicLink(npm.toPath()))
+            .`as`("${npm.absolutePath} should be a symbolic link")
+            .isTrue()
+        assertThat(Files.readSymbolicLink(npm.toPath()).toString())
+            .`as`("${npm.absolutePath} symbolic link target")
+            .isEqualTo("../lib/node_modules/npm/bin/npm-cli.js")
     }
 
     private fun runner(projectDir: File): GradleRunner = GradleRunner.create()

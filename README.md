@@ -144,6 +144,7 @@ allure {
                 enabled.set(true)
                 autoconfigureListeners.set(true)
             }
+            assertj
             jbehave
             jbehave5
             karate {

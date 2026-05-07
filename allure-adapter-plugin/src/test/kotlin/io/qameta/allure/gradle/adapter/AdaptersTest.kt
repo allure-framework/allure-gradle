@@ -37,19 +37,19 @@ class AdaptersTest {
                 "9.4.1",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
-                "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
+                "[AdapterConfig{assertj}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
             ),
             arguments(
                 "8.11.1",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
-                "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
+                "[AdapterConfig{assertj}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
             ),
             arguments(
                 "8.14.3",
                 "src/it/adapter-all",
                 arrayOf("printAdapters"),
-                "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
+                "[AdapterConfig{assertj}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
             ),
         )
     }

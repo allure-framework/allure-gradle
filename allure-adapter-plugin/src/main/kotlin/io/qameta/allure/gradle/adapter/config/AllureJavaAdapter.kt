@@ -38,6 +38,9 @@ internal enum class AllureJavaAdapter(
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
         }
     }),
+    assertj("assertj", {
+        activateOn("org.assertj:assertj-core")
+    }),
     jbehave("jbehave", {
         activateOn("org.jbehave:jbehave-core") {
             matching {

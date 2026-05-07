@@ -18,6 +18,7 @@ allure {
             junitPlatform.autoconfigureListeners = false
             jbehave
             jbehave5
+            assertj
             karate.autoconfigureListeners = false
             scalatest
             spock

@@ -18,6 +18,7 @@ open class AdapterHandler @Inject constructor(
     val karate by lazyCreating
     val scalatest by lazyCreating
     val testng by lazyCreating
+    val assertj by lazyCreating
     val spock by lazyCreating
     val cucumber4Jvm by lazyCreating
     val cucumber5Jvm by lazyCreating

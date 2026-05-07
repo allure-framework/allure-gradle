@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure-adapter'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.assertj:assertj-core:3.27.7'
+}
+
+tasks.register('writeResolvedArtifacts') {
+    doLast {
+        buildDir.mkdirs()
+        def artifacts = configurations.testRuntimeClasspath.resolvedConfiguration.resolvedArtifacts.collect {
+            "${it.moduleVersion.id.group}:${it.name}:${it.moduleVersion.id.version}"
+        }.sort().join('\n')
+        file("$buildDir/resolvedArtifacts.txt").text = artifacts
+    }
+}

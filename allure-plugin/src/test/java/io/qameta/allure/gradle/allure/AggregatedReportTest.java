@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.allure;
 
+import io.qameta.allure.gradle.rule.GradleTestVersion;
 import io.qameta.allure.gradle.rule.GradleRunnerRule;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.io.TempDir;
@@ -7,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,10 +21,9 @@ public class AggregatedReportTest {
     File tempDir;
 
     static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
+        String gradleVersion = GradleTestVersion.current();
         return List.of(
-                arguments("9.4.1", "src/it/report-multi", new String[]{"allureAggregateReport"}),
-                arguments("8.14.3", "src/it/report-multi", new String[]{"allureAggregateReport"}),
-                arguments("8.11.1", "src/it/report-multi", new String[]{"allureAggregateReport"})
+                arguments(gradleVersion, "src/it/report-multi", new String[]{"allureAggregateReport"})
         );
     }
 

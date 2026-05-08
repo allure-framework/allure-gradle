@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.assertj.core.api.Assertions.assertThat
@@ -52,7 +53,7 @@ internal object AllureRuntimeMatrixSupport {
         }
     }
 
-    fun runner(projectDir: File, gradleVersion: String = "9.4.1"): GradleRunner = GradleRunner.create()
+    fun runner(projectDir: File, gradleVersion: String = GradleTestVersion.current()): GradleRunner = GradleRunner.create()
         .withProjectDir(projectDir)
         .withGradleVersion(gradleVersion)
         .withPluginClasspath()
@@ -61,8 +62,9 @@ internal object AllureRuntimeMatrixSupport {
 
     fun build(projectDir: File, vararg tasks: String): BuildResult {
         val arguments = commonArgs(*tasks)
-        return GradleRunnerRule.runBuild(projectDir, "9.4.1", arguments) {
-            runner(projectDir)
+        val gradleVersion = GradleTestVersion.current()
+        return GradleRunnerRule.runBuild(projectDir, gradleVersion, arguments) {
+            runner(projectDir, gradleVersion)
                 .withArguments(arguments)
                 .build()
         }

@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.io.TempDir
@@ -13,7 +14,7 @@ class AutoconfigureDisabledDirectDependencyResolutionTest {
 
     companion object {
         @JvmStatic
-        fun data() = listOf("9.4.1", "8.14.3", "8.11.1")
+        fun data() = listOf(GradleTestVersion.current())
     }
 
     @ParameterizedTest(name = "{0}")

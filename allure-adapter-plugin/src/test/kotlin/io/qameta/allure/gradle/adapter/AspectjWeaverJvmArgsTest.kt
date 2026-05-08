@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -15,14 +16,13 @@ class AspectjWeaverJvmArgsTest {
 
     companion object {
         @JvmStatic
-        fun data() = listOf(
-            arguments("9.4.1", "src/it/adapter-aspectj-weaver-disabled-kts", false),
-            arguments("8.14.3", "src/it/adapter-aspectj-weaver-disabled-kts", false),
-            arguments("8.11.1", "src/it/adapter-aspectj-weaver-disabled-kts", false),
-            arguments("9.4.1", "src/it/adapter-aspectj-weaver-enabled-kts", true),
-            arguments("8.14.3", "src/it/adapter-aspectj-weaver-enabled-kts", true),
-            arguments("8.11.1", "src/it/adapter-aspectj-weaver-enabled-kts", true),
-        )
+        fun data(): List<org.junit.jupiter.params.provider.Arguments> {
+            val gradleVersion = GradleTestVersion.current()
+            return listOf(
+                arguments(gradleVersion, "src/it/adapter-aspectj-weaver-disabled-kts", false),
+                arguments(gradleVersion, "src/it/adapter-aspectj-weaver-enabled-kts", true),
+            )
+        }
     }
 
     @ParameterizedTest(name = "{1} [{0}]")

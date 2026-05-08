@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
@@ -15,7 +16,7 @@ class KotlinDslReportTest {
 
     companion object {
         @JvmStatic
-        fun versions() = listOf("9.4.1", "8.14.3", "8.11.1")
+        fun versions() = listOf(GradleTestVersion.current())
     }
 
     @ParameterizedTest(name = "[{0}]")

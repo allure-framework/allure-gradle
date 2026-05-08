@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.TaskOutcome
@@ -15,14 +16,13 @@ class DslTest {
 
     companion object {
         @JvmStatic
-        fun getFrameworks() = listOf(
-            arguments("9.4.1", "src/it/full-dsl-kotlin"),
-            arguments("8.14.3", "src/it/full-dsl-kotlin"),
-            arguments("8.11.1", "src/it/full-dsl-kotlin"),
-            arguments("9.4.1", "src/it/full-dsl-groovy"),
-            arguments("8.14.3", "src/it/full-dsl-groovy"),
-            arguments("8.11.1", "src/it/full-dsl-groovy"),
-        )
+        fun getFrameworks(): List<org.junit.jupiter.params.provider.Arguments> {
+            val gradleVersion = GradleTestVersion.current()
+            return listOf(
+                arguments(gradleVersion, "src/it/full-dsl-kotlin"),
+                arguments(gradleVersion, "src/it/full-dsl-groovy"),
+            )
+        }
     }
 
     @ParameterizedTest(name = "{1} [{0}]")

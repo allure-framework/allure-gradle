@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.allure;
 
+import io.qameta.allure.gradle.rule.GradleTestVersion;
 import io.qameta.allure.gradle.rule.GradleRunnerRule;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.io.TempDir;
@@ -7,8 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,24 +18,25 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 public class DependenciesTest {
 
-    private static final String[][] IT_MATRIX = {
-            { "src/it/cucumber7-jvm",        "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/junit4",               "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/junit4-autoconfigure", "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/junit4-kotlin",        "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/junit5",               "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/junit5-5.8.1",         "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/testng",               "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/testng-autoconfigure", "9.4.1", "8.14.3", "8.11.1" },
-            { "src/it/spock",                "9.4.1", "8.14.3", "8.11.1" },
-    };
+    private static final List<String> IT_PROJECTS = List.of(
+            "src/it/cucumber7-jvm",
+            "src/it/junit4",
+            "src/it/junit4-autoconfigure",
+            "src/it/junit4-kotlin",
+            "src/it/junit5",
+            "src/it/junit5-5.8.1",
+            "src/it/testng",
+            "src/it/testng-autoconfigure",
+            "src/it/spock"
+    );
 
     @TempDir
     File tempDir;
 
     static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
-        return Arrays.stream(IT_MATRIX)
-                .flatMap(it -> Arrays.stream(it).skip(1).map(version -> arguments(version, it[0])))
+        String gradleVersion = GradleTestVersion.current();
+        return IT_PROJECTS.stream()
+                .map(project -> arguments(gradleVersion, project))
                 .collect(Collectors.toList());
     }
 

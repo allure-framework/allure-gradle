@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.io.TempDir
@@ -14,44 +15,23 @@ class AdaptersTest {
 
     companion object {
         @JvmStatic
-        fun getFrameworks() = listOf(
-            arguments(
-                "9.4.1",
-                "src/it/adapter-junit5-spock-kts",
-                arrayOf("printAdapters"),
-                "[AdapterConfig{junit5}, AdapterConfig{spock}]",
-            ),
-            arguments(
-                "8.14.3",
-                "src/it/adapter-junit5-spock-kts",
-                arrayOf("printAdapters"),
-                "[AdapterConfig{junit5}, AdapterConfig{spock}]",
-            ),
-            arguments(
-                "8.11.1",
-                "src/it/adapter-junit5-spock-kts",
-                arrayOf("printAdapters"),
-                "[AdapterConfig{junit5}, AdapterConfig{spock}]",
-            ),
-            arguments(
-                "9.4.1",
-                "src/it/adapter-all",
-                arrayOf("printAdapters"),
-                "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
-            ),
-            arguments(
-                "8.11.1",
-                "src/it/adapter-all",
-                arrayOf("printAdapters"),
-                "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
-            ),
-            arguments(
-                "8.14.3",
-                "src/it/adapter-all",
-                arrayOf("printAdapters"),
-                "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
-            ),
-        )
+        fun getFrameworks(): List<org.junit.jupiter.params.provider.Arguments> {
+            val gradleVersion = GradleTestVersion.current()
+            return listOf(
+                arguments(
+                    gradleVersion,
+                    "src/it/adapter-junit5-spock-kts",
+                    arrayOf("printAdapters"),
+                    "[AdapterConfig{junit5}, AdapterConfig{spock}]",
+                ),
+                arguments(
+                    gradleVersion,
+                    "src/it/adapter-all",
+                    arrayOf("printAdapters"),
+                    "[AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
+                ),
+            )
+        }
     }
 
     @ParameterizedTest(name = "{1} [{0}]")

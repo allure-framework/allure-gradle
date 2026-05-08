@@ -13,5 +13,11 @@ dependencies {
     implementation(gradleTestKit())
     implementation(libs.commons.io)
     implementation(libs.commons.text)
+    testImplementation(libs.allureJunit5)
     runtimeOnly(libs.junitPlatformLauncher)
+}
+
+tasks.test {
+    useJUnitPlatform()
+    systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
 }

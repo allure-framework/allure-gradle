@@ -17,7 +17,9 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -31,6 +33,11 @@ import static org.apache.commons.lang3.RandomStringUtils.insecure;
 public class GradleRunnerRule {
 
     private static final File DEFAULT_ROOT_DIR = new File("build/gradle-testkit");
+
+    private static final List<String> NESTED_GRADLE_ENVIRONMENT_EXCLUDES = Arrays.asList(
+            "ALLURE_TESTPLAN_PATH",
+            "AS_TESTPLAN_PATH"
+    );
 
     private String project;
 
@@ -127,7 +134,18 @@ public class GradleRunnerRule {
                 .withGradleVersion(gradleVersion)
                 .withTestKitDir(testKitDir)
                 .withPluginClasspath()
+                .withEnvironment(nestedGradleEnvironment())
                 .forwardOutput();
+    }
+
+    private static Map<String, String> nestedGradleEnvironment() {
+        return nestedGradleEnvironment(System.getenv());
+    }
+
+    static Map<String, String> nestedGradleEnvironment(Map<String, String> source) {
+        Map<String, String> environment = new HashMap<>(source);
+        NESTED_GRADLE_ENVIRONMENT_EXCLUDES.forEach(environment::remove);
+        return environment;
     }
 
     public static BuildResult runBuild(File projectDir,

@@ -22,20 +22,26 @@ concurrency:
 
 jobs:
   build:
-    name: 'Build (JDK ${{ matrix.java-version }}, Gradle ${{ matrix.test-gradle-version }}, ${{ matrix.os }})'
+    name: 'Build (JDK ${{ matrix.java-version }}, Gradle ${{ matrix.gradle.version }}, ${{ matrix.os }})'
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
         os: [ 'ubuntu', 'windows' ]
         java-version: [ '17', '21' ]
-        test-gradle-version: [ '9.4.1', '8.14.3', '8.11.1' ]
+        gradle:
+          - version: '9.4.1'
+            env-version: '9_4_1'
+          - version: '8.14.3'
+            env-version: '8_14_3'
+          - version: '8.11.1'
+            env-version: '8_11_1'
     env:
       MATRIX_OS: ${{ matrix.os }}
       MATRIX_JAVA_VERSION: ${{ matrix.java-version }}
-      MATRIX_TEST_GRADLE_VERSION: ${{ matrix.test-gradle-version }}
-      ALLURE_MATRIX_ENV: ${{ matrix.os }}-jdk-${{ matrix.java-version }}-gradle-${{ matrix.test-gradle-version }}
-      ALLURE_DUMP_NAME: allure-results-build-${{ matrix.os }}-jdk-${{ matrix.java-version }}-gradle-${{ matrix.test-gradle-version }}
+      MATRIX_TEST_GRADLE_VERSION: ${{ matrix.gradle.version }}
+      ALLURE_MATRIX_ENV: ${{ matrix.os }}-jdk-${{ matrix.java-version }}-gradle-${{ matrix.gradle.env-version }}
+      ALLURE_DUMP_NAME: allure-results-build-${{ matrix.os }}-jdk-${{ matrix.java-version }}-gradle-${{ matrix.gradle.version }}
       GRADLEW_CMD: ${{ matrix.os == 'windows' && '.\\gradlew.bat' || './gradlew' }}
     steps:
       - uses: actions/checkout@v6
@@ -59,7 +65,7 @@ jobs:
         run: ${{ env.GRADLEW_CMD }} build -x test
 
       - name: Test with Allure
-        run: npx -y allure@3 run --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- ${{ env.GRADLEW_CMD }} test -PtestGradleVersion=${{ matrix.test-gradle-version }}
+        run: npx -y allure@3 run --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- ${{ env.GRADLEW_CMD }} test -PtestGradleVersion=${{ matrix.gradle.version }}
 
       - name: Upload test results
         if: always()

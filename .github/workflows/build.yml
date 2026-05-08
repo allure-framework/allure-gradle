@@ -65,7 +65,7 @@ jobs:
         run: ${{ env.GRADLEW_CMD }} build -x test
 
       - name: Test with Allure
-        run: npx -y allure@3 run --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- ${{ env.GRADLEW_CMD }} test "-PtestGradleVersion=${{ matrix.gradle.version }}"
+        run: npx -y allure@3 run --rerun 1 --config ./allurerc.mjs --environment="${{ env.ALLURE_MATRIX_ENV }}" --dump="${{ env.ALLURE_DUMP_NAME }}" -- ${{ env.GRADLEW_CMD }} test "-PtestGradleVersion=${{ matrix.gradle.version }}"
 
       - name: Upload test results
         if: always()

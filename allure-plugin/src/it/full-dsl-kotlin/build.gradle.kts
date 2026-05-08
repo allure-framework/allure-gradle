@@ -20,6 +20,7 @@ allure {
             }
             jbehave
             jbehave5
+            assertj
             karate {
                 autoconfigureListeners.set(false)
             }

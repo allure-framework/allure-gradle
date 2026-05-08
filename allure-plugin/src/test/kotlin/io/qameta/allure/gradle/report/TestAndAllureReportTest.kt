@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions
 import org.gradle.testkit.runner.TaskOutcome
@@ -16,11 +17,10 @@ class TestAndAllureReportTest {
     companion object {
         @JvmStatic
         fun getFrameworks() = buildList {
-            for (gradleVersion in listOf("9.4.1", "8.14.3", "8.11.1")) {
-                for (project in listOf("src/it/junit5-5.8.1")) {
-                    for (dependsOnTests in listOf(true, false)) {
-                        add(arguments(gradleVersion, project, dependsOnTests))
-                    }
+            val gradleVersion = GradleTestVersion.current()
+            for (project in listOf("src/it/junit5-5.8.1")) {
+                for (dependsOnTests in listOf(true, false)) {
+                    add(arguments(gradleVersion, project, dependsOnTests))
                 }
             }
         }

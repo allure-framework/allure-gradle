@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.allure;
 
+import io.qameta.allure.gradle.rule.GradleTestVersion;
 import io.qameta.allure.gradle.rule.GradleRunnerRule;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,10 +19,9 @@ public class CategoriesTest {
     File tempDir;
 
     static Collection<org.junit.jupiter.params.provider.Arguments> getFrameworks() {
+        String gradleVersion = GradleTestVersion.current();
         return List.of(
-                arguments("9.4.1", "src/it/categories", new String[]{"allureReport"}),
-                arguments("8.14.3", "src/it/categories", new String[]{"allureReport"}),
-                arguments("8.11.1", "src/it/categories", new String[]{"allureReport"})
+                arguments(gradleVersion, "src/it/categories", new String[]{"allureReport"})
         );
     }
 

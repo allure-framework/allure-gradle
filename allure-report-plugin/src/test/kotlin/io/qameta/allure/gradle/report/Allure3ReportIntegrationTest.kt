@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.apache.commons.compress.archivers.zip.UnixStat
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
@@ -319,7 +320,7 @@ class Allure3ReportIntegrationTest {
 
     private fun runner(projectDir: File): GradleRunner = GradleRunner.create()
         .withProjectDir(projectDir)
-        .withGradleVersion("9.4.1")
+        .withGradleVersion(GradleTestVersion.current())
         .withPluginClasspath()
         .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
         .forwardOutput()
@@ -333,7 +334,7 @@ class Allure3ReportIntegrationTest {
     )
 
     private fun runBuild(projectDir: File, vararg tasks: String) =
-        GradleRunnerRule.runBuild(projectDir, "9.4.1", commonArgs(*tasks)) {
+        GradleRunnerRule.runBuild(projectDir, GradleTestVersion.current(), commonArgs(*tasks)) {
             runner(projectDir).withArguments(commonArgs(*tasks)).build()
         }
 }

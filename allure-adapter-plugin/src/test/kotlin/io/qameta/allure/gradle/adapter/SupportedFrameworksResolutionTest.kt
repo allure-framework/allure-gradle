@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.io.TempDir
@@ -39,7 +40,7 @@ class SupportedFrameworksResolutionTest {
     fun `resolved runtime classpath should contain the expected adapter`(project: String, expectedDependency: String) {
         val gradleRunner = GradleRunnerRule()
             .rootDir(tempDir)
-            .version("9.4.1")
+            .version(GradleTestVersion.current())
             .project(project)
             .tasks("writeResolvedArtifacts")
             .build()

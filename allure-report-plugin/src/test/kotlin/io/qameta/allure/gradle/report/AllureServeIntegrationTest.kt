@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
@@ -37,10 +38,11 @@ class AllureServeIntegrationTest {
             "--no-watch-fs",
             "allureServe"
         )
-        val buildResult = GradleRunnerRule.runBuild(projectDir, "9.4.1", arguments) {
+        val gradleVersion = GradleTestVersion.current()
+        val buildResult = GradleRunnerRule.runBuild(projectDir, gradleVersion, arguments) {
             GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withGradleVersion("9.4.1")
+                .withGradleVersion(gradleVersion)
                 .withPluginClasspath()
                 .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
                 .withArguments(arguments)

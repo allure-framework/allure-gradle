@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -14,7 +15,7 @@ class UnsupportedFrameworksResolutionTest {
     fun `unsupported testng versions should not resolve allure adapter`() {
         val gradleRunner = GradleRunnerRule()
             .rootDir(tempDir)
-            .version("9.4.1")
+            .version(GradleTestVersion.current())
             .project("src/it/adapter-resolution-testng-unsupported")
             .tasks("writeResolvedArtifacts")
             .build()

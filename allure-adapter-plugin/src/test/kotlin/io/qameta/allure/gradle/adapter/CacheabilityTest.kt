@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.BuildResult
@@ -17,8 +18,7 @@ class CacheabilityTest {
     companion object {
         @JvmStatic
         fun data() = listOf(
-            arguments("9.4.1", "src/it/adapter-cache-junit5-kts"),
-            arguments("8.14.3", "src/it/adapter-cache-junit5-kts"),
+            arguments(GradleTestVersion.current(), "src/it/adapter-cache-junit5-kts"),
         )
     }
 

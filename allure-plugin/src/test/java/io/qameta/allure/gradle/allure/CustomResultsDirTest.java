@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.allure;
 
+import io.qameta.allure.gradle.rule.GradleTestVersion;
 import io.qameta.allure.gradle.rule.GradleRunnerRule;
 import org.gradle.testkit.runner.BuildResult;
 import org.junit.jupiter.api.io.TempDir;
@@ -19,7 +20,7 @@ public class CustomResultsDirTest {
     File tempDir;
 
     static Collection<String> getVersions() {
-        return List.of("9.4.1", "8.14.3", "8.11.1");
+        return List.of(GradleTestVersion.current());
     }
 
     @ParameterizedTest(name = "{0}")

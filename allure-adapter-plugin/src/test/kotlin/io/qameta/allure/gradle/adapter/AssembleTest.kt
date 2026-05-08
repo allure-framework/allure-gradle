@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.adapter
 
+import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.assertj.core.api.Assertions
 import org.gradle.testkit.runner.TaskOutcome
@@ -16,9 +17,7 @@ class AssembleTest {
     companion object {
         @JvmStatic
         fun getFrameworks() = listOf(
-            arguments("9.4.1", "src/it/adapter-assemble", arrayOf("assemble")),
-            arguments("8.14.3", "src/it/adapter-assemble", arrayOf("assemble")),
-            arguments("8.11.1", "src/it/adapter-assemble", arrayOf("assemble")),
+            arguments(GradleTestVersion.current(), "src/it/adapter-assemble", arrayOf("assemble")),
         )
     }
 

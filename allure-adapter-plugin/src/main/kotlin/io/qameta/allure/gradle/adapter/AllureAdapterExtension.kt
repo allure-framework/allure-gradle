@@ -62,6 +62,12 @@ open class AllureAdapterExtension @Inject constructor(
     val autoconfigureListeners: Property<Boolean> = objects.property<Boolean>().convention(autoconfigure)
 
     /**
+     * Automatically add the Javadoc description annotation processor.
+     * This can be disabled when the project configures annotation processing manually.
+     */
+    val autoconfigureJavadocDescriptions: Property<Boolean> = objects.property<Boolean>().convention(autoconfigure)
+
+    /**
      * Automatically add AspectJ waver
      */
     val aspectjWeaver = objects.property<Boolean>().convention(autoconfigure)

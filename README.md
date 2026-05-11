@@ -116,6 +116,7 @@ allure {
 
         autoconfigure.set(true)
         autoconfigureListeners.set(true)
+        autoconfigureJavadocDescriptions.set(true)
         aspectjWeaver.set(true)
 
         // By default, categories.json is detected in src/test/resources/../categories.json,
@@ -239,6 +240,15 @@ allure {
         }
     }
 }
+```
+
+### Using custom Javadoc description processing
+
+`allure-gradle` adds `io.qameta.allure:allure-descriptions-javadoc` to Java annotation
+processor configurations by default. Disable it when you configure description annotation processing manually:
+
+```kotlin
+allure.adapter.autoconfigureJavadocDescriptions.set(false)
 ```
 
 ## Report generation

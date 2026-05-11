@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure-adapter'
+}
+
+repositories {
+    mavenCentral()
+}
+
+allure {
+    adapter {
+        allureJavaVersion = '2.34.0'
+        if (providers.gradleProperty('disableJavadocDescriptions').map { it.toBoolean() }.orElse(false).get()) {
+            autoconfigureJavadocDescriptions = false
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+}
+
+tasks.register('writeJavadocDescriptionArtifacts') {
+    dependsOn tasks.named('compileTestJava')
+    doLast {
+        buildDir.mkdirs()
+        def processorArtifacts = configurations.testAnnotationProcessor.resolvedConfiguration.resolvedArtifacts.collect {
+            "${it.moduleVersion.id.group}:${it.name}:${it.moduleVersion.id.version}"
+        }.sort().join('\n')
+        file("$buildDir/testAnnotationProcessors.txt").text = processorArtifacts
+
+        def descriptionsDir = file("$buildDir/classes/java/test/META-INF/allureDescriptions")
+        def descriptions = descriptionsDir.exists()
+                ? descriptionsDir.listFiles().collect { it.text.trim() }.sort().join('\n')
+                : ''
+        file("$buildDir/javadocDescriptions.txt").text = descriptions
+    }
+}

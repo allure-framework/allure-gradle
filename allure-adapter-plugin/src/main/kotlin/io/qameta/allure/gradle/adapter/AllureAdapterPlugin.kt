@@ -14,6 +14,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 
@@ -51,6 +52,7 @@ open class AllureAdapterPlugin : Plugin<Project> {
         }
 
         autoconfigureDependencyRules(adapterExtension)
+        autoconfigureJavadocDescriptions(adapterExtension)
         configureTestTasks(adapterExtension)
         val artifactType = Attribute.of("artifactType", String::class.java)
 
@@ -102,6 +104,21 @@ open class AllureAdapterPlugin : Plugin<Project> {
                         rule.configure(this)
                     }
                 }
+            }
+        }
+    }
+
+    private fun Project.autoconfigureJavadocDescriptions(extension: AllureAdapterExtension) {
+        pluginManager.withPlugin("java-base") {
+            val descriptionsProcessor = extension.autoconfigureJavadocDescriptions.flatMap { enabled ->
+                if (enabled) {
+                    extension.allureJavaVersion.map { "io.qameta.allure:allure-descriptions-javadoc:$it" }
+                } else {
+                    providers.provider<String> { null }
+                }
+            }
+            extensions.getByType<SourceSetContainer>().configureEach {
+                dependencies.addProvider(annotationProcessorConfigurationName, descriptionsProcessor)
             }
         }
     }

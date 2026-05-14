@@ -154,7 +154,7 @@ public class GradleRunnerRule {
                                        Supplier<BuildResult> action) {
         return Allure.step("Run Gradle build", () -> {
             Allure.parameter("gradleVersion", gradleVersion);
-            Allure.parameter("projectDir", projectDir.getAbsolutePath());
+            Allure.parameter("projectDir", projectDir.getAbsolutePath(), true);
             attachText("gradle-arguments", String.join(System.lineSeparator(), arguments));
             attachFileIfExists(projectDir, "build.gradle");
             attachFileIfExists(projectDir, "build.gradle.kts");

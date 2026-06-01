@@ -6,7 +6,11 @@ import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.the
@@ -39,11 +43,23 @@ abstract class AllureReport : AllureExecTask() {
         project.the<AllureExtension>().report.singleFile
     )
 
+    @Optional
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    val configFile = objects.fileProperty().convention(
+        project.the<AllureExtension>().report.configFile
+    )
+
     @Option(option = "single-file", description = "Generate a single-file Allure report")
     fun setSingleFile(enabled: String) {
         val parsed = enabled.toBooleanStrictOrNull()
             ?: throw IllegalArgumentException("single-file expects true or false, got '$enabled'")
         singleFile.set(parsed)
+    }
+
+    @Option(option = "config-file", description = "The Allure 3 config file to use")
+    fun setConfigFile(path: String) {
+        configFile.set(layout.file(providers.provider { File(path) }))
     }
 
     @get:Internal
@@ -70,7 +86,9 @@ abstract class AllureReport : AllureExecTask() {
                 args.addAll(rawResults)
                 if (usesAllure3Runtime()) {
                     args += "--config"
-                    args += allure3ConfigFile.get().asFile.absolutePath
+                    args += resolveAllure3ConfigFile().absolutePath
+                    args += "--output"
+                    args += reportDir.get().asFile.absolutePath
                 } else {
                     args += "-o"
                     args += reportDir.get().asFile.absolutePath
@@ -87,16 +105,25 @@ abstract class AllureReport : AllureExecTask() {
     }
 
     override fun exec() {
+        require(usesAllure3Runtime() || !configFile.isPresent) {
+            "allure.report.configFile is supported only for Allure 3. " +
+                "Set allure.version to a 3.x release or remove configFile."
+        }
         if (usesAllure3Runtime()) {
             if (clean.get()) {
                 project.delete(reportDir.get().asFile)
             }
-            writeAllure3Config(
-                file = allure3ConfigFile.get().asFile,
-                outputDir = reportDir.get().asFile,
-                singleFile = singleFile.get()
-            )
+            if (!configFile.isPresent) {
+                writeAllure3Config(
+                    file = allure3ConfigFile.get().asFile,
+                    outputDir = reportDir.get().asFile,
+                    singleFile = singleFile.get()
+                )
+            }
         }
         super.exec()
     }
+
+    private fun resolveAllure3ConfigFile(): File =
+        configFile.orNull?.asFile ?: allure3ConfigFile.get().asFile
 }

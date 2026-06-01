@@ -1,16 +1,22 @@
 package io.qameta.allure.gradle.report.tasks
 
+import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.base.tasks.AllureExecTask
 import io.qameta.allure.gradle.base.tasks.ConditionalArgumentProvider
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.options.Option
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.the
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import report
+import java.io.File
 import java.io.InputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
@@ -44,7 +50,7 @@ abstract class AllureServe : AllureExecTask() {
 
     @get:Internal
     val allure3ReportDir = objects.directoryProperty().convention(
-        project.the<io.qameta.allure.gradle.base.AllureExtension>().report.reportDir.map {
+        project.the<AllureExtension>().report.reportDir.map {
             it.dir(this@AllureServe.name)
         }
     )
@@ -54,9 +60,21 @@ abstract class AllureServe : AllureExecTask() {
         providers.provider { temporaryDir.resolve("allurerc.json") }
     )
 
+    @Optional
+    @InputFile
+    @PathSensitive(PathSensitivity.RELATIVE)
+    val configFile = objects.fileProperty().convention(
+        project.the<AllureExtension>().report.configFile
+    )
+
     @Option(option = "port", description = "This port will be used to start web server for the report")
     fun setPort(port: String) {
         this.port.set(port.toInt())
+    }
+
+    @Option(option = "config-file", description = "The Allure 3 config file to use")
+    fun setConfigFile(path: String) {
+        configFile.set(layout.file(providers.provider { File(path) }))
     }
 
     init {
@@ -85,6 +103,10 @@ abstract class AllureServe : AllureExecTask() {
     }
 
     override fun exec() {
+        require(usesAllure3Runtime() || !configFile.isPresent) {
+            "allure.report.configFile is supported only for Allure 3. " +
+                "Set allure.version to a 3.x release or remove configFile."
+        }
         if (usesAllure3Runtime()) {
             execAllure3()
             return
@@ -108,20 +130,24 @@ abstract class AllureServe : AllureExecTask() {
 
         val allureExecutablePath = resolveAllureExecutable().absolutePath
         val resolvedEnvironment = resolveEnvironment()
-        val configFile = allure3ConfigFile.get().asFile
+        val configFile = resolveAllure3ConfigFile()
         val reportDir = allure3ReportDir.get().asFile
 
-        writeAllure3Config(
-            file = configFile,
-            outputDir = reportDir,
-            singleFile = false
-        )
+        if (!this.configFile.isPresent) {
+            writeAllure3Config(
+                file = configFile,
+                outputDir = reportDir,
+                singleFile = false
+            )
+        }
 
         val generateArgs = mutableListOf<String>().apply {
             add("generate")
             addAll(rawResults.get().map { it.absolutePath })
             add("--config")
             add(configFile.absolutePath)
+            add("--output")
+            add(reportDir.absolutePath)
         }
 
         execOperations.exec {
@@ -210,6 +236,9 @@ abstract class AllureServe : AllureExecTask() {
             start()
         }
     }
+
+    private fun resolveAllure3ConfigFile(): File =
+        configFile.orNull?.asFile ?: allure3ConfigFile.get().asFile
 }
 
 internal fun buildWindowsCommand(allureExecutable: String, allureArgs: List<Any>): List<String> =

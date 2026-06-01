@@ -1,6 +1,7 @@
 package io.qameta.allure.gradle.report
 
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.reporting.ReportingExtension
@@ -52,4 +53,9 @@ open class AllureReportExtension @Inject constructor(
     val singleFile: Property<Boolean> = objects.property<Boolean>().convention(
         false
     )
+
+    /**
+     * Path to a custom Allure 3 config file.
+     */
+    val configFile: RegularFileProperty = objects.fileProperty()
 }

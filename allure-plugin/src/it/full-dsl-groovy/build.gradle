@@ -52,12 +52,15 @@ allure {
         reportDir = layout.buildDirectory.dir("allure/reports")
         dependsOnTests = true
         dependsOnTests()
+        configFile = layout.projectDirectory.file("allurerc.mjs")
     }
     report.reportDir = file("$buildDir/allure/reports")
     report.dependsOnTests = true
+    report.configFile = layout.projectDirectory.file("allurerc.mjs")
 }
 allure.commandline.downloadUrlPattern = "localhost"
 allure.report.dependsOnTests = true
+allure.report.configFile = layout.projectDirectory.file("allurerc.mjs")
 
 tasks.register("testDsl") {
     doLast {

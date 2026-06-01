@@ -358,6 +358,22 @@ allure {
 
 To enable it for a single invocation without changing the DSL, run `./gradlew allureReport --single-file=true`.
 
+For Allure 3, you can provide a custom config file, for example to configure environments, custom grouping,
+report name, or theme:
+
+```kotlin
+allure {
+    report {
+        configFile.set(layout.projectDirectory.file("allurerc.mjs"))
+    }
+}
+```
+
+To use a custom Allure 3 config file for a single invocation, run `./gradlew allureReport --config-file=allurerc.mjs`.
+When `configFile` is set, Allure 3-specific options such as `singleFile`, environments, grouping, report name,
+and theme should be configured in that file. The Gradle task still passes its `reportDir` as `--output`.
+In this mode, Gradle's `singleFile` property and the `--single-file` task option are ignored for Allure 3.
+
 ### Running tests before building the report
 
 By default, `allureReport` task will NOT execute tests.

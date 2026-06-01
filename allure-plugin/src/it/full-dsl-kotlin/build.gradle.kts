@@ -55,12 +55,15 @@ allure {
         reportDir.set(layout.buildDirectory.dir("allure/reports"))
         dependsOnTests.set(true)
         dependsOnTests()
+        configFile.set(layout.projectDirectory.file("allurerc.mjs"))
     }
     report.reportDir.set(buildDir.resolve("allure/reports"))
     report.dependsOnTests.set(true)
+    report.configFile.set(layout.projectDirectory.file("allurerc.mjs"))
 }
 allure.commandline.downloadUrlPattern.set("localhost")
 allure.report.dependsOnTests.set(true)
+allure.report.configFile.set(layout.projectDirectory.file("allurerc.mjs"))
 
 val testDsl by tasks.registering {
     doLast {

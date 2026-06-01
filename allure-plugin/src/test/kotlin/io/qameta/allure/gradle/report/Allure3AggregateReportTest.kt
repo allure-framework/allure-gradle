@@ -77,6 +77,86 @@ class Allure3AggregateReportTest {
             .exists()
     }
 
+    @Test
+    fun `allureAggregateReport should use custom Allure 3 config file`() {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
+
+        val projectDir = File(tempDir, "allure3-aggregate-custom-config").apply { mkdirs() }
+        File("src/it/report-multi").copyRecursively(projectDir, overwrite = true)
+
+        val nodeArchive = createFakeNodeArchive(projectDir)
+        val fakePackage = projectDir.resolve("fake-allure.tgz").apply {
+            writeText("fake")
+        }
+        val customConfig = projectDir.resolve("allurerc.mjs").apply {
+            writeText(
+                """
+                export default {
+                    name: "Aggregate Custom Config",
+                    environments: {
+                        linux: { name: "Linux", matcher: () => true },
+                    },
+                };
+                """.trimIndent()
+            )
+        }
+
+        projectDir.resolve("build.gradle").writeText(
+            """
+            plugins {
+                id 'io.qameta.allure-aggregate-report'
+            }
+
+            configurations.allureAggregateReport.dependencies.clear()
+            dependencies {
+                allureAggregateReport(project(":module1"))
+                allureAggregateReport(project(":module2"))
+                allureAggregateReport(project(":module3"))
+                allureNodeDistribution(files('${nodeArchive.absolutePath.replace("\\", "/")}'))
+                allure3Package(files('${fakePackage.absolutePath.replace("\\", "/")}'))
+            }
+
+            allure {
+                report.configFile = layout.projectDirectory.file('allurerc.mjs')
+            }
+            """.trimIndent()
+        )
+
+        val arguments = listOf(
+            "--stacktrace",
+            "--info",
+            "-Porg.gradle.daemon=false",
+            "--no-watch-fs",
+            "allureAggregateReport"
+        )
+        val gradleVersion = GradleTestVersion.current()
+        val buildResult = GradleRunnerRule.runBuild(projectDir, gradleVersion, arguments) {
+            GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withGradleVersion(gradleVersion)
+                .withPluginClasspath()
+                .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
+                .withArguments(arguments)
+                .forwardOutput()
+                .build()
+        }
+
+        assertThat(buildResult.task(":allureAggregateReport")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(projectDir.resolve("build/tmp/allureAggregateReport/allurerc.json"))
+            .doesNotExist()
+
+        val reportDir = projectDir.resolve("build/reports/allure-report/allureAggregateReport")
+        assertThat(reportDir.resolve("summary.json"))
+            .exists()
+
+        val invocations = projectDir.resolve("build/allure/commandline/node/invocations.txt").readText()
+        assertThat(invocations)
+            .contains("command=generate")
+            .contains("--config ${customConfig.canonicalPath}")
+            .contains("--output ${reportDir.canonicalPath}")
+    }
+
     private fun createFakeNodeArchive(projectDir: File): File {
         val rootDir = projectDir.resolve("fake-node")
         val nodeRoot = rootDir.resolve("node-v22.22.0-test")
@@ -89,19 +169,37 @@ class Allure3AggregateReportTest {
             """
             #!/bin/sh
             SCRIPT_DIR=${'$'}(CDPATH= cd -- "${'$'}(dirname "${'$'}0")" && pwd)
+            LOG_FILE="${'$'}SCRIPT_DIR/../invocations.txt"
+            CLI_FILE="${'$'}1"
             shift
             COMMAND="${'$'}1"
             shift
+            {
+              printf 'cli=%s\n' "${'$'}CLI_FILE"
+              printf 'command=%s\n' "${'$'}COMMAND"
+              printf 'args=%s\n' "${'$'}*"
+            } >> "${'$'}LOG_FILE"
             if [ "${'$'}COMMAND" = "generate" ]; then
               CONFIG=""
+              OUTPUT=""
               while [ "${'$'}#" -gt 0 ]; do
-                if [ "${'$'}1" = "--config" ]; then
-                  CONFIG="${'$'}2"
-                  break
-                fi
-                shift
+                case "${'$'}1" in
+                  --config)
+                    CONFIG="${'$'}2"
+                    shift 2
+                    ;;
+                  --output|-o)
+                    OUTPUT="${'$'}2"
+                    shift 2
+                    ;;
+                  *)
+                    shift
+                    ;;
+                esac
               done
-              OUTPUT=${'$'}(sed -n 's/.*"output"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "${'$'}CONFIG" | head -n 1)
+              if [ -z "${'$'}OUTPUT" ]; then
+                OUTPUT=${'$'}(sed -n 's/.*"output"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "${'$'}CONFIG" | head -n 1)
+              fi
               mkdir -p "${'$'}OUTPUT"
               printf '{}' > "${'$'}OUTPUT/summary.json"
             fi

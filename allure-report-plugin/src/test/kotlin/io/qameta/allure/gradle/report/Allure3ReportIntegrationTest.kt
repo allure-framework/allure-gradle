@@ -104,6 +104,69 @@ class Allure3ReportIntegrationTest {
     }
 
     @Test
+    fun `allureReport should use custom Allure 3 config file`() {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
+
+        val projectDir = createAllure3Project(
+            singleFile = false,
+            extraAllureBlock = """
+                report.configFile = layout.projectDirectory.file('allurerc.mjs')
+            """.trimIndent()
+        )
+        val customConfig = projectDir.resolve("allurerc.mjs").apply {
+            writeText(
+                """
+                export default {
+                    name: "Custom Allure Report",
+                    environments: {
+                        linux: { name: "Linux", matcher: () => true },
+                    },
+                };
+                """.trimIndent()
+            )
+        }
+
+        val buildResult = runBuild(projectDir, "allureReport")
+
+        assertThat(buildResult.task(":allureReport")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+
+        assertThat(projectDir.resolve("build/tmp/allureReport/allurerc.json"))
+            .doesNotExist()
+
+        val reportDir = projectDir.resolve("build/reports/allure-report/allureReport")
+        assertThat(reportDir.resolve("summary.json"))
+            .exists()
+
+        val invocations = projectDir.resolve("build/allure/commandline/node/invocations.txt").readText()
+        assertThat(invocations)
+            .contains("command=generate")
+            .contains("--config ${customConfig.canonicalPath}")
+            .contains("--output ${reportDir.canonicalPath}")
+    }
+
+    @Test
+    fun `allureReport should accept config-file as a task option`() {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
+
+        val projectDir = createAllure3Project(singleFile = false)
+        val customConfig = projectDir.resolve("allurerc.mjs").apply {
+            writeText("export default { name: \"Task option config\" };\n")
+        }
+
+        val buildResult = runBuild(projectDir, "allureReport", "--config-file", customConfig.absolutePath)
+
+        assertThat(buildResult.task(":allureReport")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(projectDir.resolve("build/tmp/allureReport/allurerc.json"))
+            .doesNotExist()
+
+        val invocations = projectDir.resolve("build/allure/commandline/node/invocations.txt").readText()
+        assertThat(invocations)
+            .contains("--config ${customConfig.absolutePath}")
+    }
+
+    @Test
     fun `allureServe should run open for Allure 3`() {
         assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 
@@ -118,6 +181,37 @@ class Allure3ReportIntegrationTest {
         assertThat(invocations)
             .contains("command=generate")
             .contains("command=open")
+            .contains("--port 4567")
+    }
+
+    @Test
+    fun `allureServe should use custom Allure 3 config file`() {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
+
+        val projectDir = createAllure3Project(
+            singleFile = false,
+            extraAllureBlock = """
+                report.configFile = layout.projectDirectory.file('allurerc.mjs')
+            """.trimIndent()
+        )
+        val customConfig = projectDir.resolve("allurerc.mjs").apply {
+            writeText("export default { name: \"Serve config\" };\n")
+        }
+
+        val buildResult = runBuild(projectDir, "allureServe", "--port", "4567")
+
+        assertThat(buildResult.task(":allureServe")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(projectDir.resolve("build/tmp/allureServe/allurerc.json"))
+            .doesNotExist()
+
+        val reportDir = projectDir.resolve("build/reports/allure-report/allureServe")
+        val invocations = projectDir.resolve("build/allure/commandline/node/invocations.txt").readText()
+        assertThat(invocations)
+            .contains("command=generate")
+            .contains("command=open")
+            .contains("--config ${customConfig.canonicalPath}")
+            .contains("--output ${reportDir.canonicalPath}")
             .contains("--port 4567")
     }
 
@@ -156,6 +250,41 @@ class Allure3ReportIntegrationTest {
         val buildFailure = requireNotNull(failure)
         assertThat(buildFailure.message)
             .contains("Allure 3 does not support Allure 2 allure.commandline")
+    }
+
+    @Test
+    fun `allureReport should reject custom config file for Allure 2`() {
+        val projectDir = File(tempDir, "allure2-custom-config-${System.nanoTime()}").apply { mkdirs() }
+        projectDir.resolve("settings.gradle").createNewFile()
+        createManualResults(projectDir)
+        val commandlineArchive = createFakeAllure2CommandlineZip(projectDir)
+        projectDir.resolve("allurerc.mjs").writeText("export default { name: \"Allure 2 unsupported\" };\n")
+
+        projectDir.resolve("build.gradle").writeText(
+            """
+            plugins {
+                id 'io.qameta.allure-report'
+            }
+
+            dependencies {
+                allureReport(files("${'$'}buildDir/manual-allure-results"))
+                allureCommandline(files('${commandlineArchive.absolutePath.replace("\\", "/")}'))
+            }
+
+            allure {
+                version = '2.38.1'
+                report.configFile = layout.projectDirectory.file('allurerc.mjs')
+            }
+            """.trimIndent()
+        )
+
+        val failure = runCatching {
+            runBuild(projectDir, "allureReport")
+        }.exceptionOrNull() as? UnexpectedBuildFailure
+
+        val buildFailure = requireNotNull(failure)
+        assertThat(buildFailure.message)
+            .contains("allure.report.configFile is supported only for Allure 3")
     }
 
     private fun createAllure3Project(singleFile: Boolean, extraAllureBlock: String = ""): File {
@@ -221,14 +350,25 @@ class Allure3ReportIntegrationTest {
             } >> "${'$'}LOG_FILE"
             if [ "${'$'}COMMAND" = "generate" ]; then
               CONFIG=""
+              OUTPUT=""
               while [ "${'$'}#" -gt 0 ]; do
-                if [ "${'$'}1" = "--config" ]; then
-                  CONFIG="${'$'}2"
-                  break
-                fi
-                shift
+                case "${'$'}1" in
+                  --config)
+                    CONFIG="${'$'}2"
+                    shift 2
+                    ;;
+                  --output|-o)
+                    OUTPUT="${'$'}2"
+                    shift 2
+                    ;;
+                  *)
+                    shift
+                    ;;
+                esac
               done
-              OUTPUT=${'$'}(sed -n 's/.*"output"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "${'$'}CONFIG" | head -n 1)
+              if [ -z "${'$'}OUTPUT" ]; then
+                OUTPUT=${'$'}(sed -n 's/.*"output"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "${'$'}CONFIG" | head -n 1)
+              fi
               mkdir -p "${'$'}OUTPUT"
               printf '{}' > "${'$'}OUTPUT/summary.json"
             fi
@@ -271,6 +411,16 @@ class Allure3ReportIntegrationTest {
             nodeRoot.name
         ).inheritIO().start()
         check(process.waitFor() == 0) { "Failed to create fake Node.js archive" }
+        return archive
+    }
+
+    private fun createFakeAllure2CommandlineZip(projectDir: File): File {
+        val archive = projectDir.resolve("fake-allure2.zip")
+        ZipArchiveOutputStream(archive).use { zip ->
+            val root = "allure-2.38.1"
+            zip.addDirectory("$root/bin/")
+            zip.addFile("$root/bin/allure", "#!/bin/sh\nexit 0\n")
+        }
         return archive
     }
 

@@ -164,14 +164,25 @@ internal object AllureRuntimeMatrixSupport {
             } >> "${'$'}LOG_FILE"
             if [ "${'$'}COMMAND" = "generate" ]; then
               CONFIG=""
+              OUTPUT=""
               while [ "${'$'}#" -gt 0 ]; do
-                if [ "${'$'}1" = "--config" ]; then
-                  CONFIG="${'$'}2"
-                  break
-                fi
-                shift
+                case "${'$'}1" in
+                  --config)
+                    CONFIG="${'$'}2"
+                    shift 2
+                    ;;
+                  --output|-o)
+                    OUTPUT="${'$'}2"
+                    shift 2
+                    ;;
+                  *)
+                    shift
+                    ;;
+                esac
               done
-              OUTPUT=${'$'}(sed -n 's/.*"output"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "${'$'}CONFIG" | head -n 1)
+              if [ -z "${'$'}OUTPUT" ]; then
+                OUTPUT=${'$'}(sed -n 's/.*"output"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "${'$'}CONFIG" | head -n 1)
+              fi
               mkdir -p "${'$'}OUTPUT"
               printf '{}' > "${'$'}OUTPUT/summary.json"
             fi

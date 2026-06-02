@@ -59,6 +59,42 @@ class Allure3ReportIntegrationTest {
     }
 
     @Test
+    fun `downloadNode extracts tar gzip distributions with legacy buildscript commons io`() {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Symlink assertions require Unix-like filesystem semantics")
+
+        val projectDir = File(tempDir, "allure3-tar-project-${System.nanoTime()}").apply { mkdirs() }
+        projectDir.resolve("settings.gradle").createNewFile()
+        val nodeArchive = createFakeNodeArchive(projectDir)
+        val legacyCommonsIo = createLegacyCommonsIoJar(projectDir)
+
+        projectDir.resolve("build.gradle").writeText(
+            """
+            buildscript {
+                dependencies {
+                    classpath files('${legacyCommonsIo.absolutePath.replace("\\", "/")}')
+                }
+            }
+
+            plugins {
+                id 'io.qameta.allure-report'
+            }
+
+            dependencies {
+                allureNodeDistribution(files('${nodeArchive.absolutePath.replace("\\", "/")}'))
+            }
+            """.trimIndent()
+        )
+
+        val buildResult = runBuild(projectDir, "downloadNode")
+
+        assertThat(buildResult.task(":downloadNode")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+        assertThat(projectDir.resolve("build/allure/node/bin/node"))
+            .exists()
+        assertNpmSymlink(projectDir.resolve("build/allure/node/bin/npm"))
+    }
+
+    @Test
     fun `downloadNode preserves symlinks from zip distributions`() {
         assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Symlink assertions require Unix-like filesystem semantics")
 
@@ -411,6 +447,48 @@ class Allure3ReportIntegrationTest {
             nodeRoot.name
         ).inheritIO().start()
         check(process.waitFor() == 0) { "Failed to create fake Node.js archive" }
+        return archive
+    }
+
+    private fun createLegacyCommonsIoJar(projectDir: File): File {
+        val sourceDir = projectDir.resolve("legacy-commons-io/src")
+        val classesDir = projectDir.resolve("legacy-commons-io/classes")
+        val sourceFile = sourceDir.resolve("org/apache/commons/io/IOUtils.java")
+        sourceFile.parentFile.mkdirs()
+        classesDir.mkdirs()
+        sourceFile.writeText(
+            """
+            package org.apache.commons.io;
+
+            public final class IOUtils {
+                private IOUtils() {
+                }
+
+                public static long skip(java.io.InputStream input, long toSkip) throws java.io.IOException {
+                    return input.skip(toSkip);
+                }
+            }
+            """.trimIndent()
+        )
+
+        val javac = ProcessBuilder(
+            "javac",
+            "-d",
+            classesDir.absolutePath,
+            sourceFile.absolutePath
+        ).inheritIO().start()
+        check(javac.waitFor() == 0) { "Failed to compile legacy Commons IO fixture" }
+
+        val archive = projectDir.resolve("legacy-commons-io.jar")
+        val jar = ProcessBuilder(
+            "jar",
+            "cf",
+            archive.absolutePath,
+            "-C",
+            classesDir.absolutePath,
+            "."
+        ).inheritIO().start()
+        check(jar.waitFor() == 0) { "Failed to create legacy Commons IO fixture" }
         return archive
     }
 

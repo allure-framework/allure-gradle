@@ -4,12 +4,12 @@ plugins {
 }
 
 allure {
-    version.set("2.8.1")
+    version.set("2.42.0")
 
     adapter {
         frameworks {
             junit4 {
-                adapterVersion.set("2.9.0")
+                adapterVersion.set("2.35.2")
             }
         }
     }
@@ -20,5 +20,5 @@ repositories {
 }
 
 dependencies {
-    testImplementation("junit:junit:4.12")
+    testImplementation("junit:junit:4.13.2")
 }

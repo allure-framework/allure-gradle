@@ -159,7 +159,7 @@ class Allure3AggregateReportTest {
 
     private fun createFakeNodeArchive(projectDir: File): File {
         val rootDir = projectDir.resolve("fake-node")
-        val nodeRoot = rootDir.resolve("node-v22.22.0-test")
+        val nodeRoot = rootDir.resolve("node-v26.3.0-test")
         val binDir = nodeRoot.resolve("bin")
         binDir.mkdirs()
         val npmCli = nodeRoot.resolve("lib/node_modules/npm/bin/npm-cli.js")

@@ -9,7 +9,6 @@ repositories {
 
 allure {
     adapter {
-        allureJavaVersion = '2.34.0'
         if (providers.gradleProperty('disableJavadocDescriptions').map { it.toBoolean() }.orElse(false).get()) {
             autoconfigureJavadocDescriptions = false
         }
@@ -17,7 +16,7 @@ allure {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:6.1.0'
 }
 
 tasks.register('writeJavadocDescriptionArtifacts') {

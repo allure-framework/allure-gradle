@@ -16,8 +16,8 @@ abstract class AllureExtension(
 ) {
     companion object {
         const val NAME = "allure"
-        const val DEFAULT_VERSION = "3.4.1"
-        const val LAST_ALLURE_2_VERSION = "2.38.1"
+        const val DEFAULT_ALLURE3 = AllureDefaults.DEFAULT_ALLURE3
+        const val DEFAULT_ALLURE2 = AllureDefaults.DEFAULT_ALLURE2
     }
 
     /**
@@ -26,7 +26,7 @@ abstract class AllureExtension(
      * `2.x` selects the Allure 2 `allure-commandline` runtime.
      * `3.x` selects the Allure 3 runtime.
      */
-    val version: Property<String> = objects.property<String>().convention(DEFAULT_VERSION)
+    val version: Property<String> = objects.property<String>().convention(DEFAULT_ALLURE3)
 
     /**
      * Default environment variables for launching Allure runtime commands.

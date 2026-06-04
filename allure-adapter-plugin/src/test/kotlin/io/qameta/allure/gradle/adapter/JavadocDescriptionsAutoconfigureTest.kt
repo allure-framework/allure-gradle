@@ -24,7 +24,7 @@ class JavadocDescriptionsAutoconfigureTest {
         val descriptions = gradleRunner.projectDir.resolve("build/javadocDescriptions.txt").readText()
 
         assertThat(processors)
-            .contains("io.qameta.allure:allure-descriptions-javadoc:2.34.0")
+            .contains("io.qameta.allure:allure-descriptions-javadoc:${AllureAdapterExtension.DEFAULT_ALLURE_JAVA_VERSION}")
         assertThat(descriptions)
             .contains("A description from Javadoc.")
     }

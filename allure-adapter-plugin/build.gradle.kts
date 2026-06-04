@@ -4,6 +4,41 @@ plugins {
 
 group = "io.qameta.allure.gradle.adapter"
 
+val generateAllureAdapterDefaults = tasks.register("generateAllureAdapterDefaults") {
+    val outputDirectory = layout.buildDirectory.dir("generated/sources/allureAdapterDefaults/kotlin")
+    val allureJavaVersion = libs.versions.allureJava
+    val aspectjVersion = libs.versions.aspectj
+
+    inputs.property("allureJavaVersion", allureJavaVersion)
+    inputs.property("aspectjVersion", aspectjVersion)
+    outputs.dir(outputDirectory)
+
+    doLast {
+        val outputFile = outputDirectory.get()
+            .file("io/qameta/allure/gradle/adapter/AllureAdapterDefaults.kt")
+            .asFile
+        outputFile.parentFile.mkdirs()
+        outputFile.writeText(
+            """
+            package io.qameta.allure.gradle.adapter
+
+            internal object AllureAdapterDefaults {
+                const val DEFAULT_ALLURE_JAVA_VERSION = "${allureJavaVersion.get()}"
+                const val DEFAULT_ASPECTJ_VERSION = "${aspectjVersion.get()}"
+            }
+            """.trimIndent() + "\n"
+        )
+    }
+}
+
+tasks.named<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>("compileKotlin") {
+    source(generateAllureAdapterDefaults)
+}
+
+tasks.named<Jar>("sourcesJar") {
+    from(generateAllureAdapterDefaults)
+}
+
 dependencies {
     api(project(":allure-base-plugin"))
     testImplementation(project(":testkit-jupiter"))

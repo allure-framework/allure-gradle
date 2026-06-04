@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'io.cucumber:cucumber-core:7.13.0'
+    testImplementation 'io.cucumber:cucumber-core:7.34.3'
 }
 
 tasks.register('writeResolvedArtifacts') {

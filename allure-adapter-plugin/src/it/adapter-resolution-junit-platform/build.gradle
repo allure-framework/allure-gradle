@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:6.1.0'
 }
 
 tasks.register('writeResolvedArtifacts') {

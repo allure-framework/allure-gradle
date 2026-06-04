@@ -3,12 +3,13 @@ plugins {
     id("io.qameta.allure")
 }
 
-val allureVersion = "2.30.0"
+val allureRuntimeVersion = "2.42.0"
+val allureJavaVersion = "2.35.2"
 
 allure {
-    version.set(allureVersion)
+    version.set(allureRuntimeVersion)
 }
 
-allure.version.set(allureVersion)
-allure.adapter.allureJavaVersion.set(allureVersion)
+allure.version.set(allureRuntimeVersion)
+allure.adapter.allureJavaVersion.set(allureJavaVersion)
 allure.adapter.aspectjWeaver.set(true)

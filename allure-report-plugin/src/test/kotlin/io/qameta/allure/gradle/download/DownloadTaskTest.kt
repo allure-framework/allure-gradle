@@ -17,7 +17,7 @@ class DownloadTaskTest {
                 apply(plugin = "io.qameta.allure-report")
                 assertThat(the<AllureExtension>().version.get())
                     .`as`("default Allure runtime version")
-                    .isEqualTo(AllureExtension.DEFAULT_VERSION)
+                    .isEqualTo(AllureExtension.DEFAULT_ALLURE3)
             }
         }
     }
@@ -34,7 +34,7 @@ class DownloadTaskTest {
                 }
 
                 configure<AllureExtension> {
-                    version.set(AllureExtension.LAST_ALLURE_2_VERSION)
+                    version.set(AllureExtension.DEFAULT_ALLURE2)
                 }
 
                 assertThat(allureCommandline.singleFile).`as`("allure-commandline binary")

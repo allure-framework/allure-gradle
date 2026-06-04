@@ -4,13 +4,13 @@ plugins {
 }
 
 allure {
-    version = '2.8.0'
+    version = '2.42.0'
     aspectjweaver = true
 
     adapter {
         frameworks {
             junit4 {
-                version = "2.9.0"
+                version = "2.35.2"
             }
         }
     }
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 test {

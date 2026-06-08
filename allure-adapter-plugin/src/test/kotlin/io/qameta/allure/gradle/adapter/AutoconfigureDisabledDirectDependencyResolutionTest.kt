@@ -30,7 +30,7 @@ class AutoconfigureDisabledDirectDependencyResolutionTest {
         val resolved = gradleRunner.projectDir.resolve("build/resolvedArtifacts.txt").readText()
 
         assertThat(resolved)
-            .contains("io.qameta.allure:allure-testng:2.33.0:allure-testng-2.33.0.jar")
+            .contains("io.qameta.allure:allure-testng:2.35.2:allure-testng-2.35.2.jar")
             .doesNotContain("spi-off")
     }
 }

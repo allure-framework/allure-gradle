@@ -7,7 +7,7 @@ plugins {
 group = "io.qameta.allure"
 
 val testGradleVersionProperty = "testGradleVersion"
-val defaultTestGradleVersion = "9.4.1"
+val defaultTestGradleVersion = "9.5.1"
 
 allprojects {
     tasks.withType<Test>().configureEach {

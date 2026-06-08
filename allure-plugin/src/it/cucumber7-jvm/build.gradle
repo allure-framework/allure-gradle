@@ -7,7 +7,7 @@ allure {
     adapter {
         frameworks {
             cucumber7jvm {
-                version = "2.29.1"
+                version = "2.35.2"
             }
         }
     }
@@ -18,11 +18,11 @@ repositories {
 }
 
 dependencies {
-    testImplementation platform('io.cucumber:cucumber-bom:7.13.0')
+    testImplementation platform('io.cucumber:cucumber-bom:7.34.3')
     testImplementation 'io.cucumber:cucumber-junit'
     testImplementation 'io.cucumber:cucumber-java'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 test {

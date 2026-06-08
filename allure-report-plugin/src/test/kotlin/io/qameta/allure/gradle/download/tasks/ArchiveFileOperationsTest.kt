@@ -21,7 +21,7 @@ class ArchiveFileOperationsTest {
     @Test
     fun `tar extraction rejects entries with parent traversal`(@TempDir tempDir: Path) {
         val archive = createTarGzipArchive(tempDir, "node.tar.gz") {
-            addFile("node-v22.22.0-test/../escape.txt")
+            addFile("node-v26.3.0-test/../escape.txt")
         }
         val destination = tempDir.resolve("node")
 
@@ -38,7 +38,7 @@ class ArchiveFileOperationsTest {
     @Test
     fun `zip extraction rejects entries with parent traversal`(@TempDir tempDir: Path) {
         val archive = createZipArchive(tempDir, "node.zip") {
-            addFile("node-v22.22.0-test/../escape.txt")
+            addFile("node-v26.3.0-test/../escape.txt")
         }
         val destination = tempDir.resolve("node")
 
@@ -56,8 +56,8 @@ class ArchiveFileOperationsTest {
     @DisabledOnOs(OS.WINDOWS)
     fun `tar extraction rejects symlinks outside destination`(@TempDir tempDir: Path) {
         val archive = createTarGzipArchive(tempDir, "node.tar.gz") {
-            addDirectory("node-v22.22.0-test/bin/")
-            addSymlink("node-v22.22.0-test/bin/npm", "../../outside")
+            addDirectory("node-v26.3.0-test/bin/")
+            addSymlink("node-v26.3.0-test/bin/npm", "../../outside")
         }
         val destination = tempDir.resolve("node")
 
@@ -75,8 +75,8 @@ class ArchiveFileOperationsTest {
     @DisabledOnOs(OS.WINDOWS)
     fun `zip extraction rejects symlinks outside destination`(@TempDir tempDir: Path) {
         val archive = createZipArchive(tempDir, "node.zip") {
-            addDirectory("node-v22.22.0-test/bin/")
-            addSymlink("node-v22.22.0-test/bin/npm", "../../outside")
+            addDirectory("node-v26.3.0-test/bin/")
+            addSymlink("node-v26.3.0-test/bin/npm", "../../outside")
         }
         val destination = tempDir.resolve("node")
 
@@ -94,9 +94,9 @@ class ArchiveFileOperationsTest {
     @DisabledOnOs(OS.WINDOWS)
     fun `tar extraction rejects entries under symlink parents`(@TempDir tempDir: Path) {
         val archive = createTarGzipArchive(tempDir, "node.tar.gz") {
-            addDirectory("node-v22.22.0-test/safe/")
-            addSymlink("node-v22.22.0-test/link", "safe")
-            addFile("node-v22.22.0-test/link/file.txt")
+            addDirectory("node-v26.3.0-test/safe/")
+            addSymlink("node-v26.3.0-test/link", "safe")
+            addFile("node-v26.3.0-test/link/file.txt")
         }
 
         assertThatThrownBy {

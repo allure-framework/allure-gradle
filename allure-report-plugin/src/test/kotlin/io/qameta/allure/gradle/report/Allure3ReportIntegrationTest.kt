@@ -308,7 +308,7 @@ class Allure3ReportIntegrationTest {
             }
 
             allure {
-                version = '2.38.1'
+                version = '2.42.1'
                 report.configFile = layout.projectDirectory.file('allurerc.mjs')
             }
             """.trimIndent()
@@ -364,7 +364,7 @@ class Allure3ReportIntegrationTest {
 
     private fun createFakeNodeArchive(projectDir: File): File {
         val rootDir = projectDir.resolve("fake-node")
-        val nodeRoot = rootDir.resolve("node-v22.22.0-test")
+        val nodeRoot = rootDir.resolve("node-v26.3.0-test")
         val binDir = nodeRoot.resolve("bin")
         binDir.mkdirs()
         val npmCli = nodeRoot.resolve("lib/node_modules/npm/bin/npm-cli.js")
@@ -495,7 +495,7 @@ class Allure3ReportIntegrationTest {
     private fun createFakeAllure2CommandlineZip(projectDir: File): File {
         val archive = projectDir.resolve("fake-allure2.zip")
         ZipArchiveOutputStream(archive).use { zip ->
-            val root = "allure-2.38.1"
+            val root = "allure-2.42.1"
             zip.addDirectory("$root/bin/")
             zip.addFile("$root/bin/allure", "#!/bin/sh\nexit 0\n")
         }
@@ -505,7 +505,7 @@ class Allure3ReportIntegrationTest {
     private fun createFakeNodeZipArchive(projectDir: File): File {
         val archive = projectDir.resolve("fake-node.zip")
         ZipArchiveOutputStream(archive).use { zip ->
-            val nodeRoot = "node-v22.22.0-test"
+            val nodeRoot = "node-v26.3.0-test"
             zip.addDirectory("$nodeRoot/bin/")
             zip.addDirectory("$nodeRoot/lib/node_modules/npm/bin/")
             zip.addFile("$nodeRoot/lib/node_modules/npm/bin/npm-cli.js", "#!/bin/sh\n")

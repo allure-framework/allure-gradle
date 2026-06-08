@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.testng:testng:6.14.3'
+    testImplementation 'org.testng:testng:7.12.0'
 }
 
 tasks.register('writeResolvedArtifacts') {

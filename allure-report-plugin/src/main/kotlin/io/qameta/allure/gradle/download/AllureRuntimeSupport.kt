@@ -5,7 +5,7 @@ import io.qameta.allure.gradle.base.AllureRuntimeFamily
 import io.qameta.allure.gradle.base.allureRuntimeFamily
 import org.gradle.api.plugins.ExtensionAware
 
-internal const val DEFAULT_NODE_VERSION = "22.22.0"
+internal const val DEFAULT_NODE_VERSION = "26.3.0"
 
 internal data class NodeDistribution(
     val classifier: String,

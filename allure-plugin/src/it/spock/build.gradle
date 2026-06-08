@@ -20,7 +20,7 @@ configurations {
 
 dependencies {
     groovy4 'org.apache.groovy:groovy:4.0.21'
-    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
+    testImplementation 'org.spockframework:spock-core:2.4-groovy-4.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 

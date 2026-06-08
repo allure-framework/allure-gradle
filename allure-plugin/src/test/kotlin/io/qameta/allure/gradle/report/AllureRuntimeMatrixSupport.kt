@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.rule.GradleTestVersion
 import io.qameta.allure.gradle.rule.GradleRunnerRule
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -12,8 +13,8 @@ import java.io.File
 import java.nio.file.Files
 
 enum class TestAllureRuntime(val version: String) {
-    ALLURE_2("2.38.1"),
-    ALLURE_3("3.4.1"),
+    ALLURE_2(AllureExtension.DEFAULT_ALLURE2),
+    ALLURE_3(AllureExtension.DEFAULT_ALLURE3),
 }
 
 internal object AllureRuntimeMatrixSupport {
@@ -144,7 +145,7 @@ internal object AllureRuntimeMatrixSupport {
 
     private fun createFakeNodeArchive(projectDir: File): File {
         val rootDir = projectDir.resolve("fake-node")
-        val nodeRoot = rootDir.resolve("node-v22.22.0-test")
+        val nodeRoot = rootDir.resolve("node-v26.3.0-test")
         val binDir = nodeRoot.resolve("bin")
         binDir.mkdirs()
 

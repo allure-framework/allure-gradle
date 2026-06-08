@@ -1,18 +1,23 @@
 [versions]
-allureJava = "2.34.0"
+allure2 = "2.42.1"
+allure3 = "3.9.0"
+allureJava = "2.35.2"
+aspectj = "1.9.25"
 
 [libraries]
+allureCommandline = { module = "io.qameta.allure:allure-commandline", version.ref = "allure2" }
 allureJavaCommons = { module = "io.qameta.allure:allure-java-commons", version.ref = "allureJava" }
 allureJunit5 = { module = "io.qameta.allure:allure-junit5", version.ref = "allureJava" }
+aspectjWeaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
 assertjCore = "org.assertj:assertj-core:3.27.7"
-commons-io = "commons-io:commons-io:2.22.0"
 commons-compress = "org.apache.commons:commons-compress:1.28.0"
+commons-io = "commons-io:commons-io:2.22.0"
 commons-text = "org.apache.commons:commons-text:1.15.0"
 dokkaPlugin = "org.jetbrains.dokka:org.jetbrains.dokka.gradle.plugin:2.2.0"
-gradlePublishPlugin = "com.gradle.plugin-publish:com.gradle.plugin-publish.gradle.plugin:1.3.1"
-junitJupiter = "org.junit.jupiter:junit-jupiter:5.10.2"
-junitPlatformLauncher = "org.junit.platform:junit-platform-launcher:1.10.2"
-kotlinterPlugin = "org.jmailen.gradle:kotlinter-gradle:5.2.0"
+gradlePublishPlugin = "com.gradle.plugin-publish:com.gradle.plugin-publish.gradle.plugin:2.1.1"
+junitJupiter = "org.junit.jupiter:junit-jupiter:6.1.0"
+junitPlatformLauncher = "org.junit.platform:junit-platform-launcher:6.1.0"
+kotlinterPlugin = "org.jmailen.gradle:kotlinter-gradle:5.5.0"
 nexusPublishPlugin = "io.github.gradle-nexus.publish-plugin:io.github.gradle-nexus.publish-plugin.gradle.plugin:2.0.0"
 researchgateReleasePlugin = "net.researchgate.release:net.researchgate.release.gradle.plugin:3.1.0"
 versionCatalogUpdatePlugin = "nl.littlerobots.version-catalog-update:nl.littlerobots.version-catalog-update.gradle.plugin:1.1.0"

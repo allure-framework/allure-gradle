@@ -39,7 +39,8 @@ open class AllureAdapterExtension @Inject constructor(
     companion object {
         const val NAME = "adapter"
         const val EXECUTOR_FILE_NAME = "executor.json"
-        const val DEFAULT_ALLURE_JAVA_VERSION = "2.33.0"
+        const val DEFAULT_ALLURE_JAVA_VERSION = AllureAdapterDefaults.DEFAULT_ALLURE_JAVA_VERSION
+        const val DEFAULT_ASPECTJ_VERSION = AllureAdapterDefaults.DEFAULT_ASPECTJ_VERSION
     }
 
     /**
@@ -47,7 +48,7 @@ open class AllureAdapterExtension @Inject constructor(
      */
     val allureJavaVersion: Property<String> =
         objects.property<String>().convention(DEFAULT_ALLURE_JAVA_VERSION)
-    val aspectjVersion: Property<String> = objects.property<String>().convention("1.9.24")
+    val aspectjVersion: Property<String> = objects.property<String>().convention(DEFAULT_ASPECTJ_VERSION)
 
 
     /**

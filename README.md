@@ -57,7 +57,7 @@ Groovy DSL:
 
 ```groovy
 allure {
-    version = "3.4.1"
+    version = "3.9.0"
 }
 ```
 
@@ -65,7 +65,7 @@ Kotlin DSL:
 
 ```kotlin
 allure {
-    version = "3.4.1"
+    version = "3.9.0"
 }
 ```
 
@@ -100,16 +100,16 @@ provide Allure results.
 Data collecting is implemented via `io.qameta.allure-adapter` Gradle plugin.
 
 The values in the sample below are the defaults.
-The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.33.0"`, however, that is the only difference.
+The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.35.2"`, however, that is the only difference.
 
 ```kotlin
 allure {
-    version.set("3.4.1")
+    version.set("3.9.0")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
         // It defaults to the latest supported allure-java release
-        allureJavaVersion.set("2.33.0")
-        aspectjVersion.set("1.9.24")
+        allureJavaVersion.set("2.35.2")
+        aspectjVersion.set("1.9.25")
 
         // Customize environment variables for launching Allure
         environment.put("JAVA_HOME", "/path/to/java_home")
@@ -414,7 +414,7 @@ If you have a customized version, you could configure it as follows:
 ```kotlin
 allure {
     // Legacy runtime selection.
-    version.set("2.38.1")
+    version.set("2.42.1")
 
     commandline {
         // The following patterns are supported: `[group]`, `[module]`, `[version]`, `[extension]`
@@ -579,7 +579,7 @@ Tasks:
 
 The 3.x line targets modern Gradle and JVMs and aligns Spock with JUnit Platform:
 
-- Minimal supported Gradle version: 8.11 (tested with 8.11.1, 8.14.3, 9.4.1)
+- Minimal supported Gradle version: 8.11 (tested with 8.11.1, 8.14.3, 9.5.1)
 - Java 17 and 21 are supported
 - Spock 2 (Groovy 4) runs on JUnit Platform and should use the `allure-spock2` adapter
 

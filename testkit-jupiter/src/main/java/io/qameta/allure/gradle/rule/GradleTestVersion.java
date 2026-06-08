@@ -7,7 +7,7 @@ public final class GradleTestVersion {
 
     public static final String PROPERTY_NAME = "testGradleVersion";
 
-    public static final String DEFAULT_VERSION = "9.4.1";
+    public static final String DEFAULT_VERSION = "9.5.1";
 
     private GradleTestVersion() {
     }

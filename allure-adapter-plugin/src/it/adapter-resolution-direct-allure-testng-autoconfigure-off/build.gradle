@@ -15,7 +15,7 @@ allure {
 }
 
 dependencies {
-    implementation 'io.qameta.allure:allure-testng:2.33.0'
+    implementation 'io.qameta.allure:allure-testng:2.35.2'
 }
 
 tasks.register('writeResolvedArtifacts') {

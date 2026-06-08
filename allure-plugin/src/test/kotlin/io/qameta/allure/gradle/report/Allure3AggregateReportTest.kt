@@ -78,6 +78,84 @@ class Allure3AggregateReportTest {
     }
 
     @Test
+    fun `allureAggregateReport should pass multiple result directories to Allure 3_9_0 generate`() {
+        assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
+
+        val projectDir = File(tempDir, "allure3-aggregate-multiple-results").apply { mkdirs() }
+        File("src/it/report-multi").copyRecursively(projectDir, overwrite = true)
+
+        val nodeArchive = createFakeNodeArchive(projectDir)
+        val fakePackage = projectDir.resolve("fake-allure-3.9.0.tgz").apply {
+            writeText("fake")
+        }
+
+        projectDir.resolve("build.gradle").writeText(
+            """
+            plugins {
+                id 'io.qameta.allure-aggregate-report'
+            }
+
+            configurations.allureAggregateReport.dependencies.clear()
+            dependencies {
+                allureAggregateReport(project(":module1"))
+                allureAggregateReport(project(":module2"))
+                allureAggregateReport(project(":module3"))
+                allureNodeDistribution(files('${nodeArchive.absolutePath.replace("\\", "/")}'))
+                allure3Package(files('${fakePackage.absolutePath.replace("\\", "/")}'))
+            }
+
+            allure {
+                version = '3.9.0'
+            }
+            """.trimIndent()
+        )
+
+        val arguments = listOf(
+            "--stacktrace",
+            "--info",
+            "-Porg.gradle.daemon=false",
+            "--no-watch-fs",
+            "allureAggregateReport"
+        )
+        val gradleVersion = GradleTestVersion.current()
+        val buildResult = GradleRunnerRule.runBuild(projectDir, gradleVersion, arguments) {
+            GradleRunner.create()
+                .withProjectDir(projectDir)
+                .withGradleVersion(gradleVersion)
+                .withPluginClasspath()
+                .withTestKitDir(GradleRunnerRule.testKitDirFor(projectDir))
+                .withArguments(arguments)
+                .forwardOutput()
+                .build()
+        }
+
+        assertThat(buildResult.task(":allureAggregateReport")?.outcome)
+            .isEqualTo(TaskOutcome.SUCCESS)
+
+        val reportDir = projectDir.resolve("build/reports/allure-report/allureAggregateReport")
+        assertThat(reportDir.resolve("summary.json"))
+            .exists()
+
+        val invocations = projectDir.resolve("build/allure/commandline/node/invocations.txt")
+            .readText()
+        assertThat(invocations)
+            .contains("command=generate")
+
+        val generateArgs = invocations
+            .lineSequence()
+            .single { it.startsWith("args=") }
+            .removePrefix("args=")
+        assertThat(generateArgs)
+            .contains(
+                projectDir.resolve("module1/build/custom-allure-results").canonicalPath,
+                projectDir.resolve("module2/build/allure-results").canonicalPath,
+                projectDir.resolve("module3/build/manual-allure-results").canonicalPath,
+                "--config ${projectDir.resolve("build/tmp/allureAggregateReport/allurerc.json").canonicalPath}",
+                "--output ${reportDir.canonicalPath}"
+            )
+    }
+
+    @Test
     fun `allureAggregateReport should use custom Allure 3 config file`() {
         assumeFalse(Os.isFamily(Os.FAMILY_WINDOWS), "Fake Allure 3 runtime tests currently support Unix-like systems only")
 

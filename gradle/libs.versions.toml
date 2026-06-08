@@ -2,7 +2,7 @@
 allure2 = "2.42.1"
 allure3 = "3.9.0"
 allureJava = "2.35.2"
-aspectj = "1.9.25"
+aspectj = "1.9.25.1"
 
 [libraries]
 allureCommandline = { module = "io.qameta.allure:allure-commandline", version.ref = "allure2" }

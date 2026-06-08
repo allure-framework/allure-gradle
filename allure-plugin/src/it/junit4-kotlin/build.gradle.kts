@@ -4,7 +4,7 @@ plugins {
 }
 
 allure {
-    version.set("2.42.0")
+    version.set("2.42.1")
 
     adapter {
         frameworks {

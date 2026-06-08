@@ -3,7 +3,7 @@ plugins {
     id("io.qameta.allure")
 }
 
-val allureRuntimeVersion = "2.42.0"
+val allureRuntimeVersion = "2.42.1"
 val allureJavaVersion = "2.35.2"
 
 allure {

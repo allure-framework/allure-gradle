@@ -52,7 +52,7 @@ class DownloadTaskTest {
                 val allureCommandline by configurations
 
                 configure<AllureExtension> {
-                    version.set("2.42.0")
+                    version.set("2.42.1")
                     commandline.apply {
                         downloadUrlPattern.set(customUrl)
                     }
@@ -61,7 +61,7 @@ class DownloadTaskTest {
                 assertThatThrownBy {
                     allureCommandline.singleFile
                 }.`as`("Custom URL configured as %s", customUrl)
-                    .hasStackTraceContaining("https://download-test-custom.io.qameta.allure.test/allure-commandline-custom-2.42.0.zip")
+                    .hasStackTraceContaining("https://download-test-custom.io.qameta.allure.test/allure-commandline-custom-2.42.1.zip")
             }
         }
     }
@@ -75,7 +75,7 @@ class DownloadTaskTest {
                 val allureCommandline by configurations
 
                 configure<AllureExtension> {
-                    version.set("2.42.0")
+                    version.set("2.42.1")
                     commandline.apply {
                         downloadUrlPattern.set("https://localhost/[illegal-for-test].zip")
                     }
@@ -90,7 +90,7 @@ class DownloadTaskTest {
                                 "[organization] = custom.io.qameta.allure, " +
                                 "[group] = custom.io.qameta.allure, " +
                                 "[module] = allure-commandline, " +
-                                "[version] = 2.42.0"
+                                "[version] = 2.42.1"
                     )
             }
         }

@@ -308,7 +308,7 @@ class Allure3ReportIntegrationTest {
             }
 
             allure {
-                version = '2.42.0'
+                version = '2.42.1'
                 report.configFile = layout.projectDirectory.file('allurerc.mjs')
             }
             """.trimIndent()
@@ -495,7 +495,7 @@ class Allure3ReportIntegrationTest {
     private fun createFakeAllure2CommandlineZip(projectDir: File): File {
         val archive = projectDir.resolve("fake-allure2.zip")
         ZipArchiveOutputStream(archive).use { zip ->
-            val root = "allure-2.42.0"
+            val root = "allure-2.42.1"
             zip.addDirectory("$root/bin/")
             zip.addFile("$root/bin/allure", "#!/bin/sh\nexit 0\n")
         }

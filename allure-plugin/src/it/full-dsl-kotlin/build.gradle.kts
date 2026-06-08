@@ -6,7 +6,7 @@ plugins {
 // The folowing tests different syntax variations to verify if they compile
 
 allure {
-    version.set("2.42.0")
+    version.set("2.42.1")
     environment.put("TZ", "UTC")
     adapter {
         resultsDir.set(layout.buildDirectory.dir("custom-allure-results"))

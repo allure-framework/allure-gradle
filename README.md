@@ -414,7 +414,7 @@ If you have a customized version, you could configure it as follows:
 ```kotlin
 allure {
     // Legacy runtime selection.
-    version.set("2.42.0")
+    version.set("2.42.1")
 
     commandline {
         // The following patterns are supported: `[group]`, `[module]`, `[version]`, `[extension]`

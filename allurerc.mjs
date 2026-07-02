@@ -15,7 +15,12 @@ export default {
             options: {
                 publish: true
             }
-        }
+        },
+        testops: {
+            options: {
+                launchName: `Allure Gradle GitHub actions run (${new Date().toISOString()})`,
+            },
+        },
     },
     ...(allureService ? { allureService } : {}),
 };

@@ -1,4 +1,4 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
   - name: Usage and setup guide
     url: https://github.com/allure-framework/allure-gradle/blob/main/README.md

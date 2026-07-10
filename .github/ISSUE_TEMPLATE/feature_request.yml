@@ -1,8 +1,6 @@
 name: Feature request
 description: Suggest an improvement to the allure-gradle plugins
-title: "[Feature]: "
-labels:
-  - enhancement
+type: feature
 body:
   - type: markdown
     attributes:

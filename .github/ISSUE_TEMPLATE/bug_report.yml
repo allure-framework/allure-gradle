@@ -1,8 +1,6 @@
 name: Bug report
 description: Report a reproducible problem in the allure-gradle plugins
-title: "[Bug]: "
-labels:
-  - bug
+type: bug
 body:
   - type: markdown
     attributes:

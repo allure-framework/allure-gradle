@@ -1,5 +1,6 @@
 package io.qameta.allure.gradle.report
 
+import io.qameta.allure.gradle.base.AllureExtension
 import io.qameta.allure.gradle.base.metadata.AllureResultType
 import io.qameta.allure.gradle.download.AllureDownloadPlugin
 import io.qameta.allure.gradle.download.tasks.DownloadAllure
@@ -9,6 +10,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import report
 
 /**
  * The plugin adds tasks to build Allure reports for the current project ([REPORT_TASK_NAME] and [SERVE_TASK_NAME]).
@@ -95,10 +97,12 @@ internal fun Project.registerReportTasks(
     // Ensure download task exists
     apply<AllureDownloadPlugin>()
     val download = tasks.named<DownloadAllure>(AllureDownloadPlugin.ALLURE_DOWNLOAD_TASK_NAME)
+    val reportExtension = the<AllureExtension>().report
 
     tasks.register<AllureReport>(reportTaskName) {
         description = "Builds Allure report from $aggConfigurationName dependencies"
         group = LifecycleBasePlugin.VERIFICATION_GROUP
+        dependsOnTests.convention(reportExtension.dependsOnTests)
         dependsOn(download)
         // This dependency ensures categories.json files are copied by the relevant copyCategories task
         // It enables users to update cagetories.json file in src/..., launch allureReport
@@ -111,6 +115,7 @@ internal fun Project.registerReportTasks(
     tasks.register<AllureServe>(serveTaskName) {
         description = "Builds Allure report from $aggConfigurationName dependencies and launches Allure server"
         group = LifecycleBasePlugin.VERIFICATION_GROUP
+        dependsOnTests.convention(reportExtension.dependsOnTests)
         dependsOn(download)
         // This dependency ensures categories.json files are copied by the relevant copyCategories task
         // It enables users to update categories.json file in src/..., launch allureReport

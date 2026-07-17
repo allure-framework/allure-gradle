@@ -57,7 +57,7 @@ Groovy DSL:
 
 ```groovy
 allure {
-    version = "3.9.0"
+    version = "3.14.3"
 }
 ```
 
@@ -65,7 +65,7 @@ Kotlin DSL:
 
 ```kotlin
 allure {
-    version = "3.9.0"
+    version = "3.14.3"
 }
 ```
 
@@ -104,7 +104,7 @@ The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.
 
 ```kotlin
 allure {
-    version.set("3.9.0")
+    version.set("3.14.3")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
         // It defaults to the latest supported allure-java release

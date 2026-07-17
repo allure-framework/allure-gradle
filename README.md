@@ -382,7 +382,7 @@ might help:
 
 * Execute tests separately: `./gradlew test`
 * Use `--depends-on-tests` as follows (the option should come after the task name): `./gradlew allureReport --depends-on-tests`
-* Configure `allure.report.dependsOnTest.set(true)`
+* Configure `allure.report.dependsOnTests.set(true)`
 
 ```kotlin
 allure {
@@ -391,7 +391,7 @@ allure {
         // If the tests are fast (e.g. UP-TO-DATE or FROM-CACHE),
         // then you might want configure dependsOnTests.set(true) so you always
         // get the latest report from allureReport
-        dependsOnTests.set(false)
+        dependsOnTests.set(true)
     }
 }
 ```

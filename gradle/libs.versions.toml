@@ -1,6 +1,6 @@
 [versions]
 allure2 = "2.44.0"
-allure3 = "3.9.0"
+allure3 = "3.14.3"
 allureJava = "2.35.3"
 aspectj = "1.9.25.1"
 

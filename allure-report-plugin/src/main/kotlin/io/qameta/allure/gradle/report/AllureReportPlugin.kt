@@ -75,7 +75,7 @@ internal fun Project.registerReportTasks(
         }
     }
 
-    val allureGenerateCategories by configurations.creating {
+    val allureGenerateCategories = configurations.create("allureGenerateCategories") {
         extendsFrom(allureAggregate)
 
         description = "Contains all the projects for aggregating Allure results"
@@ -90,7 +90,7 @@ internal fun Project.registerReportTasks(
     // However, it defeats Gradle's task dependency tracking: https://github.com/gradle/gradle/issues/16910
     dependencies {
         for (p in projects) {
-            allureAggregate(create(p))
+            allureAggregate(project(mapOf("path" to p.path)))
         }
     }
 

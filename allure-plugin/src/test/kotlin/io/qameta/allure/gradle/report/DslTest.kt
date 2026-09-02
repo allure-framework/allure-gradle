@@ -27,17 +27,24 @@ class DslTest {
 
     @ParameterizedTest(name = "{1} [{0}]")
     @MethodSource("getFrameworks")
-    fun `build script should compile`(version: String, project: String) {
+    fun `build script should compile without Allure deprecation warnings`(version: String, project: String) {
         val gradleRunner = GradleRunnerRule()
             .rootDir(tempDir)
             .version(version)
             .project(project)
-            .tasks("testDsl")
+            .tasks("--warning-mode=all", "testDsl")
             .build()
 
         assertThat(gradleRunner.buildResult.tasks).`as`("testDsl task status")
             .filteredOn { task -> task.path == ":testDsl" }
             .extracting("outcome")
             .containsExactly(TaskOutcome.SUCCESS)
+
+        assertThat(gradleRunner.buildResult.output).`as`("Gradle deprecation warnings")
+            .doesNotContain(
+                "The 'val name by creating { }' property delegate syntax has been deprecated.",
+                "The 'val name by registering(Type::class) { }' property delegate syntax has been deprecated.",
+                "Using a Project object as a dependency notation has been deprecated.",
+            )
     }
 }

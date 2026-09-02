@@ -30,8 +30,8 @@ jobs:
         os: [ 'ubuntu', 'windows' ]
         java-version: [ '17', '21' ]
         gradle:
-          - version: '9.4.1'
-            env-version: '9_4_1'
+          - version: '9.6.1'
+            env-version: '9_6_1'
           - version: '8.14.3'
             env-version: '8_14_3'
           - version: '8.11.1'

@@ -59,7 +59,7 @@ open class AllureAdapterBasePlugin : Plugin<Project> {
             }
         }
 
-        val allureRawResultDirs by configurations.creating {
+        val allureRawResultDirs = configurations.create("allureRawResultDirs") {
             description = "gather all allure-results folders in the current project"
             isVisible = false
             isCanBeConsumed = false
@@ -67,7 +67,7 @@ open class AllureAdapterBasePlugin : Plugin<Project> {
             extendsFrom(rawResultElements)
         }
 
-        val copyCategories by tasks.registering(CopyCategories::class) {
+        val copyCategories = tasks.register<CopyCategories>("copyCategories") {
             description = "Copies categories.json to allure-results folders"
             destinationDirs.set(allureRawResultDirs)
         }

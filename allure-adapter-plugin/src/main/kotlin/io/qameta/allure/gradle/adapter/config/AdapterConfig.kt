@@ -83,6 +83,12 @@ open class AdapterConfig @Inject constructor(
         activateOn.add(
             DefaultAutoconfigureRuleBuilder(dependency, enabled).apply {
                 configureAction.execute(this)
+                AllureJavaAdapter.find(name)?.let { adapter ->
+                    compatibility = org.gradle.api.specs.Spec { framework ->
+                        val version = adapterVersion.get()
+                        AllureJavaCompatibility.of(version).accepts(adapter, framework, version)
+                    }
+                }
             }.build()
         )
     }
@@ -90,14 +96,19 @@ open class AdapterConfig @Inject constructor(
     /**
      * Dependency coordinates for the adapter (e.g. `io.qameta.allure:allure-junit5:2.8.0`)
      */
-    val adapterDependency = adapterVersion.map { "io.qameta.allure:$module:$it" }
+    val adapterDependency = adapterVersion.map { version ->
+        val module = AllureJavaAdapter.find(name)?.let { AllureJavaCompatibility.of(version).module(it) } ?: name
+        "io.qameta.allure:allure-$module:$version"
+    }
 
     internal val module get() = "allure-$adapterModule"
 
     /**
      * Name of the artifact (e.g. `allure-junit5`)
      */
-    val adapterModule get() = AllureJavaAdapter.find(name)?.adapterName ?: name
+    val adapterModule get() = AllureJavaAdapter.find(name)?.let {
+        AllureJavaCompatibility.of(adapterVersion.get()).module(it)
+    } ?: name
 
     override fun toString() = "AdapterConfig{$name}"
 }

@@ -12,6 +12,7 @@ class DefaultAutoconfigureRuleBuilder(
 ) : AutoconfigureRuleBuilder {
     private val deps = mutableMapOf<String, MutableList<DependencyDeclaration>>()
     private var predicate: Spec<in ModuleVersionIdentifier>? = null
+    internal var compatibility: Spec<in ModuleVersionIdentifier>? = null
 
     override fun matching(predicate: Spec<in ModuleVersionIdentifier>) {
         this.predicate = predicate
@@ -48,7 +49,7 @@ class DefaultAutoconfigureRuleBuilder(
     fun build(): AutoconfigureRule = SimpleRule(
         triggerDependency,
         {
-            enabled.get() && predicate?.isSatisfiedBy(it) != false
+            enabled.get() && predicate?.isSatisfiedBy(it) != false && compatibility?.isSatisfiedBy(it) != false
         },
         deps.ifEmpty {
             throw IllegalStateException("Please add at least one dependency via .compile(..) or .runtime(..) method")

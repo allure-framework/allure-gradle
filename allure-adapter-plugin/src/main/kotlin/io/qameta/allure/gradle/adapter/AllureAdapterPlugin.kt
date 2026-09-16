@@ -3,15 +3,13 @@ package io.qameta.allure.gradle.adapter
 import adapter
 import io.qameta.allure.gradle.base.AllureBasePlugin
 import io.qameta.allure.gradle.base.AllureExtension
-import io.qameta.allure.gradle.adapter.autoconfigure.BaseTrimMetaInfServices
-import io.qameta.allure.gradle.adapter.autoconfigure.TrimMetaInfServices54
 import io.qameta.allure.gradle.adapter.config.AdapterHandler
 import io.qameta.allure.gradle.adapter.config.AllureJavaAdapter
+import io.qameta.allure.gradle.adapter.config.AllureJavaCompatibility
 import io.qameta.allure.gradle.util.categoryLibrary
 import io.qameta.allure.gradle.util.libraryElementsJar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
@@ -54,7 +52,6 @@ open class AllureAdapterPlugin : Plugin<Project> {
         autoconfigureDependencyRules(adapterExtension)
         autoconfigureJavadocDescriptions(adapterExtension)
         configureTestTasks(adapterExtension)
-        val artifactType = Attribute.of("artifactType", String::class.java)
 
         afterEvaluate {
             // We don't know if the user updates autoconfigure value, so we delay the decision till afterEvaluate
@@ -66,7 +63,6 @@ open class AllureAdapterPlugin : Plugin<Project> {
                 }
             }
 
-            // Gradle 9+ path only: use dependency substitution with classifier and drop legacy transform path
             configureSpiOffSubstitution(adapterExtension.frameworks)
         }
     }
@@ -76,12 +72,24 @@ open class AllureAdapterPlugin : Plugin<Project> {
         frameworks.matching { it.trimServicesFromJar.get() }
             .all {
                 val adapterConfig = this
+                // Recent 2.x versions use allure-junit5 as an alias for allure-jupiter; 3.x removes the alias.
+                // Jupiter also brings in Platform's service loader listener. Preserve an explicitly enabled
+                // Platform adapter when the user configures both adapters separately.
+                val platformListenerEnabled = frameworks.configuredAdapters[AllureJavaAdapter.junitPlatform]
+                    ?.autoconfigureListeners?.get() == true
+                val modules = AllureJavaAdapter.find(adapterConfig.name)?.let { adapter ->
+                    AllureJavaCompatibility.of(adapterConfig.adapterVersion.get())
+                        .serviceModules(adapter, platformListenerEnabled)
+                } ?: setOf(adapterConfig.module)
                 configurations.all {
                     resolutionStrategy {
                         dependencySubstitution {
                             eachDependency {
                                 if (requested.group == "io.qameta.allure"
-                                    && requested.name == adapterConfig.module
+                                    && requested.name in modules
+                                    && !AllureJavaCompatibility.isJunit5Relocation(
+                                        requested.name, requested.version ?: adapterConfig.adapterVersion.get()
+                                    )
                                 ) {
                                     artifactSelection {
                                         selectArtifact("jar", null, "spi-off")
@@ -128,12 +136,14 @@ open class AllureAdapterPlugin : Plugin<Project> {
             tasks.withType<Test>().let {
                 gatherResultsFrom(it)
                 addAspectjTo(it)
+                it.configureEach { doFirst(ValidateAllureJavaRuntime()) }
             }
             tasks.withType<JavaExec>()
                 .matching { task -> task.name == "junitPlatformTest" }
                 .let {
                     gatherResultsFrom(it)
                     addAspectjTo(it)
+                    it.configureEach { doFirst(ValidateAllureJavaRuntime()) }
                 }
         }
     }

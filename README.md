@@ -100,15 +100,15 @@ provide Allure results.
 Data collecting is implemented via `io.qameta.allure-adapter` Gradle plugin.
 
 The values in the sample below are the defaults.
-The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.35.2"`, however, that is the only difference.
+The sample uses Kotlin DSL. In Groovy DSL you could use `allureJavaVersion = "2.35.5"`, however, that is the only difference.
 
 ```kotlin
 allure {
     version.set("3.14.3")
     adapter {
         // Configure version for io.qameta.allure:allure-* adapters
-        // It defaults to the latest supported allure-java release
-        allureJavaVersion.set("2.35.2")
+        // The default stays on 2.x; set 3.0.0 to opt into Allure Java 3
+        allureJavaVersion.set("2.35.5")
         aspectjVersion.set("1.9.25")
 
         // Customize environment variables for launching Allure
@@ -161,6 +161,61 @@ allure {
     }
 }
 ```
+
+### Supporting Allure Java 2.x and 3.x
+
+The same plugin and framework DSL support both SDK majors. Allure Java **2.35.5 remains the default**.
+To migrate a project to Allure Java 3:
+
+```kotlin
+allure {
+    adapter {
+        allureJavaVersion.set("3.0.0")
+    }
+}
+```
+
+`allure.version` selects the report generator independently; changing it does not change the Java SDK.
+Use a clean build directory when switching report generator majors.
+The framework's `adapterVersion` overrides `allureJavaVersion`, including the choice of artifact name.
+For example, `frameworks.junit5 { adapterVersion.set("3.0.0") }` selects `allure-jupiter:3.0.0`.
+The `junit5` DSL name remains the same for JUnit Jupiter 5 and 6.
+
+| Framework | Allure Java 2.x | Allure Java 3.x |
+| --- | --- | --- |
+| JUnit Jupiter (`junit5`) | `allure-junit5` (recent 2.x releases relocate to `allure-jupiter`) | `allure-jupiter` |
+| JUnit 4, JUnit Platform, AssertJ, Spock 2, Cucumber 7, JBehave 5 | Existing artifacts | Same artifact names |
+| TestNG | 6.14.3 or newer | 7.10.0 or newer |
+| Cucumber 4–6, JBehave 4 | Supported | Migrate the framework or keep this runtime on SDK 2.x |
+| Karate | Karate 1 (`com.intuit.karate:karate-core`) | Karate 2 (`io.karatelabs:karate-core`), Java 21+ |
+| ScalaTest | Scala 2.12 / 2.13 | Scala 2.12 / 2.13 / 3 |
+
+Allure Java 3 requires **Java 17 or newer for the test JVM** (21 for Karate 2). Set the Java toolchain
+or the test task's `javaLauncher`; the JVM running Gradle can be different. Unsupported framework/SDK
+combinations fail when that framework is detected. Unused or disabled adapters do not block the build.
+
+Migrate subprojects or independent test runtimes separately. Keep all Allure Java adapters and direct
+SDK dependencies on one major per runtime; the plugin rejects mixed 2.x/3.x built-in adapters on a
+test task's classpath. Per-framework overrides do not isolate dependencies from each other.
+For manually managed runtimes, use `autoconfigure.set(false)` and declare each runtime's adapters
+explicitly. The Javadoc description processor follows the project-wide `allureJavaVersion`;
+disable `autoconfigureJavadocDescriptions` if annotation processing is managed separately.
+
+Disabling `frameworks.junit5.autoconfigureListeners` also disables its transitive Jupiter/Platform
+listeners. If `frameworks.junitPlatform.autoconfigureListeners` is explicitly enabled, the Platform
+listener remains active. TestNG retains its listener opt-out setting. With Karate 2, register the
+listener explicitly in the runner; service-loader autoconfiguration is available only for Karate 1:
+
+```java
+Runner.builder()
+    .path("classpath:features")
+    .listener(new io.qameta.allure.karate.AllureKarate())
+    .parallel(4);
+```
+
+The compatibility suites pin SDK 2.35.5 and 3.0.0 independently of the plugin's own SDK 2.x reporting
+harness. Run them with the repository's [Allure Agent Mode workflow](docs/allure-agent-mode.md).
+Runtime compatibility tests require installed Java 11, 17, and 21 toolchains; CI provisions all three.
 
 ### What if I have both JUnit5, JUnit4, and CucumberJVM on the classpath?
 

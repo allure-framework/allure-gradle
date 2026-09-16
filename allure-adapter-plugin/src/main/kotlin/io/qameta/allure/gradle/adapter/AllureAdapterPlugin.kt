@@ -78,8 +78,7 @@ open class AllureAdapterPlugin : Plugin<Project> {
                 val platformListenerEnabled = frameworks.configuredAdapters[AllureJavaAdapter.junitPlatform]
                     ?.autoconfigureListeners?.get() == true
                 val modules = AllureJavaAdapter.find(adapterConfig.name)?.let { adapter ->
-                    AllureJavaCompatibility.of(adapterConfig.adapterVersion.get())
-                        .serviceModules(adapter, platformListenerEnabled)
+                    AllureJavaCompatibility.serviceModules(adapter, platformListenerEnabled)
                 } ?: setOf(adapterConfig.module)
                 configurations.all {
                     resolutionStrategy {

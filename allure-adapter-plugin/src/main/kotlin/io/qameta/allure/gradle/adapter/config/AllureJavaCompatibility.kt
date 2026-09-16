@@ -13,17 +13,6 @@ internal enum class AllureJavaCompatibility {
 
     fun supportsKarateServiceLoading(): Boolean = this == ALLURE_2
 
-    fun serviceModules(adapter: AllureJavaAdapter, platformListenerEnabled: Boolean): Set<String> =
-        if (adapter == AllureJavaAdapter.junit5) {
-            buildSet {
-                add("allure-${module(adapter)}")
-                add("allure-jupiter")
-                if (!platformListenerEnabled) add("allure-junit-platform")
-            }
-        } else {
-            setOf("allure-${module(adapter)}")
-        }
-
     fun accepts(adapter: AllureJavaAdapter, framework: ModuleVersionIdentifier, version: String): Boolean {
         fun incompatible(requirement: String): Nothing = throw GradleException(
             "Allure Java $version cannot configure ${adapter.name} for $framework: $requirement. " +
@@ -62,6 +51,18 @@ internal enum class AllureJavaCompatibility {
     }
 
     companion object {
+        // Match the actual dependency coordinates without evaluating an unused adapter version.
+        fun serviceModules(adapter: AllureJavaAdapter, platformListenerEnabled: Boolean): Set<String> =
+            if (adapter == AllureJavaAdapter.junit5) {
+                buildSet {
+                    add("allure-junit5")
+                    add("allure-jupiter")
+                    if (!platformListenerEnabled) add("allure-junit-platform")
+                }
+            } else {
+                setOf("allure-${adapter.adapterName}")
+            }
+
         // From 2.35.0 the old coordinate is only a relocation POM, with no classifier artifacts.
         fun isJunit5Relocation(module: String, version: String): Boolean =
             module == "allure-junit5" && versionAtLeast(version, 2, 35, 0)

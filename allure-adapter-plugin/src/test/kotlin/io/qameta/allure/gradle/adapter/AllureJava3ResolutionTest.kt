@@ -95,6 +95,23 @@ class AllureJava3ResolutionTest {
         assertThat(resolvedArtifacts(runner)).doesNotContain("io.qameta.allure:allure-cucumber4-jvm:")
     }
 
+    @ParameterizedTest(name = "Disabled {0} ignores unused SDK {1}")
+    @CsvSource("junit5,42.0", "testng,43")
+    fun `disabled adapters do not validate unused SDK versions`(adapter: String, version: String) {
+        val runner = prepare(adapter)
+        runner.projectDir.resolve("build.gradle").appendText(
+            """
+
+            allure.adapter.frameworks.$adapter.adapterVersion.set('$version')
+            allure.adapter.frameworks.$adapter.enabled.set(false)
+            """.trimIndent()
+        )
+        runner.run("writeResolvedArtifacts")
+        assertThat(resolvedArtifacts(runner))
+            .`as`("disabled adapter must not add Allure SDK dependencies")
+            .doesNotContain("io.qameta.allure:")
+    }
+
     @ParameterizedTest(name = "SDK 2 rejects {0}")
     @CsvSource(
         "karate,com.intuit.karate:karate-core:1.4.1,io.karatelabs:karate-core:2.1.2,Karate 2 requires Allure Java 3.x",

@@ -132,7 +132,7 @@ class AllureJavaCompatibilityTest {
         assertThat(result.task(":legacyTest").getOutcome()).isEqualTo(TaskOutcome.SUCCESS);
         assertThat(results(runner)).hasSize(2);
         for (Path file : results(runner)) {
-            Allure.addAttachment("Runtime result", "application/json", Files.readString(file), ".json");
+            Allure.attachment("Runtime result", "application/json", Files.readString(file));
             assertThat(parse(file)).containsEntry("status", "passed");
         }
     }
@@ -156,7 +156,7 @@ class AllureJavaCompatibilityTest {
         assertThat(runner.run("test").task(":test").getOutcome()).isEqualTo(TaskOutcome.SUCCESS);
         List<Path> results = results(runner);
         assertThat(results).hasSize(1);
-        Allure.addAttachment("Karate result", "application/json", Files.readString(results.get(0)), ".json");
+        Allure.attachment("Karate result", "application/json", Files.readString(results.get(0)));
         Map<String, Object> result = parse(results.get(0));
         assertThat(result).containsEntry("status", "passed");
         assertThat((List<Map<String, Object>>) result.get("steps"))
@@ -220,7 +220,7 @@ class AllureJavaCompatibilityTest {
     private void verifyEvidence(GradleRunnerRule runner, String stepName) throws Exception {
         List<Path> results = results(runner);
         for (Path result : results) {
-            Allure.addAttachment("Generated result", "application/json", Files.readString(result), ".json");
+            Allure.attachment("Generated result", "application/json", Files.readString(result));
         }
         Allure.step("Verify one passed result with its recorded step and attachment payload", () -> {
             assertThat(results).hasSize(1);
@@ -232,7 +232,7 @@ class AllureJavaCompatibilityTest {
                 List<Path> attachments = files.filter(p -> p.getFileName().toString().contains("-attachment")).toList();
                 assertThat(attachments).hasSize(1);
                 String payload = Files.readString(attachments.get(0));
-                Allure.addAttachment("Generated attachment content", "text/plain", payload, ".txt");
+                Allure.attachment("Generated attachment content", "text/plain", payload);
                 assertThat(payload).isEqualTo("<p>HELLO</p>");
                 assertThat(Files.readString(results.get(0))).contains(attachments.get(0).getFileName().toString());
             }

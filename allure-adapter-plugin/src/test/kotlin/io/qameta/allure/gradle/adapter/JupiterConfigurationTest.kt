@@ -24,7 +24,7 @@ class JupiterConfigurationTest {
             .project("src/it/adapter-jupiter-alias-$dsl").prepare()
         runner.run("writeJupiterConfiguration", "-Psdk=$sdk")
         val configuration = runner.projectDir.resolve("build/jupiter-configuration.txt").readText()
-        Allure.addAttachment("Jupiter configuration", "text/plain", configuration, ".txt")
+        Allure.attachment("Jupiter configuration", "text/plain", configuration)
         assertThat(configuration).isEqualTo(
             """
             name=jupiter

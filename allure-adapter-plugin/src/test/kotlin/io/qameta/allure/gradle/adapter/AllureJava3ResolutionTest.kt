@@ -134,7 +134,7 @@ class AllureJava3ResolutionTest {
 
     private fun resolvedArtifacts(runner: GradleRunnerRule): String =
         runner.projectDir.resolve("build/resolvedArtifacts.txt").readText().also {
-            Allure.addAttachment("Resolved test runtime", "text/plain", it, ".txt")
+            Allure.attachment("Resolved test runtime", "text/plain", it)
         }
 
     private fun failure(runner: GradleRunnerRule): String = GradleRunnerRule.runBuild(

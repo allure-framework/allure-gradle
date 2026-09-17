@@ -226,7 +226,7 @@ Runner.builder()
     .parallel(4);
 ```
 
-The compatibility suites pin SDK 2.35.5 and 3.0.0 independently of the plugin's own SDK 2.x reporting
+The compatibility suites pin SDK 2.35.5 and 3.0.0 independently of the plugin's own SDK 3.0.0 reporting
 harness. Run them with the repository's [Allure Agent Mode workflow](docs/allure-agent-mode.md).
 Runtime compatibility tests require installed Java 11, 17, and 21 toolchains; CI provisions all three.
 

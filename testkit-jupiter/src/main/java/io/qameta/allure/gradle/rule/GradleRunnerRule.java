@@ -293,7 +293,7 @@ public class GradleRunnerRule {
         if (content == null || content.isEmpty()) {
             return;
         }
-        Allure.addAttachment(name, "text/plain", content, ".txt");
+        Allure.attachment(name, "text/plain", content);
     }
 
     private static String stackTrace(Throwable throwable) {

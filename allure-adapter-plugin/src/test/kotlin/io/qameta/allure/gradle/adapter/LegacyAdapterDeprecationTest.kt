@@ -52,7 +52,7 @@ class LegacyAdapterDeprecationTest {
         )
         val result = runner.run("writeResolvedArtifacts", "writeOlderArtifacts")
         val older = runner.projectDir.resolve("build/olderArtifacts.txt").readText()
-        Allure.addAttachment("Older Cucumber runtime", "text/plain", older, ".txt")
+        Allure.attachment("Older Cucumber runtime", "text/plain", older)
 
         assertThat(warnings(result.output)).singleElement().asString().contains("Adapter 'cucumber6Jvm' is deprecated")
         assertThat(resolvedArtifacts(runner))
@@ -147,7 +147,7 @@ class LegacyAdapterDeprecationTest {
         val result = runner.run("writeLegacyConfigurations")
         val compilerWarnings = result.output.lines().filter { it.contains("is deprecated") }
         val configurations = runner.projectDir.resolve("build/legacy-configurations.txt").readText()
-        Allure.addAttachment("Legacy configurations", "text/plain", configurations, ".txt")
+        Allure.attachment("Legacy configurations", "text/plain", configurations)
 
         assertThat(compilerWarnings).anySatisfy {
             assertThat(it).contains("cucumber4Jvm", "Allure Java 2.x", "Cucumber 7", "cucumber7Jvm")
@@ -172,6 +172,6 @@ class LegacyAdapterDeprecationTest {
 
     private fun resolvedArtifacts(runner: GradleRunnerRule): String =
         runner.projectDir.resolve("build/resolvedArtifacts.txt").readText().also {
-            Allure.addAttachment("Resolved test runtime", "text/plain", it, ".txt")
+            Allure.attachment("Resolved test runtime", "text/plain", it)
         }
 }

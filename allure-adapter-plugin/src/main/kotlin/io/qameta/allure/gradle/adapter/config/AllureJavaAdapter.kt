@@ -88,7 +88,19 @@ internal enum class AllureJavaAdapter(
     cucumber7Jvm("cucumber7-jvm", cucumberJvm(7)),
     ;
 
+    val deprecationMessage: String?
+        get() = when (this) {
+            cucumber4Jvm, cucumber5Jvm, cucumber6Jvm -> LEGACY_CUCUMBER_DEPRECATION
+            jbehave -> LEGACY_JBEHAVE_DEPRECATION
+            else -> null
+        }
+
     companion object {
+        const val LEGACY_CUCUMBER_DEPRECATION =
+            "Supported only with Allure Java 2.x. Upgrade to Cucumber 7 and use frameworks.cucumber7Jvm."
+        const val LEGACY_JBEHAVE_DEPRECATION =
+            "Supported only with Allure Java 2.x. Upgrade to JBehave 5 and use frameworks.jbehave5."
+
         private val adapters = values().associateBy { it.adapterName }
         private val values = values().associateBy { it.name }
 

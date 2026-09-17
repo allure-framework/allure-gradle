@@ -146,16 +146,16 @@ allure {
                 autoconfigureListeners.set(true)
             }
             assertj
-            jbehave
+            jbehave // Deprecated: JBehave 4, Allure Java 2.x only
             jbehave5
             karate {
                 autoconfigureListeners.set(true)
             }
             scalatest
             spock
-            cucumber4Jvm
-            cucumber5Jvm
-            cucumber6Jvm
+            cucumber4Jvm // Deprecated: Allure Java 2.x only
+            cucumber5Jvm // Deprecated: Allure Java 2.x only
+            cucumber6Jvm // Deprecated: Allure Java 2.x only
             cucumber7Jvm
         }
     }
@@ -188,9 +188,20 @@ name are shared, and using both names does not add a second adapter.
 | JUnit Jupiter (`jupiter`) | `allure-jupiter` from 2.35.1 (first published renamed artifact); `allure-junit5` for older releases | `allure-jupiter` |
 | JUnit 4, JUnit Platform, AssertJ, Spock 2, Cucumber 7, JBehave 5 | Existing artifacts | Same artifact names |
 | TestNG | 6.14.3 or newer | 7.10.0 or newer |
-| Cucumber 4–6, JBehave 4 | Supported | Migrate the framework or keep this runtime on SDK 2.x |
+| Cucumber 4–6, JBehave 4 | Supported, deprecated | Migrate the framework or keep this runtime on SDK 2.x |
 | Karate | Karate 1 (`com.intuit.karate:karate-core`) | Karate 2 (`io.karatelabs:karate-core`), Java 21+ |
 | ScalaTest | Scala 2.12 / 2.13 | Scala 2.12 / 2.13 / 3 |
+
+The `cucumber4Jvm`, `cucumber5Jvm`, `cucumber6Jvm`, and `jbehave` configurations are deprecated because
+their adapters were removed in Allure Java 3. They remain available for SDK 2.x. Upgrade Cucumber to 7
+and select `cucumber7Jvm`, or upgrade JBehave to 5 and select `jbehave5`; changing the configuration
+name alone does not upgrade the test framework.
+
+Kotlin DSL access reports a deprecation at compilation. When an enabled legacy adapter detects its
+framework during dependency resolution, the plugin also logs one warning per adapter per project,
+including for Groovy DSL, named configurations, and autodetection. Registering or disabling a legacy
+adapter does not produce a runtime warning. Compatibility uses the adapter's effective `adapterVersion`:
+SDK 2.x continues to work, while SDK 3.x still fails with migration guidance.
 
 Allure Java 3 requires **Java 17 or newer for the test JVM** (21 for Karate 2). Set the Java toolchain
 or the test task's `javaLauncher`; the JVM running Gradle can be different. Unsupported framework/SDK

@@ -9,7 +9,7 @@ aspectj = "1.9.25.1"
 [libraries]
 allureCommandline = { module = "io.qameta.allure:allure-commandline", version.ref = "allure2" }
 allureJavaCommons = { module = "io.qameta.allure:allure-java-commons", version.ref = "allureJavaTest" }
-allureJunit5 = { module = "io.qameta.allure:allure-junit5", version.ref = "allureJavaTest" }
+allureJupiter = { module = "io.qameta.allure:allure-jupiter", version.ref = "allureJavaTest" }
 aspectjWeaver = { module = "org.aspectj:aspectjweaver", version.ref = "aspectj" }
 assertjCore = "org.assertj:assertj-core:3.27.7"
 commons-compress = "org.apache.commons:commons-compress:1.28.0"

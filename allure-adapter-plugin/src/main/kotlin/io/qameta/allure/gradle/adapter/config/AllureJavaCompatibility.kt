@@ -8,8 +8,9 @@ internal enum class AllureJavaCompatibility {
     ALLURE_2,
     ALLURE_3;
 
-    fun module(adapter: AllureJavaAdapter): String =
-        if (this == ALLURE_3 && adapter == AllureJavaAdapter.junit5) "jupiter" else adapter.adapterName
+    fun module(adapter: AllureJavaAdapter, version: String): String =
+        if (adapter == AllureJavaAdapter.jupiter && !versionAtLeast(version, 2, 35, 0)) "junit5"
+        else adapter.adapterName
 
     fun supportsKarateServiceLoading(): Boolean = this == ALLURE_2
 
@@ -53,7 +54,7 @@ internal enum class AllureJavaCompatibility {
     companion object {
         // Match the actual dependency coordinates without evaluating an unused adapter version.
         fun serviceModules(adapter: AllureJavaAdapter, platformListenerEnabled: Boolean): Set<String> =
-            if (adapter == AllureJavaAdapter.junit5) {
+            if (adapter == AllureJavaAdapter.jupiter) {
                 buildSet {
                     add("allure-junit5")
                     add("allure-jupiter")

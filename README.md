@@ -130,11 +130,11 @@ allure {
                 adapterVersion.set("...")
                 enabled.set(true)
             }
-            junit5 {
+            jupiter {
                 // Defaults to allureJavaVersion
                 adapterVersion.set("...")
                 enabled.set(true)
-                // Enables allure-junit5 default test listeners via META-INF/services/...
+                // Enables allure-jupiter default test listeners via META-INF/services/...
                 autoconfigureListeners.set(true)
             }
             junitPlatform {
@@ -178,12 +178,14 @@ allure {
 `allure.version` selects the report generator independently; changing it does not change the Java SDK.
 Use a clean build directory when switching report generator majors.
 The framework's `adapterVersion` overrides `allureJavaVersion`, including the choice of artifact name.
-For example, `frameworks.junit5 { adapterVersion.set("3.0.0") }` selects `allure-jupiter:3.0.0`.
-The `junit5` DSL name remains the same for JUnit Jupiter 5 and 6.
+For example, `frameworks.jupiter { adapterVersion.set("3.0.0") }` selects `allure-jupiter:3.0.0`.
+Use `jupiter` for JUnit Jupiter with both JUnit 5 and JUnit 6. The old `junit5` DSL property and
+configuration block remain as deprecated aliases for the same adapter; settings through either
+name are shared, and using both names does not add a second adapter.
 
 | Framework | Allure Java 2.x | Allure Java 3.x |
 | --- | --- | --- |
-| JUnit Jupiter (`junit5`) | `allure-junit5` (recent 2.x releases relocate to `allure-jupiter`) | `allure-jupiter` |
+| JUnit Jupiter (`jupiter`) | `allure-jupiter` from 2.35.1 (first published renamed artifact); `allure-junit5` for older releases | `allure-jupiter` |
 | JUnit 4, JUnit Platform, AssertJ, Spock 2, Cucumber 7, JBehave 5 | Existing artifacts | Same artifact names |
 | TestNG | 6.14.3 or newer | 7.10.0 or newer |
 | Cucumber 4–6, JBehave 4 | Supported | Migrate the framework or keep this runtime on SDK 2.x |
@@ -201,7 +203,7 @@ For manually managed runtimes, use `autoconfigure.set(false)` and declare each r
 explicitly. The Javadoc description processor follows the project-wide `allureJavaVersion`;
 disable `autoconfigureJavadocDescriptions` if annotation processing is managed separately.
 
-Disabling `frameworks.junit5.autoconfigureListeners` also disables its transitive Jupiter/Platform
+Disabling `frameworks.jupiter.autoconfigureListeners` also disables its transitive Jupiter/Platform
 listeners. If `frameworks.junitPlatform.autoconfigureListeners` is explicitly enabled, the Platform
 listener remains active. TestNG retains its listener opt-out setting. With Karate 2, register the
 listener explicitly in the runner; service-loader autoconfiguration is available only for Karate 1:
@@ -217,7 +219,7 @@ The compatibility suites pin SDK 2.35.5 and 3.0.0 independently of the plugin's 
 harness. Run them with the repository's [Allure Agent Mode workflow](docs/allure-agent-mode.md).
 Runtime compatibility tests require installed Java 11, 17, and 21 toolchains; CI provisions all three.
 
-### What if I have both JUnit5, JUnit4, and CucumberJVM on the classpath?
+### What if I have both JUnit Jupiter, JUnit4, and CucumberJVM on the classpath?
 
 By default, `allure-gradle` would detect all of them and apply all the listeners yielding 3 reports.
 If you need only one or two, specify the required ones via `frameworks {...}` block.
@@ -265,15 +267,15 @@ allureRawResultElements.outgoing.artifact(file("...")) {
 }
 ```
 
-### Using custom JUnit5 listeners instead of the default ones
+### Using custom JUnit Jupiter listeners instead of the default ones
 
-`allure-java` comes with a set of default listeners for JUnit5, JUnit Platform, Karate, and TestNG.
+`allure-java` comes with a set of default listeners for JUnit Jupiter, JUnit Platform, Karate, and TestNG.
 However, you might want to disable them and use your own ones.
 
 Here's how you disable default listeners:
 
 ```kotlin
-allure.adapter.frameworks.junit5.autoconfigureListeners.set(false)
+allure.adapter.frameworks.jupiter.autoconfigureListeners.set(false)
 ```
 
 An alternative syntax is as follows:
@@ -284,8 +286,8 @@ allure {
         frameworks {
             // Note: every time you mention an adapter, it is added to the classpath,
             // so refrain from mentioning unused adapters here
-            junit5 {
-                // Disable allure-junit5 default test listeners
+            jupiter {
+                // Disable allure-jupiter default test listeners
                 autoconfigureListeners.set(false)
             }
             testng {
@@ -323,7 +325,7 @@ plugin {
 allure {
     adapter {
         frameworks {
-            junit5
+            jupiter
         }
     }
 }

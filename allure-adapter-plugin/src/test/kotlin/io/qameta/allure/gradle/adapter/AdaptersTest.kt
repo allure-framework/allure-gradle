@@ -20,15 +20,15 @@ class AdaptersTest {
             return listOf(
                 arguments(
                     gradleVersion,
-                    "src/it/adapter-junit5-spock-kts",
+                    "src/it/adapter-jupiter-spock-kts",
                     arrayOf("printAdapters"),
-                    "[AdapterConfig{junit5}, AdapterConfig{spock}]",
+                    "[AdapterConfig{jupiter}, AdapterConfig{spock}]",
                 ),
                 arguments(
                     gradleVersion,
                     "src/it/adapter-all",
                     arrayOf("printAdapters"),
-                    "[AdapterConfig{assertj}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junit5}, AdapterConfig{junitPlatform}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
+                    "[AdapterConfig{assertj}, AdapterConfig{cucumber4Jvm}, AdapterConfig{cucumber5Jvm}, AdapterConfig{cucumber6Jvm}, AdapterConfig{cucumber7Jvm}, AdapterConfig{jbehave5}, AdapterConfig{jbehave}, AdapterConfig{junit4}, AdapterConfig{junitPlatform}, AdapterConfig{jupiter}, AdapterConfig{karate}, AdapterConfig{scalatest}, AdapterConfig{spock}, AdapterConfig{testng}]",
                 ),
             )
         }

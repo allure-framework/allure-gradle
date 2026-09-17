@@ -11,7 +11,7 @@ import java.util.jar.JarOutputStream
 
 /**
  * Removes `META-INF/services` folder from a jar.
- * It enables to automatically transform `allure-junit5` to `allure-junit5:spi-off`.
+ * It enables to automatically transform `allure-jupiter` to `allure-jupiter:spi-off`.
  */
 @CacheableTransform
 abstract class BaseTrimMetaInfServices : TransformAction<TransformParameters.None> {

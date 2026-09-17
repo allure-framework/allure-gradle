@@ -23,8 +23,8 @@ public class DependenciesTest {
             "src/it/junit4",
             "src/it/junit4-autoconfigure",
             "src/it/junit4-kotlin",
-            "src/it/junit5",
-            "src/it/junit5-5.8.1",
+            "src/it/jupiter",
+            "src/it/jupiter-5.8.1",
             "src/it/testng",
             "src/it/testng-autoconfigure",
             "src/it/spock"

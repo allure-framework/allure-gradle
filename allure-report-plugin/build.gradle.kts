@@ -8,7 +8,7 @@ dependencies {
     api(project(":allure-base-plugin"))
 
     testImplementation(project(":testkit-jupiter"))
-    testImplementation(libs.allureJunit5)
+    testImplementation(libs.allureJupiter)
     testImplementation(libs.assertjCore)
     testImplementation(libs.commons.compress)
 }

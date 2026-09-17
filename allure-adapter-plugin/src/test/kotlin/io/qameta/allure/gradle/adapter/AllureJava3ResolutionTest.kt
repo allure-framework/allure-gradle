@@ -16,7 +16,7 @@ class AllureJava3ResolutionTest {
 
     @ParameterizedTest(name = "SDK 3 resolves {0}")
     @CsvSource(
-        "junit4,allure-junit4", "junit5,allure-jupiter", "junit-platform,allure-junit-platform",
+        "junit4,allure-junit4", "jupiter,allure-jupiter", "junit-platform,allure-junit-platform",
         "testng,allure-testng", "assertj,allure-assertj", "spock,allure-spock2",
         "cucumber7-jvm,allure-cucumber7-jvm", "jbehave5,allure-jbehave5",
         "scalatest-212,allure-scalatest_2.12", "scalatest-213,allure-scalatest_2.13"
@@ -64,16 +64,19 @@ class AllureJava3ResolutionTest {
     }
 
     @ParameterizedTest(name = "global {0}, Jupiter override {1}")
-    @CsvSource("2.35.5,3.0.0,allure-jupiter", "3.0.0,2.35.5,allure-junit5")
+    @CsvSource(
+        "2.35.5,3.0.0,allure-jupiter", "3.0.0,2.35.5,allure-jupiter",
+        "3.0.0,2.34.0,allure-junit5", "3.0.0,2.35.1,allure-jupiter"
+    )
     fun `artifact mapping uses the effective adapter version`(global: String, override: String, module: String) {
-        val runner = prepare("junit5", global)
+        val runner = prepare("jupiter", global)
         runner.projectDir.resolve("build.gradle").appendText(
             """
 
-            allure.adapter.frameworks.junit5.adapterVersion.set(providers.provider { '$override' })
+            allure.adapter.frameworks.jupiter.adapterVersion.set(providers.provider { '$override' })
             tasks.named('writeResolvedArtifacts') {
                 doLast {
-                    file('build/adapterDependency.txt').text = allure.adapter.frameworks.junit5.adapterDependency.get()
+                    file('build/adapterDependency.txt').text = allure.adapter.frameworks.jupiter.adapterDependency.get()
                 }
             }
             """.trimIndent()
@@ -81,8 +84,7 @@ class AllureJava3ResolutionTest {
         runner.run("writeResolvedArtifacts")
         assertThat(runner.projectDir.resolve("build/adapterDependency.txt"))
             .hasContent("io.qameta.allure:$module:$override")
-        // In 2.35.5 junit5 is a POM relocation to jupiter, so the resolved jar uses the new name in both cases.
-        assertThat(resolvedArtifacts(runner)).contains("io.qameta.allure:allure-jupiter:$override")
+        assertThat(resolvedArtifacts(runner)).contains("io.qameta.allure:$module:$override")
     }
 
     @Test
@@ -96,7 +98,7 @@ class AllureJava3ResolutionTest {
     }
 
     @ParameterizedTest(name = "Disabled {0} ignores unused SDK {1}")
-    @CsvSource("junit5,42.0", "testng,43")
+    @CsvSource("jupiter,42.0", "testng,43")
     fun `disabled adapters do not validate unused SDK versions`(adapter: String, version: String) {
         val runner = prepare(adapter)
         runner.projectDir.resolve("build.gradle").appendText(

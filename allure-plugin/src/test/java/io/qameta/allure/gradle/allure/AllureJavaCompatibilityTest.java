@@ -41,10 +41,11 @@ class AllureJavaCompatibilityTest {
         verifyEvidence(runner, step);
     }
 
-    @ParameterizedTest(name = "{0} listeners disabled with SDK {1}")
+    @ParameterizedTest(name = "{0} listeners disabled with SDK {1} via {2}")
     @CsvSource({
+        "jupiter-sdk-compatibility,2.35.5,jupiter", "jupiter-sdk-compatibility,3.0.0,jupiter",
         "jupiter-sdk-compatibility,2.35.5,junit5", "jupiter-sdk-compatibility,3.0.0,junit5",
-        "junit5,2.13.5,junit5",
+        "jupiter,2.13.5,jupiter",
         "testng-autoconfigure,2.35.5,testng", "testng-autoconfigure,3.0.0,testng"
     })
     void listenerOptOutIncludesTransitiveListeners(String fixture, String sdk, String adapter) throws Exception {
@@ -59,7 +60,7 @@ class AllureJavaCompatibilityTest {
     void explicitPlatformListenerSurvivesJupiterOptOut() throws Exception {
         GradleRunnerRule runner = prepare("jupiter-sdk-compatibility", "3.0.0");
         append(runner, """
-            allure.adapter.frameworks.junit5.autoconfigureListeners = false
+            allure.adapter.frameworks.jupiter.autoconfigureListeners = false
             allure.adapter.frameworks.junitPlatform.autoconfigureListeners = true
             """);
         runner.run("test");
@@ -92,13 +93,14 @@ class AllureJavaCompatibilityTest {
         verifyEvidence(runner, "step");
     }
 
-    @Test
-    void mixedSdkMajorsFailBeforeTestsStart() throws Exception {
+    @ParameterizedTest(name = "SDK 3 rejects legacy {0}:{1} on the same test runtime")
+    @CsvSource({"allure-testng,2.35.5", "allure-junit5,2.34.0"})
+    void mixedSdkMajorsFailBeforeTestsStart(String module, String version) throws Exception {
         GradleRunnerRule runner = prepare("jupiter-sdk-compatibility", "3.0.0");
-        append(runner, "dependencies { testImplementation 'io.qameta.allure:allure-testng:2.35.5' }");
+        append(runner, "dependencies { testImplementation 'io.qameta.allure:" + module + ":" + version + "' }");
         BuildResult result = failure(runner, "test");
         assertThat(result.getOutput()).contains("mixes Allure Java 2.x and 3.x on one test runtime",
-            "allure-testng-2.35.5.jar", "one SDK major version per test runtime");
+            module + "-" + version + ".jar", "one SDK major version per test runtime");
         assertThat(results(runner)).isEmpty();
     }
 

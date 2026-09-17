@@ -13,7 +13,7 @@ dependencies {
     implementation(gradleTestKit())
     implementation(libs.commons.io)
     implementation(libs.commons.text)
-    testImplementation(libs.allureJunit5)
+    testImplementation(libs.allureJupiter)
     runtimeOnly(libs.junitPlatformLauncher)
 }
 

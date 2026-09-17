@@ -24,7 +24,7 @@ class ConfigurationCacheTest {
         val gradleRunner = GradleRunnerRule()
             .rootDir(tempDir)
             .version(version)
-            .project("src/it/adapter-cache-junit5-kts")
+            .project("src/it/adapter-cache-jupiter-kts")
             .prepare()
 
         val firstRun = gradleRunner.run("test", "--configuration-cache")

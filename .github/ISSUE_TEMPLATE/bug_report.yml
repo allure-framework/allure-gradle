@@ -111,8 +111,8 @@ body:
     id: test-frameworks
     attributes:
       label: Test framework(s)
-      description: For example JUnit 5, TestNG, Spock 2, Cucumber JVM 7.
-      placeholder: JUnit 5
+      description: For example JUnit Jupiter, TestNG, Spock 2, Cucumber JVM 7.
+      placeholder: JUnit Jupiter
   - type: input
     id: allure-runtime
     attributes:

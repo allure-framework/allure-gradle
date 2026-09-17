@@ -30,7 +30,7 @@ import java.nio.file.Paths
 import javax.inject.Inject
 
 /**
- * Configures Allure raw result adapters (e.g. [junit5], [testng], ...) as `allure { adapter {...` extension.
+ * Configures Allure raw result adapters (e.g. [AdapterHandler.jupiter], [AdapterHandler.testng], ...) as `allure { adapter {...` extension.
  */
 open class AllureAdapterExtension @Inject constructor(
     private val project: Project,
@@ -57,7 +57,7 @@ open class AllureAdapterExtension @Inject constructor(
     val autoconfigure: Property<Boolean> = objects.property<Boolean>().convention(true)
 
     /**
-     * Configure default listeners by default (e.g. JUnit5, TestNG).
+     * Configure default listeners by default (e.g. JUnit Jupiter, TestNG).
      * This should be disabled if the project uses custom listeners
      */
     val autoconfigureListeners: Property<Boolean> = objects.property<Boolean>().convention(autoconfigure)
@@ -151,12 +151,12 @@ open class AllureAdapterExtension @Inject constructor(
             // Pass the path to the task
             if (this is JavaForkOptions) {
                 jvmArgumentProviders += AllureResultsDirectoryArgumentProvider(taskResultsDir)
-                // We don't know if the task will execute JUnit5 engine or not,
+                // We don't know if the task will execute JUnit Jupiter engine or not,
                 // so we add extensions.autodetection.enabled to all the tasks if
-                // junit5.autoconfigureListeners is enabled
+                // jupiter.autoconfigureListeners is enabled
                 jvmArgumentProviders += ConditionalArgumentProvider(
                     project.provider {
-                        frameworks.configuredAdapters[AllureJavaAdapter.junit5]?.let {
+                        frameworks.configuredAdapters[AllureJavaAdapter.jupiter]?.let {
                             listOf(
                                 if (it.autoconfigureListeners.get()) {
                                     "-Djunit.jupiter.extensions.autodetection.enabled=true"

@@ -1,0 +1,42 @@
+plugins {
+    id 'io.qameta.allure-adapter'
+}
+
+allure.adapter.frameworks.create('junit5')
+
+allure {
+    adapter {
+        frameworks {
+            jupiter {
+                adapterVersion = providers.gradleProperty('sdk')
+                enabled = true
+            }
+            junit5 {
+                enabled = false
+                autoconfigureListeners = false
+            }
+        }
+    }
+}
+
+def frameworks = allure.adapter.frameworks
+def configuration = [
+    "name=${frameworks.jupiter.name}",
+    "sameInstance=${frameworks.junit5.is(frameworks.jupiter)}",
+    "namedAlias=${frameworks.named('junit5').get().is(frameworks.jupiter)}",
+    "adapters=${frameworks.names.join(', ')}",
+    "module=${frameworks.jupiter.adapterModule}",
+    "dependency=${frameworks.jupiter.adapterDependency.get()}",
+    "enabled=${frameworks.junit5.enabled.get()}",
+    "listeners=${frameworks.jupiter.autoconfigureListeners.get()}"
+].join('\n')
+
+tasks.register('writeJupiterConfiguration') {
+    def destination = layout.buildDirectory.file('jupiter-configuration.txt')
+    doLast {
+        destination.get().asFile.with {
+            parentFile.mkdirs()
+            text = configuration
+        }
+    }
+}

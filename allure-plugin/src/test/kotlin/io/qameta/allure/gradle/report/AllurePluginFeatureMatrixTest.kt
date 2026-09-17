@@ -89,7 +89,7 @@ class AllurePluginFeatureMatrixTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("runtimes")
     fun `allureReport respects depends-on-tests for both runtimes`(runtime: TestAllureRuntime) {
-        val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/junit5-5.8.1")
+        val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/jupiter-5.8.1")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
         val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "allureReport", "--depends-on-tests")
@@ -106,7 +106,7 @@ class AllurePluginFeatureMatrixTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("runtimes")
     fun `allureReport runs tests when report extension enables dependsOnTests`(runtime: TestAllureRuntime) {
-        val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/junit5-5.8.1")
+        val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/jupiter-5.8.1")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
         projectDir.resolve("build.gradle").appendText(
             """
@@ -134,7 +134,7 @@ class AllurePluginFeatureMatrixTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("runtimes")
     fun `allureReport stays no-source without depends-on-tests for both runtimes`(runtime: TestAllureRuntime) {
-        val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/junit5-5.8.1")
+        val projectDir = AllureRuntimeMatrixSupport.copyFixture(tempDir, "src/it/jupiter-5.8.1")
         AllureRuntimeMatrixSupport.configureRuntime(projectDir, runtime, usesReportRuntime = true)
 
         val buildResult = AllureRuntimeMatrixSupport.build(projectDir, "allureReport")

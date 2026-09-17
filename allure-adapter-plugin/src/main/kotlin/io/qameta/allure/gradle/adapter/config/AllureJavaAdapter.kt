@@ -17,7 +17,7 @@ internal enum class AllureJavaAdapter(
             runtimeOnly(adapterVersion.map { "io.qameta.allure:allure-junit4-aspect:$it" })
         }
     }),
-    junit5("junit5", {
+    jupiter("jupiter", {
         supportsAutoconfigureListeners.set(true)
         activateOn("org.junit.jupiter:junit-jupiter-api") {
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)

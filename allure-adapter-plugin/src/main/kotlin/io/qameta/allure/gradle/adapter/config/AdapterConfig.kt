@@ -50,8 +50,8 @@ open class AdapterConfig @Inject constructor(
         set(value) = autoconfigureListeners.set(!value)
 
     /**
-     * Autoconfigure listeners is available only for the subset of adapters only (e.g [AdapterHandlerScope.testng],
-     * [AdapterHandlerScope.junit5])
+     * Autoconfigure listeners is available only for the subset of adapters only (e.g [AdapterHandler.testng],
+     * [AdapterHandler.jupiter])
      */
     val supportsAutoconfigureListeners = objects.property<Boolean>().convention(false)
 
@@ -94,20 +94,21 @@ open class AdapterConfig @Inject constructor(
     }
 
     /**
-     * Dependency coordinates for the adapter (e.g. `io.qameta.allure:allure-junit5:2.8.0`)
+     * Dependency coordinates for the adapter (e.g. `io.qameta.allure:allure-jupiter:2.35.5`)
      */
     val adapterDependency = adapterVersion.map { version ->
-        val module = AllureJavaAdapter.find(name)?.let { AllureJavaCompatibility.of(version).module(it) } ?: name
+        val module = AllureJavaAdapter.find(name)?.let { AllureJavaCompatibility.of(version).module(it, version) } ?: name
         "io.qameta.allure:allure-$module:$version"
     }
 
     internal val module get() = "allure-$adapterModule"
 
     /**
-     * Name of the artifact (e.g. `allure-junit5`)
+     * Name of the artifact without the `allure-` prefix (e.g. `jupiter`)
      */
     val adapterModule get() = AllureJavaAdapter.find(name)?.let {
-        AllureJavaCompatibility.of(adapterVersion.get()).module(it)
+        val version = adapterVersion.get()
+        AllureJavaCompatibility.of(version).module(it, version)
     } ?: name
 
     override fun toString() = "AdapterConfig{$name}"

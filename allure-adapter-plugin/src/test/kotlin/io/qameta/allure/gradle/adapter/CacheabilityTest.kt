@@ -18,7 +18,7 @@ class CacheabilityTest {
     companion object {
         @JvmStatic
         fun data() = listOf(
-            arguments(GradleTestVersion.current(), "src/it/adapter-cache-junit5-kts"),
+            arguments(GradleTestVersion.current(), "src/it/adapter-cache-jupiter-kts"),
         )
     }
 

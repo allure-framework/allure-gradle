@@ -17,6 +17,6 @@ dependencies {
 }
 
 allure {
-    // Newer allure-java fail to adapter data from JUnit5 :(
+    // Newer allure-java fail to adapter data from JUnit Jupiter :(
     adapter.allureJavaVersion = "2.13.5"
 }

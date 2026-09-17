@@ -17,7 +17,7 @@ internal class ValidateAllureJavaRuntime : Action<Task> {
         }
         // Gradle's resolved Maven artifacts retain their artifact-version[-classifier].jar names.
         val modules = AllureJavaAdapter.values().map { "allure-${it.adapterName}" } + listOf(
-            "allure-java-commons", "allure-model", "allure-jupiter", "allure-junit4-aspect",
+            "allure-java-commons", "allure-model", "allure-junit5", "allure-junit4-aspect",
             "allure-scalatest_2.12", "allure-scalatest_2.13", "allure-scalatest_3"
         )
         val pattern = Regex("(${modules.joinToString("|") { Regex.escape(it) }})-([23])\\..*\\.jar")

@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'io.qameta.allure'
+}
+
+repositories { mavenCentral() }
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+allure.adapter {
+    allureJavaVersion = '3.0.0'
+    frameworks { karate {} }
+}
+
+dependencies {
+    testImplementation 'io.karatelabs:karate-core:2.1.2'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+test { useJUnit() }

@@ -12,7 +12,7 @@ allure {
         resultsDir.set(layout.buildDirectory.dir("custom-allure-results"))
         autoconfigureJavadocDescriptions.set(false)
         frameworks {
-            junit5 {
+            jupiter {
                 adapterVersion.set("42.0")
                 enabled.set(true)
             }
@@ -40,8 +40,8 @@ allure {
                 }
             }
         }
-        frameworks.junit5
-        frameworks.junit5.enabled.set(false)
+        frameworks.jupiter
+        frameworks.jupiter.enabled.set(false)
     }
     adapter.frameworks.spock.enabled.set(true)
     commandline {

@@ -80,9 +80,9 @@ abstract class AllureExtension(
     }
 
     // visible for Groovy DSL
-    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.junit5")
+    @Deprecated(level = DeprecationLevel.HIDDEN, message = "Use frameworks.jupiter")
     fun useJUnit5(action: Action<in Any>) {
-        action.execute(getAdapter("getJunit5"))
+        action.execute(getAdapter("getJupiter"))
     }
 
     // visible for Groovy DSL

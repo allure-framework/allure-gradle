@@ -2,11 +2,11 @@ package tests;
 
 import io.qameta.allure.Attachment;
 import io.qameta.allure.Step;
-
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class Junit5Test {
+public class JupiterTest {
 
     @Test
     public void testWithAttachment() {
@@ -23,5 +23,4 @@ public class Junit5Test {
     public String attachment() {
         return "<p>HELLO</p>";
     }
-
 }

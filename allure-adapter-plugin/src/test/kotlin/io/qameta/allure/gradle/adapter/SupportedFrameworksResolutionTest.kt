@@ -19,7 +19,7 @@ class SupportedFrameworksResolutionTest {
         @JvmStatic
         fun data() = listOf(
             arguments("src/it/adapter-resolution-junit4", "io.qameta.allure:allure-junit4:$ALLURE_JAVA_VERSION"),
-            arguments("src/it/adapter-resolution-junit5", "io.qameta.allure:allure-jupiter:$ALLURE_JAVA_VERSION"),
+            arguments("src/it/adapter-resolution-jupiter", "io.qameta.allure:allure-jupiter:$ALLURE_JAVA_VERSION"),
             arguments("src/it/adapter-resolution-junit-platform", "io.qameta.allure:allure-junit-platform:$ALLURE_JAVA_VERSION"),
             arguments("src/it/adapter-resolution-testng", "io.qameta.allure:allure-testng:$ALLURE_JAVA_VERSION"),
             arguments("src/it/adapter-resolution-assertj", "io.qameta.allure:allure-assertj:$ALLURE_JAVA_VERSION"),

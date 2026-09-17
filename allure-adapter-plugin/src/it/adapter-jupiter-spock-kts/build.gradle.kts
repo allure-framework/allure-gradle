@@ -9,7 +9,7 @@ repositories {
 allure {
     adapter {
         frameworks {
-            junit5 {
+            jupiter {
                 adapterVersion.set("42.0")
             }
             spock

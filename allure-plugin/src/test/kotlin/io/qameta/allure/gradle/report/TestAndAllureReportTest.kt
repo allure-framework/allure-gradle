@@ -18,7 +18,7 @@ class TestAndAllureReportTest {
         @JvmStatic
         fun getFrameworks() = buildList {
             val gradleVersion = GradleTestVersion.current()
-            for (project in listOf("src/it/junit5-5.8.1")) {
+            for (project in listOf("src/it/jupiter-5.8.1")) {
                 for (dependsOnTests in listOf(true, false)) {
                     add(arguments(gradleVersion, project, dependsOnTests))
                 }

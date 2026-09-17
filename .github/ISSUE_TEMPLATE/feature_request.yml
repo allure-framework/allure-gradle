@@ -54,8 +54,8 @@ body:
     id: test-frameworks
     attributes:
       label: Relevant test framework(s)
-      description: For example JUnit 5, TestNG, Spock 2, or Cucumber JVM 7.
-      placeholder: JUnit 5
+      description: For example JUnit Jupiter, TestNG, Spock 2, or Cucumber JVM 7.
+      placeholder: JUnit Jupiter
   - type: textarea
     id: additional-context
     attributes:

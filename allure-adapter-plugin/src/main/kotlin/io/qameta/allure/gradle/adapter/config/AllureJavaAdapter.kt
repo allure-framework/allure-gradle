@@ -17,7 +17,7 @@ internal enum class AllureJavaAdapter(
             runtimeOnly(adapterVersion.map { "io.qameta.allure:allure-junit4-aspect:$it" })
         }
     }),
-    junit5("junit5", {
+    jupiter("jupiter", {
         supportsAutoconfigureListeners.set(true)
         activateOn("org.junit.jupiter:junit-jupiter-api") {
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
@@ -32,9 +32,6 @@ internal enum class AllureJavaAdapter(
     testng("testng", {
         supportsAutoconfigureListeners.set(true)
         activateOn("org.testng:testng") {
-            matching {
-                versionAtLeast(it.version, 6, 14, 3)
-            }
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
         }
     }),
@@ -58,8 +55,13 @@ internal enum class AllureJavaAdapter(
         }
     }),
     karate("karate", {
-        supportsAutoconfigureListeners.set(true)
+        supportsAutoconfigureListeners.set(adapterVersion.map {
+            AllureJavaCompatibility.of(it).supportsKarateServiceLoading()
+        })
         activateOn("com.intuit.karate:karate-core") {
+            compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
+        }
+        activateOn("io.karatelabs:karate-core") {
             compileAndRuntimeWithServices(adapterDependency, trimServicesFromJar)
         }
     }),
@@ -69,6 +71,9 @@ internal enum class AllureJavaAdapter(
         }
         activateOn("org.scalatest:scalatest_2.13") {
             compileAndRuntime(adapterVersion.map { "io.qameta.allure:allure-scalatest_2.13:$it" })
+        }
+        activateOn("org.scalatest:scalatest_3") {
+            compileAndRuntime(adapterVersion.map { "io.qameta.allure:allure-scalatest_3:$it" })
         }
     }),
     // Spock 2 runs on JUnit Platform, Allure provides allure-spock2 for it
@@ -125,20 +130,6 @@ internal enum class AllureJavaAdapter(
             }
         }
 
-        private fun versionAtLeast(version: String, vararg minimum: Int): Boolean {
-            val actual = version.substringBefore('-')
-                .split('.')
-                .map { it.toIntOrNull() ?: 0 }
-
-            for (index in 0 until maxOf(actual.size, minimum.size)) {
-                val actualPart = actual.getOrElse(index) { 0 }
-                val minimumPart = minimum.getOrElse(index) { 0 }
-                if (actualPart != minimumPart) {
-                    return actualPart > minimumPart
-                }
-            }
-            return true
-        }
     }
 }
 

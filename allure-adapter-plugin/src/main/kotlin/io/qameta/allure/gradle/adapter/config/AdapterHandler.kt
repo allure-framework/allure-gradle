@@ -21,18 +21,33 @@ open class AdapterHandler @Inject constructor(
     val junit5 get() = jupiter
 
     val junitPlatform by lazyCreating
+
+    /** Legacy JBehave 4 integration for Allure Java 2.x; upgrade to JBehave 5 and use [jbehave5]. */
+    @Deprecated(AllureJavaAdapter.LEGACY_JBEHAVE_DEPRECATION)
     val jbehave by lazyCreating
+
     val jbehave5 by lazyCreating
     val karate by lazyCreating
     val scalatest by lazyCreating
     val testng by lazyCreating
     val assertj by lazyCreating
     val spock by lazyCreating
+
+    /** Legacy Cucumber 4 integration for Allure Java 2.x; upgrade to Cucumber 7 and use [cucumber7Jvm]. */
+    @Deprecated(AllureJavaAdapter.LEGACY_CUCUMBER_DEPRECATION)
     val cucumber4Jvm by lazyCreating
+
+    /** Legacy Cucumber 5 integration for Allure Java 2.x; upgrade to Cucumber 7 and use [cucumber7Jvm]. */
+    @Deprecated(AllureJavaAdapter.LEGACY_CUCUMBER_DEPRECATION)
     val cucumber5Jvm by lazyCreating
+
+    /** Legacy Cucumber 6 integration for Allure Java 2.x; upgrade to Cucumber 7 and use [cucumber7Jvm]. */
+    @Deprecated(AllureJavaAdapter.LEGACY_CUCUMBER_DEPRECATION)
     val cucumber6Jvm by lazyCreating
+
     val cucumber7Jvm by lazyCreating
 
+    /** Cucumber 4–6 integrations are deprecated and support only Allure Java 2.x; prefer Cucumber 7. */
     fun cucumberJvm(majorVersion: Int) = maybeCreate(
         if (majorVersion == 1) "cucumberJvm" else "cucumber${majorVersion}Jvm"
     )

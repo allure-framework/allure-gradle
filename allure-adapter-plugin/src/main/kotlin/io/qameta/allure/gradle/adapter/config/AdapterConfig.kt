@@ -8,6 +8,8 @@ import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.domainObjectSet
+import org.slf4j.LoggerFactory
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 open class AdapterConfig @Inject constructor(
@@ -15,6 +17,12 @@ open class AdapterConfig @Inject constructor(
     objects: ObjectFactory,
     allureAdapterExtension: AllureAdapterExtension
 ) {
+    companion object {
+        private val logger = LoggerFactory.getLogger(AdapterConfig::class.java)
+    }
+
+    private val deprecationWarningLogged = AtomicBoolean()
+
     /**
      * Configures `allure-java` version for the current adapter.
      * The value defaults to [AllureAdapterExtension.allureJavaVersion]
@@ -86,7 +94,12 @@ open class AdapterConfig @Inject constructor(
                 AllureJavaAdapter.find(name)?.let { adapter ->
                     compatibility = org.gradle.api.specs.Spec { framework ->
                         val version = adapterVersion.get()
-                        AllureJavaCompatibility.of(version).accepts(adapter, framework, version)
+                        val accepted = AllureJavaCompatibility.of(version).accepts(adapter, framework, version)
+                        val deprecation = adapter.deprecationMessage
+                        if (accepted && deprecation != null && deprecationWarningLogged.compareAndSet(false, true)) {
+                            logger.warn("allure-gradle: Adapter '$name' is deprecated. $deprecation")
+                        }
+                        accepted
                     }
                 }
             }.build()

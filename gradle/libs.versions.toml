@@ -3,7 +3,7 @@ allure2 = "2.46.1"
 allure3 = "3.16.1"
 allureJava = "2.35.5"
 # The plugin's own reporting harness stays on 2.x independently of consumer SDK defaults.
-allureJavaTest = "2.35.5"
+allureJavaTest = "3.0.0"
 aspectj = "1.9.25.1"
 
 [libraries]
